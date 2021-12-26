@@ -1,0 +1,21 @@
+const Users = require("../Schemas/UserSchema");
+
+const create_new_user = () => {
+  return new Users();
+};
+
+const find_user_by_email = async (email) => {
+  return await Users.findOne({ email: email });  
+};
+const get_all_users = async () => {
+  return await Users.find();
+};
+const get_user_rooms = async (email) => {
+  return await Users.findOne({ email: email }) // Will find user by his/her email id and then will return all the rooms corresponding to that user.
+    .populate("rooms")
+    .select("rooms");
+};
+exports.create_new_user = create_new_user;
+exports.find_user_by_email = find_user_by_email;
+exports.get_all_users = get_all_users;
+exports.get_user_rooms = get_user_rooms;

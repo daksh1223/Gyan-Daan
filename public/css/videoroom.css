@@ -1,0 +1,147 @@
+body {
+  overflow: hidden;
+}
+.main_window {
+  height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+.left_window {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+}
+
+.remote-stream-container {
+  max-width: 100%;
+}
+
+.videos_container {
+  flex-grow: 1;
+  background-color: black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.left_window_controls {
+  display: inline-block;
+  justify-content: center;
+  padding: 5px;
+  overflow: auto;
+  border-color: transparent;
+  background-color: black;
+}
+
+.left_window_controls_block {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.right_window {
+  width: 30%;
+  background-color: #242324;
+  border-left: 2px solid grey;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+}
+
+.right_window_header {
+  padding-top: 5px;
+  color: #f5f5f5;
+  text-align: center;
+  font-size: 3vmin;
+}
+
+.right_window_chat {
+  flex-grow: 1;
+  margin-left: 1%;
+  overflow-y: auto;
+  max-width: 100%;
+  margin-bottom: 1%;
+}
+
+#chat_messages {
+  box-sizing: border-box;
+  margin: auto;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  margin-bottom: 1%;
+}
+.right_window_chat::-webkit-scrollbar {
+  width: 8px;
+  background-color: #292929;
+}
+
+.right_window_chat::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 100px;
+}
+
+.mute {
+  display: flex;
+  float: right;
+  color: white;
+}
+.username {
+  font-size: 3vmin;
+  float: left;
+  color: white;
+}
+.video__container {
+  position: relative;
+  flex-grow: 1;
+  height: 100%;
+  max-width: 100%;
+}
+.remote-stream-container {
+  z-index: 0;
+  display: flex;
+  padding: 2%;
+  border-style: solid;
+  border-radius: 25px;
+  border-width: thick;
+  flex-direction: column;
+}
+#video-grid {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  height: 90%;
+  width: 100%;
+  max-height: 100vh;
+}
+.pointer {
+  transition: all ease-in-out 0.2s;
+}
+
+.fr-draggable,
+.fr-gvc,
+.fr-dvb,
+.fr-video,
+iframe,
+video {
+  width: 100% !important;
+}
+
+.participants_window {
+  width: 30%;
+  background-color: #242324;
+  border-left: 2px solid grey;
+  display: none;
+  overflow: hidden;
+  flex-direction: column;
+}
+#participants_list::-webkit-scrollbar {
+  width: 8px;
+  background-color: #292929;
+}
+
+#participants_list::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 100px;
+}

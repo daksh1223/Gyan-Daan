@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>True-meet | Home</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js" defer></script>
+    <script src="https://kit.fontawesome.com/c939d0e917.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+        integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
+    <script>
+        const user_name = "<%=user_name %>";
+        const email = "<%= user_email %>";
+        const isEducator = "<%= isEducator %>";
+    </script>
+    <link rel="stylesheet" type="text/css" href="/css/home.css" />
+    <link rel="stylesheet" type="text/css" href="/css/tags.css" />
+    <script src="/js/home.js" defer></script>
+    <script src="/js/tags.js"></script>
+</head>
+
+<body>
+    <div class="body_container">
+        <nav class="navbar navbar-expand-md navbar-dark justify-content-start" style="background-color: black;">
+
+            <a class="navbar-brand mb-0 h1" href="/home"><i class="fas fa-users"></i> True-Meet</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar6">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse collapse" id="navbar6">
+                <form class="mx-5 my-auto d-inline w-100">
+                    <input class="form-control mr-sm-2" placeholder="&#xf002; Search a room"
+                        onkeyup="show_rooms(this.value)"
+                        style="background-color: #1f1f1f; color:white;border-color: grey;border-width: 2px; font-family: 'Font Awesome 5 Free'; font-weight: 600;">
+                </form>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle nav-link active" id="user_data" href='#' role="button"
+                                data-toggle="dropdown" aria-expanded="false">
+                                <%= user_name %>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li>
+                                    <a class="dropdown-item" href='#' type="button" onclick="show_users();"
+                                        data-toggle="modal" data-target="#user_display_modal">
+                                        <i class="fas fa-user-tag" style="color:black;"></i> True-Meet<br>Members</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item"
+                                        href='https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=https://true-meet.herokuapp.com/logout/'>
+                                        <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="modal fade" id="RoomcreationModal" tabindex="-1" role="dialog"
+            aria-labelledby="RoomcreationModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content" style="background: #292929;box-shadow: 0px 0px 15px black;">
+                    <div class="modal-header" style="border-color: #292929;">
+                        <h5 class="modal-title" id="RoomcreationModalLongTitle">Create new course</h5>
+                    </div>
+                    <form>
+
+                        <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                            <div class="form-group">
+                                <label for="room_name">Course Name</label>
+                                <input type="text" class="form-control" id="room_name" style="color: black;" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="room_description">Course Description</label>
+                                <textarea row="3" class="form-control" id="room_description"
+                                    style="color: black;"> </textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Add Course Tags:</label>
+                                <input type="text" id="room_tags" data-role="tagsinput" />
+                                <small class="form-text " style="color:white;font-weight:400;">
+                                    Add Tags associated with this course. <br>Eg. Trignometry, Maths, Class Xth
+                                    etc...<br>
+                                    Press enter after typing a tag name to add a new tag.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="border-color: #292929;">
+                            <button type="button" id="modal_close" class="btn btn-secondary"
+                                data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" onclick="modal_submission()">Create
+                                Room</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+        <div style="margin-top:1%;">
+            <a href="/home" class="custom_link" style="float:left;margin-left: 2.5%;">
+                <i class="fas fa-home"></i> Home</a>
+
+
+            <a class="custom_link" href="#" data-toggle="modal" id="room_create" data-target="#RoomcreationModal"
+                style="float:right;margin-right:2.5%;">
+    
+
+        </div>
+        <div id="rooms_container" class="rooms_container">
+        </div>
+
+        <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"
+            aria-labelledby="user_display_modalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content" style="background: #292929;box-shadow: 0px 0px 15px black;">
+                    <div class="modal-header" style="border-color: #292929;">
+                        <h5 class="modal-title" id="user_display_modalLongTitle">Members</h5>
+                    </div>
+                    <form>
+
+                        <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                            <div class="form-group" id="all_users_container">
+
+                            </div>
+                            <div class="modal-footer" style="border-color: #292929;">
+                                <button type="button" id="modal_close" class="btn btn-secondary"
+                                    data-dismiss="modal">Close</button>
+                            </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,642 @@
+const url = `/api/room/${ROOM_ID}`;
+var socket = io("/"); // For connecting the socket.
+
+var channel_data_copy; // Will contain all te data present in the current channel
+var channel_data_messages; // Will contain all the messages present in the current channel.
+var current_channel; // ID of the current channel
+var general_channel; // ID of the General channel
+var current_channel_message_id; // ID of the current channel message
+var current_channel_meet_link = null;
+
+const room_data = async (url) => {
+  promise = await axios.get(url); // Fetch all the data present in this room
+
+  var room = document.getElementById("room_name");
+  var room_container = document.createElement("div");
+  icon = document.createElement("div");
+
+  let icon_value = promise.data.room_detail.name[0].toUpperCase();
+  if (promise.data.room_detail.name.length > 1) {
+    icon_value += promise.data.room_detail.name[1].toUpperCase();
+  }
+  // Will set the properties of the room in the frontend
+  room_container.innerHTML = ` 
+    <a href="/home" class="home_link" style="float:left;margin-left:3%;margin-top:1%;">
+      <i class="fas fa-angle-left"></i> Home</a>
+    <div class="icon">
+      <img src="https://place-hold.it/80/${promise.data.room_detail.room_color}/fff&text=${icon_value}&fontsize=20" style="border-radius:4px;height:40%;width:40%;"></img>
+    </div>
+    <div class="room" style="width:100%;">
+      <div>
+        ${promise.data.room_detail.name}
+        <a class="dropdown-toggle" id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="float:right;color:white;margin-right:2%"></a>
+        <ul class="dropdown-menu" >
+          <li>
+            <a class="dropdown-item" href="#" onclick="add_user('${promise.data.room_detail._id}')">
+              <i class="fas fa-user-plus"></i> Add users
+            </a>
+          </li>
+          <li>
+            <a href="#" class="dropdown-item" onclick="leave_room('${promise.data.room_detail._id}','${promise.data.room_detail.channels[0]._id}')">
+              <i class="fas fa-sign-out-alt")></i> Leave Room 
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  `;
+  room_container.style.display = "flex";
+  room_container.style.flexDirection = "column";
+  room.appendChild(room_container); // Append the container in the room
+
+  var channel_container = document.getElementById("channels_container"); // Container for all the channels inside the room where this user is present
+
+  general_channel = promise.data.room_detail.channels[0]._id; // set the ID of the General channel
+  for (var id = 0; id < promise.data.room_detail.channels.length; id++) {
+    if (promise.data.user_present[id]) {
+      // Add all the channels and their properties inside the channel container.
+      var temp_channel_container = document.createElement("div");
+
+      temp_channel_container.setAttribute(
+        "id",
+        promise.data.room_detail.channels[id]._id + "container"
+      );
+      temp_channel_container.setAttribute("class", "container_element");
+
+      temp_channel_setting_container = document.createElement("div");
+      if (id) {
+        temp_channel_container.innerHTML = `
+      <a class="container_element"  style="float:left;" href="#" id=${promise.data.room_detail.channels[id]._id} onclick="channel_data('${promise.data.room_detail.channels[id]._id}')">
+      ${promise.data.room_detail.channels[id].name}
+      </a>
+       <div class="container_element_settings dropdown">
+          <a class="dropdown-toggle" id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="float:right;color:white;">
+          </a>
+  
+          <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item" href="#" onclick="add_user('${promise.data.room_detail.channels[id]._id}')">
+                  <i class="fas fa-user-plus"></i> Add users
+                </a>
+            </li>
+      
+            <li>
+                <a class="dropdown-item" href="#" onclick="leave_channel('${promise.data.room_detail.channels[id]._id}')">
+                  <i class="fas fa-sign-out-alt"></i> Leave Channel
+                </a>
+            </li>
+          </ul>
+      </div>
+      `;
+      } else {
+        temp_channel_container.innerHTML = `
+      <a class="container_element"  style="float:left;" href="#" id=${promise.data.room_detail.channels[id]._id} onclick="channel_data('${promise.data.room_detail.channels[id]._id}')">
+      ${promise.data.room_detail.channels[id].name}
+      </a>
+      <div class="container_element_settings dropdown">
+      
+      </div>
+      `;
+      }
+
+      channel_container.appendChild(temp_channel_container);
+    }
+  }
+
+  var response = await channel_data(promise.data.room_detail.channels[0]._id); // Will fetch all the data of the General Channel
+  return promise.data;
+};
+const channel_data = async (cid) => {
+  if (current_channel) {
+    document.getElementById(current_channel).style.color = "white"; // Set the previously selected channel color as white
+  }
+
+  document.getElementById(cid).style.color = "#007bff";
+  current_channel_meet_link = null;
+
+  channel = await axios.get(`/api/channel/${cid}`); // Get the current channel's data
+  current_channel = cid; // Set the current channel as cid
+  current_channel_message_id = cid;
+  channel_data_copy = channel.data;
+
+  document.getElementById("channel_name_display").innerHTML = channel.data.name;
+  channel_data_messages = channel.data.messages;
+  messages = document.getElementById("chat_messages");
+  user_container = document.getElementById("users_container");
+  meets_container = document.getElementById("meets_container");
+
+  while (user_container.firstChild) {
+    user_container.removeChild(user_container.firstChild); // Remove all the users present in the channel users container
+  }
+  while (meets_container.firstChild) {
+    meets_container.removeChild(meets_container.firstChild); // Remove all the meets present in the channel meet container
+  }
+  for (var i = 0; i < channel.data.users.length; i++) {
+    // Add current channel's users
+    temp_user = document.createElement("div");
+    temp_user.style.color = "white";
+    temp_user.setAttribute("title", "Email Id: " + channel.data.users[i].email);
+    temp_user.setAttribute("class", "container_element pointer");
+    temp_user.innerHTML = channel.data.users[i].name;
+    user_container.appendChild(temp_user);
+  }
+  for (var i = 0; i < channel.data.meets.length; i++) {
+    // Add current channel's meet
+    temp_meet = document.createElement("div");
+    temp_meet.style.color = "white";
+    temp_meet.innerHTML = `
+    <a class="container_element" href="#" onclick="meet_message('${channel.data.meets[i]._id}')">
+      ${channel.data.meets[i].name}
+    </a>
+    `;
+    temp_meet.setAttribute("class", "container_element");
+    meets_container.appendChild(temp_meet);
+  }
+  show_chat(""); // Show the chat of current channel
+};
+
+const show_chat = (prefix) => {
+  while (messages.firstChild) {
+    messages.removeChild(messages.firstChild); // Remove previous channel's chats
+  }
+
+  if (current_channel_meet_link) {
+    // If the current channel is a meet channel then show join meet else show create meet option.
+    document.getElementById("create_meet").style.display = "none";
+    document.getElementById("join_meet").style.display = "";
+  } else {
+    document.getElementById("create_meet").style.display = "";
+    document.getElementById("join_meet").style.display = "none";
+  }
+  prefix = prefix.toLowerCase();
+
+  channel_data_messages.map((chat) => {
+    let name = chat.username.toLowerCase(),
+      message = chat.message.toLowerCase(),
+      timestamp = chat.timestamp.toLowerCase();
+    // Add those chats which contains the string typed in the search bar.
+    if (
+      name.includes(prefix) ||
+      message.includes(prefix) ||
+      timestamp.includes(prefix)
+    ) {
+      let user_post = false;
+      if (email == chat.email) {
+        user_post = true;
+      }
+      generate_message(
+        chat.username,
+        chat.message,
+        chat.timestamp,
+        current_channel_message_id,
+        user_post
+      );
+    }
+  });
+};
+const room = room_data(url);
+
+function setup() {
+  // For setting up the froala editor (Rich Text editor)
+  socket.emit("join-room", ROOM_ID);
+
+  $("#editor").froalaEditor({
+    toolbarButtons: [
+      "color",
+      "inlineStyle",
+      "|",
+      "formatOL",
+      "formatUL",
+      "outdent",
+      "indent",
+      "insertLink",
+      "insertImage",
+      "insertVideo",
+      "insertFile",
+      "|",
+      "specialCharacters",
+      "insertHR",
+      "selectAll",
+      "|",
+      "html",
+      "|",
+      "undo",
+      "redo",
+      "|",
+    ],
+    toolbarButtonsMD: [
+      "color",
+      "inlineStyle",
+      "|",
+      "formatOL",
+      "formatUL",
+      "outdent",
+      "indent",
+      "insertLink",
+      "insertImage",
+      "insertVideo",
+      "insertFile",
+      "|",
+      "specialCharacters",
+      "selectAll",
+      "|",
+      "undo",
+      "redo",
+      "|",
+    ],
+    toolbarButtonsSM: [
+      "color",
+      "inlineStyle",
+      "|",
+      "formatOL",
+      "formatUL",
+      "outdent",
+      "indent",
+      "insertLink",
+      "insertImage",
+      "insertVideo",
+      "insertFile",
+      "|",
+      "specialCharacters",
+      "selectAll",
+      "|",
+      "undo",
+      "redo",
+      "|",
+    ],
+    toolbarButtonsXS: [
+      "color",
+      "|",
+      "insertImage",
+      "insertVideo",
+      "insertLink",
+      "insertFile",
+      "|",
+      "specialCharacters",
+      "|",
+    ],
+
+    theme: "dark",
+    heightMin: 80,
+    heightMax: 80,
+    width: "100%",
+    imageDefaultWidth: 50,
+    imageResizeWithPercent: true,
+    charCounterCount: true,
+    toolbarBottom: true,
+    tabSpaces: 4,
+  });
+
+  socket.on("send_channel_message", get_data); // When other users sends a message the socket will recieve "send_channel_message" signal
+  document.getElementById("defaultCanvas0").style.display = "none";
+
+  var froala_box = document.getElementsByClassName("fr-box")[0];
+  if (
+    froala_box.childNodes.length >= 2 &&
+    froala_box.childNodes[1].tagName == "DIV" &&
+    froala_box.childNodes[1].style.position == "absolute"
+  ) {
+    froala_box.childNodes[1].remove();
+  }
+  var submit_button = document.createElement("div");
+  submit_button.innerHTML = `
+  <a href="#" id="submit_button" type="button" class="fr-command fr-btn fr-btn-font_awesome pointer"
+  style="text-decoration:none;display:flex;align-items:center;float:right;margin-right:1%;"
+  title="Send Message" onclick="send_chat_message()">
+  <i class="fa fa-send fa-lg" style="color:white;">
+  </i>
+</a>
+`;
+if (document.getElementsByClassName("fr-desktop").length > 0) {
+    
+  document.getElementsByClassName("fr-toolbar")[0].appendChild(submit_button);
+} else {
+  submit_button.style.display ="flex";
+  submit_button.style.alignContent="center";
+  submit_button.style.marginRight="1%";
+  document.getElementById("chat_sender").prepend(submit_button);
+}
+}
+
+const get_data = (username, message, timestring, channel_id) => {
+  if (channel_id == current_channel_message_id) {
+    // If the channel ID from where the signal came is same as the current channel message ID
+    let temp_data = {
+      message: message,
+      username: username,
+      timestamp: timestring,
+    };
+
+    channel_data_messages.push(temp_data);
+  }
+  generate_message(username, message, timestring, channel_id, false); // Generate the message if the above condition is true
+};
+const generate_message = (
+  user_name,
+  message,
+  timestring,
+  channel_id,
+  is_user_post
+) => {
+  if (channel_id == current_channel_message_id) {
+    // If the ID of the channel from where this request came from is same as te current channel message ID ten add the emited message.
+    messages = document.getElementById("chat_messages");
+
+    message_card = document.createElement("div");
+    message_card.style.marginBottom = "0.5%";
+    message_card.style.paddingLeft = "0.5%";
+    message_card.className = "card";
+    message_card.innerHTML = `
+    <b>
+      <div class="card-title" style="margin-top:0.5%;font-size:1rem;">
+        ${user_name}
+      </div>
+      <div class="card-subtitle" style="font-size:1rem;">
+        ${timestring}
+      </div>
+    </b>
+    <div class="card-body" style="margin-top:0.5%;font-size:1rem;">
+      ${message}
+    </div>
+    `;
+    if (is_user_post) {
+      message_card.style.borderLeft = "4px solid #0354ab";
+    }
+    messages.append(message_card);
+    messages.scrollTop = messages.scrollHeight;
+  }
+};
+const send_chat_message = async () => {
+  var message_in_html_form = $("#editor").froalaEditor("html.get");
+  $("#editor").froalaEditor("html.set", null);
+  // After sending the message set the editor's content as null.
+  messages = document.getElementById("chat_messages");
+  var message = message_in_html_form;
+
+  await socket.emit(
+    "receive_channel_message",
+    user_name,
+    message,
+    email,
+    current_channel_message_id
+  );
+  // After emiting the message to the server add this message in the chat container.
+  let timestring = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+  });
+  generate_message(
+    user_name,
+    message,
+    timestring,
+    current_channel_message_id,
+    true
+  );
+  let temp_data = {
+    message: message,
+    username: user_name,
+    timestamp: timestring,
+  };
+  //Add this message in channel_data_messages to access it while searching in the search bar
+  channel_data_messages.push(temp_data);
+};
+function start_meet() {
+  location = current_channel_meet_link; // Will change the current url to the meet's url
+}
+async function meet_message(cid) {
+  current_channel_message_id = cid;
+  channel = await axios.get(`/api/channel/${cid}`); //Get the meet channel's data
+  channel_data_messages = channel.data.messages;
+  document.getElementById("channel_name_display").innerHTML = channel.data.name;
+
+  // Set the properties of the join meet button
+  document.getElementById("join_meet_btn").innerHTML = `Join Meet`;
+  document
+    .getElementById("join_meet_btn")
+    .setAttribute("class", "btn btn-primary");
+  document.getElementById("join_meet_btn").style.color = "white";
+  document
+    .getElementById("join_meet_btn")
+    .setAttribute("onclick", "start_meet()");
+
+  current_channel_meet_link = channel.data.meet_link;
+  // After joining the meet channel display it's content in the frontend
+  show_chat("");
+}
+function channel_modal_submission() {
+  //For creatin a new channel
+  const name = document.getElementById("channel_name").value;
+  let users = document.getElementById("user_tags").value;
+  users = users.split(" ");
+  console.log(users);
+  if (name.length) {
+    userinfo = {
+      name: name,
+      users: users,
+      is_meet: false,
+    };
+    axios
+      .post("/api/room/" + ROOM_ID + "/add_channel", {
+        data: { userinfo: userinfo },
+      })
+      .then((response) => {
+        response = response.data;
+        var channel_container = document.getElementById("channels_container");
+        var temp_channel_container = document.createElement("div");
+
+        var temp_channel = document.createElement("a");
+      
+        temp_channel_container.innerHTML = `
+          <a href="#" id=${response._id} class="container_element" style="float:left;" onclick="channel_data('${response._id}')" >
+            ${response.name}
+          </a>
+          <div class="container_element_settings dropdown">
+            <a class="dropdown-toggle" style="float:right;color:white;" id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <a class="dropdown-item" href="#" onclick="add_user('${response._id}')">
+                  <i class="fas fa-user-plus"></i> Add users
+                </a>
+              </li>
+              <li>
+               <a class="dropdown-item" href="#" onclick="leave_channel('${response._id}')">
+                  <i class="fas fa-sign-out-alt"></i> Leave Channel
+               </a> 
+              </li>
+            </ul>
+          </div>
+        `;
+        temp_channel_container.setAttribute("id", response._id + "container");
+        temp_channel_container.setAttribute("class", "container_element");
+        channel_container.appendChild(temp_channel_container);
+        document.getElementById("modal_close").click();
+      });
+  }
+}
+async function meet_modal_submission() {
+  // For creating a new meet
+  const name = document.getElementById("meet_name").value;
+  const time = document.getElementById("meet_time").value;
+  const date = document.getElementById("meet_date").value;
+  console.log(name, date, time);
+  if (name.length && time.length && date.length) {
+    userinfo = {
+      name: name,
+      channel_id: current_channel,
+      is_meet: true,
+    };
+
+    response = await axios.post("/api/room/" + ROOM_ID + "/add_channel", {
+      data: { userinfo: userinfo },
+    });
+    response = response.data;
+
+    meet = `<br><div style="border: 1px solid;border-radius: 5px;width:fit-content;padding:2%;">
+        <b>Meet Detail:<hr style="border: 1px solid black;background-color: black;height:1px;">
+        Meet scheduled by: ${user_name}<br> 
+        Meet name: ${name}<br>
+        Meet start date: ${date}<br>
+        Meet start time: ${time}<br>
+        </b>
+        <hr style="border: 1px solid black;background-color: black;height:1px;">
+        To get more info about this 
+        <button class="btn btn-dark">
+        <a href='#' onclick=meet_message('${response._id}') class="custom_link_black" type="button"  style="color:white;"
+        >click here</a></button>
+        </div>
+        `;
+      // Will send a new message to other users by the name of True-Meet Bot
+    await socket.emit(
+      "receive_channel_message",
+      "True-Meet Bot",
+      meet,
+      "",
+      current_channel_message_id
+    );
+
+    generate_message(
+      "True-Meet Bot",
+      meet,
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+      current_channel_message_id,
+      false
+    );
+
+    meets_container = document.getElementById("meets_container");
+    temp_meet = document.createElement("div");
+    temp_meet.style.color = "white";
+    temp_meet_name = document.createElement("a");
+    temp_meet.setAttribute("class", "container_element");
+    temp_meet_name.setAttribute("class", "container_element");
+    temp_meet_name.innerHTML = name;
+    temp_meet_name.href = "#";
+    temp_meet_name.setAttribute("onclick", `meet_message('${response._id}')`);
+    temp_meet.appendChild(temp_meet_name);
+    meets_container.appendChild(temp_meet);
+    document.getElementById("meet_modal_close").click();
+  }
+}
+
+async function leave_channel(channel_id) {
+  // For leaving a channel
+  var response = await axios.delete("/api/room/" + ROOM_ID, {
+    data: { channel_id: channel_id },
+  });
+  var channel_container = document.getElementById("channels_container");
+  channel_container.removeChild(
+    document.getElementById(channel_id + "container")
+  );
+  current_channel = general_channel;
+  document.getElementById(general_channel).click();
+}
+async function leave_room(room_id, channel_id) {
+  var response = await axios.delete("/api/room/" + ROOM_ID, {
+    data: { channel_id: channel_id },
+  });
+
+  response = await axios.delete("/api/room/", {
+    data: { room_id: ROOM_ID },
+  });
+  location = "/home";
+}
+
+function add_user(cid) {
+  if (ROOM_ID == cid) {
+    // For adding a new user
+    document.getElementById("add_users_muted_text").innerHTML =
+      "Add users that are currently present in the organization by typing their email id.";
+  } else {
+    document.getElementById("add_users_muted_text").innerHTML =
+      "Add users that are currently present in the room by typing their email id.";
+  }
+  document.getElementsByClassName("add_users_link")[0].setAttribute("id", cid);
+  document.getElementsByClassName("add_users_link")[0].click();
+}
+async function add_users_modal_submission() {
+  // Modal for adding user in the room or channel
+  var users = document.getElementById("add_user_tags").value;
+  users = users.split(" ");
+  console.log(users);
+  if (ROOM_ID == document.getElementsByClassName("add_users_link")[0].id) {
+    var response = await axios.post("/api/add_users", {
+      room_id: ROOM_ID,
+      users: users,
+    });
+    console.log(response.data);
+    if (general_channel == current_channel) {
+      user_container = document.getElementById("users_container");
+
+      for (var i = 0; i < response.data.length; i++) {
+        temp_user = document.createElement("div");
+        temp_user.style.color = "white";
+        temp_user.setAttribute("title", "Email Id: " + response.data[i].email);
+        temp_user.setAttribute("class", "container_element pointer");
+        temp_user.innerHTML = response.data[i].name;
+        user_container.appendChild(temp_user);
+      }
+    }
+  } else {
+    var response = await axios.post("/api/add_users", {
+      channel_id: document.getElementsByClassName("add_users_link")[0].id,
+      channel_room: ROOM_ID,
+      users: users,
+    });
+    console.log(response.data);
+    if (
+      document.getElementsByClassName("add_users_link")[0].id == current_channel
+    ) {
+      user_container = document.getElementById("users_container");
+
+      for (var i = 0; i < response.data.length; i++) {
+        temp_user = document.createElement("div");
+        temp_user.style.color = "white";
+        temp_user.setAttribute("class", "container_element");
+        temp_user.setAttribute("title", "Email Id: " + response.data[i].email);
+        temp_user.innerHTML = response.data[i].name;
+        user_container.appendChild(temp_user);
+      }
+    }
+  }
+  document.getElementById("add_users_modal_close").click();
+}
+async function show_users() {
+  response = await axios.get("/api/get_users");
+  // To show all the users present in the organization
+  console.log(response.data);
+  user_container = document.getElementById("all_users_container");
+  while (user_container.firstChild) {
+    user_container.removeChild(user_container.firstChild);
+  }
+  for (var i = 0; i < response.data.length; i++) {
+    temp_user = document.createElement("div");
+    temp_user.innerHTML = `
+    <div>
+        <div style="float:left;" >${response.data[i].name}</div>
+        <div style="float:right" >${response.data[i].email}</div>
+    </div>
+    <br>
+`;
+    user_container.appendChild(temp_user);
+  }
+}

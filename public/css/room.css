@@ -1,0 +1,131 @@
+body,
+html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.chat_container {
+  box-sizing: border-box;
+  min-height: 100%;
+  max-height: 100%;
+  width: 100%;
+  background-color: #292929;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+#chat_messages {
+  box-sizing: border-box;
+  margin: auto;
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  margin-bottom: 1%;
+}
+.data_container::-webkit-scrollbar {
+  width: 8px;
+  background-color: #292929;
+}
+
+.data_container::-webkit-scrollbar-thumb {
+  background-color: grey;
+  border-radius: 100px;
+}
+.chat-input {
+  display: flex;
+  justify-content: center;
+}
+.message_container {
+  height: 100%;
+  width: 95%;
+  display: flex;
+  margin-left: 2.5%;
+  flex-direction: column;
+  overflow: hidden;
+}
+h5 {
+  font-weight: bolder;
+}
+h6 {
+  font-weight: bold;
+}
+.container_element {
+  color: white;
+  text-decoration: none;
+  align-content: center;
+}
+.container_element:hover {
+  color: white;
+  text-decoration: none;
+  background-color: #1c1f22;
+}
+.container_element_settings {
+  color: white;
+}
+.container_element .container_element_settings {
+  visibility: hidden;
+}
+.container_element:hover .container_element_settings {
+  visibility: visible;
+}
+.fr-draggable,
+.fr-gvc,
+.fr-dvb,
+.fr-video,
+iframe {
+  width: 100% !important;
+}
+.icon {
+  font-weight: 900;
+  text-align: center;
+  font-size: 10vmin;
+  color: white;
+}
+.room {
+  font-weight: 900;
+  text-align: center;
+  overflow: hidden;
+  color: white;
+  justify-content: center;
+  text-overflow: ellipsis;
+  /* margin-bottom: 5%; */
+}
+.custom_link {
+  text-decoration: none;
+  color: white;
+  font-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 1%;
+}
+.custom_link:hover {
+  text-decoration: none;
+  color: white;
+}
+
+.custom_link_black {
+  text-decoration: none;
+  color: black;
+  font-size: 100%;
+}
+.custom_link_black:hover {
+  text-decoration: none;
+  color: black;
+}
+.pointer {
+  transition: all ease-in-out 0.2s;
+}
+.home_link {
+  text-decoration: none;
+  color: white;
+  font-size: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-right: 1%;
+}
+.home_link:hover {
+  text-decoration: none;
+}
