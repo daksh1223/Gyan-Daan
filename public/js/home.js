@@ -51,8 +51,9 @@ async function get_rooms() {
   response = await axios.get("/api/get_all_rooms"); // Will fetch all the rooms where the user is present
   rooms_copy = response.data.rooms;
   let room_create = document.getElementById("room_create");
-  if (isEducator)
+  if (isEducator != "false") {
     room_create.innerHTML = `<i class="fas fa-user-plus"></i> Create a new Course</a>`;
+  }
   show_rooms("");
 }
 
