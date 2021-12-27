@@ -19,7 +19,6 @@ router
   .route("/add_room")
   .post(async (req, res) => {
     // Create the room using the create room function and then return that room in JSON format.
-    console.log(req.user)
     if (req.user.isEducator) {
       const room = await home_controller.create_room(
         req.body.data.roominfo,
@@ -32,4 +31,6 @@ router
     res.send(`${req.method} method is not allowed!`);
   });
 
+
+  
 exports.router = router;

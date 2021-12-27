@@ -6,17 +6,17 @@ html
 {
   height: 100vh;
 }
-.body_container {
+body {
   height: 100vh;
   background-color: #292929;
   overflow:auto;
 }
-.body_container::-webkit-scrollbar {
+body::-webkit-scrollbar {
   width: 8px;
   background-color: #292929;
 }
 
-.body_container::-webkit-scrollbar-thumb {
+body::-webkit-scrollbar-thumb {
   background-color: grey;
   border-radius: 100px;
 }
@@ -70,3 +70,15 @@ img
   text-decoration: none;
   color:white;
  }
+
+ .navbar-nav
+button {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  font-family: arial, sans-serif;
+  color: #069;
+  text-decoration: none;
+  cursor: pointer;
+}
+

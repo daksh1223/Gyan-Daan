@@ -9,6 +9,10 @@ const { set_new_stream } = require("../Repository/stream_repository.js");
 const {
   find_room_by_id,
   find_room_by_id_and_populate_channels,
+  get_popular_rooms,
+  get_oldest_rooms,
+  get_latest_rooms,
+  get_highest_rated_rooms
 } = require("../Repository/room_repository.js");
 const {
   find_channel_by_id,
@@ -61,6 +65,7 @@ router
             // Check whether the user is present in the room. If present then add in the General channel.
             user_names.push(user_to_add);
             room.users.push(user_to_add);
+            room.userCount += 1;
             channel.users.push(user_to_add);
             user_to_add.rooms.push(room);
             user_to_add.save();
@@ -118,6 +123,7 @@ router
     let room = await find_room_by_id_and_populate_channels(room_id);
     user.rooms.remove({ _id: room_id });
     room.users.remove({ _id: user._id });
+    room.userCount -= 1;
     for (var i = 0; i < room.channels.length; i++) {
       if (room.channels[i].users.includes(user._id)) {
         let user_channels =await find_channel_by_id(room.channels[i]);
@@ -205,7 +211,36 @@ router
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
+router.get("/get_popular_rooms/", async (req, res) => {
+  const rooms = await get_popular_rooms()
+  res.json(rooms)
+})
+.all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+});
 
+router.get("/get_oldest_rooms/", async (req, res) => {
+  const rooms = await get_oldest_rooms()
+  res.json(rooms)
+})
+.all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+});
+
+router.get("/get_latest_rooms/", async (req, res) => {
+  const rooms = await get_latest_rooms()
+  res.json(rooms)
+})
+.all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+});
+router.get("/get_highest_rated_rooms/", async (req, res) => {
+  const rooms = await get_highest_rated_rooms()
+  res.json(rooms)
+})
+.all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+});
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router
