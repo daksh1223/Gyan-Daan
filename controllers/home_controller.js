@@ -1,6 +1,7 @@
 const { find_user_by_email } = require("../Repository/user_repository");
 const { create_new_room } = require("../Repository/room_repository");
 const { create_new_channel } = require("../Repository/channel_repository");
+const Room = require("../Schemas/RoomSchema");
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -12,6 +13,7 @@ async function create_room(roominfo, session_user) {
   room.name = roominfo.name;
   channel.name = "General"; // By default the newly created room will have a "General" channel present.
   room.users.push(user);
+  room.userCount += 1;
   channel.users.push(user);
   room.room_color = roominfo.color;
   channel.is_meet = false;
@@ -30,4 +32,7 @@ async function create_room(roominfo, session_user) {
   return room;
 }
 
-exports.create_room = create_room;
+
+module.exports = {
+  create_room,
+}

@@ -9,6 +9,10 @@ const { set_new_stream } = require("../Repository/stream_repository.js");
 const {
   find_room_by_id,
   find_room_by_id_and_populate_channels,
+  get_popular_rooms,
+  get_oldest_rooms,
+  get_latest_rooms,
+  get_highest_rated_rooms
 } = require("../Repository/room_repository.js");
 const {
   find_channel_by_id,
@@ -21,7 +25,7 @@ const {
 router
   .route("/get_all_rooms") // Will fetch all the rooms where the current user is present.
   .get(async (req, res) => {
-    let rooms = await get_user_rooms(req.session.user.email);
+    let rooms = await get_user_rooms(req.user.email);
     res.json(rooms);
   })
   .all((req, res) => {
@@ -61,6 +65,7 @@ router
             // Check whether the user is present in the room. If present then add in the General channel.
             user_names.push(user_to_add);
             room.users.push(user_to_add);
+            room.userCount += 1;
             channel.users.push(user_to_add);
             user_to_add.rooms.push(room);
             user_to_add.save();
@@ -114,10 +119,11 @@ router
   .delete(async (req, res) => {
     let room_id = req.body.room_id;
 
-    let user = await find_user_by_email(req.session.user.email);
+    let user = await find_user_by_email(req.user.email);
     let room = await find_room_by_id_and_populate_channels(room_id);
     user.rooms.remove({ _id: room_id });
     room.users.remove({ _id: user._id });
+    room.userCount -= 1;
     for (var i = 0; i < room.channels.length; i++) {
       if (room.channels[i].users.includes(user._id)) {
         let user_channels =await find_channel_by_id(room.channels[i]);
@@ -140,7 +146,7 @@ router
     let room_detail = await find_room_by_id_and_populate_channels(
       req.params.room
     );
-    let user = await find_user_by_email(req.session.user.email);
+    let user = await find_user_by_email(req.user.email);
     let user_present = room_detail.channels.map((channel) => {
       return channel.users.includes(user._id);
     });
@@ -151,7 +157,7 @@ router
     // Remove the user from that channel
     let channel_id = req.body.channel_id;
     let channel = await find_channel_by_id(channel_id);
-    let user = await find_user_by_email(req.session.user.email);
+    let user = await find_user_by_email(req.user.email);
     channel.users.remove({ _id: user._id });
     channel.save();
     res.json({ message: "Successfully deleted!" });
@@ -164,7 +170,7 @@ router
   .post(async (req, res) => {
     // Add channel in the particular room
     let channelinfo = req.body.data.userinfo;
-    let user = await find_user_by_email(req.session.user.email);
+    let user = await find_user_by_email(req.user.email);
     let room = await find_room_by_id_and_populate_channels(req.params.room);
     let channel = create_new_channel();
 
@@ -205,7 +211,36 @@ router
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
+router.get("/get_popular_rooms/", async (req, res) => {
+  const rooms = await get_popular_rooms()
+  res.json(rooms)
+})
+.all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+});
 
+router.get("/get_oldest_rooms/", async (req, res) => {
+  const rooms = await get_oldest_rooms()
+  res.json(rooms)
+})
+.all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+});
+
+router.get("/get_latest_rooms/", async (req, res) => {
+  const rooms = await get_latest_rooms()
+  res.json(rooms)
+})
+.all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+});
+router.get("/get_highest_rated_rooms/", async (req, res) => {
+  const rooms = await get_highest_rated_rooms()
+  res.json(rooms)
+})
+.all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+});
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router
