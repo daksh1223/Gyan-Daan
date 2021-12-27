@@ -21,7 +21,7 @@ const {
 router
   .route("/get_all_rooms") // Will fetch all the rooms where the current user is present.
   .get(async (req, res) => {
-    let rooms = await get_user_rooms(req.user.email);
+    let rooms = await get_user_rooms(req.session.user.email);
     res.json(rooms);
   })
   .all((req, res) => {
@@ -93,6 +93,76 @@ router
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
+router
+  .route("/remove_users") //Will be called to remove users in a room or channel
+  .post(async (req, res) => {
+    //Will only allow post requests
+    let users_to_remove = req.body.users;
+    let user_names = [];
+    if (req.body.room_id) {
+      // Check whether the post request is for a room or channel
+      let room = await find_room_by_id(req.body.room_id);
+      let all_channels = [];
+      for (let i = 0; i < room.channels.length; i++) {
+        let temp = await find_channel_by_id(room.channels[i]._id);
+        all_channels.push(temp);
+      }
+      for (var i = 0; i < users_to_remove.length; i++) {
+        let user_to_remove = await find_user_by_email(users_to_remove[i]);
+        if (user_to_remove) {
+          // Check whether the user to be removed exists or not
+          let user_present = room.users.includes(user_to_remove._id);
+
+          if (user_present) {
+            // Check whether the user is present in the room. If present then remove from all the channel.
+            user_names.push(user_to_remove);
+            console.log(room.users,user_to_remove._id)
+            room.users = room.users.filter((user) => {
+              return user != String(user_to_remove._id);
+            });
+            console.log(room.users)
+            for (let i = 0; i < room.channels.length; i++) {
+              console.log(all_channels[i].users);
+              all_channels[i].users = all_channels[i].users.filter(
+                (user) => user != String(user_to_remove._id)
+              );
+              console.log(all_channels[i].users);
+              all_channels[i].save();
+            }
+            user_to_remove.rooms = user_to_remove.rooms.filter((temp_room) => {
+              room._id != temp_room;
+            });
+            user_to_remove.save();
+          }
+        }
+      }
+      room.save();
+    } else {
+      let room = await find_room_by_id(req.body.channel_room);
+      let channel = await find_channel_by_id(req.body.channel_id);
+
+      for (var i = 0; i < users_to_remove.length; i++) {
+        let user_to_remove = await find_user_by_email(users_to_remove[i]);
+        if (user_to_remove) {
+          let user_present =
+            room.users.includes(user_to_remove._id) &&
+            channel.users.includes(user_to_remove._id);
+          if (user_present) {
+            user_names.push(user_to_remove);
+            channel.users = channel.users.filter(
+              (user_id) => String(user_to_remove._id) != user_id
+            );
+          }
+        }
+      }
+      channel.save();
+    }
+
+    res.json(user_names);
+  })
+  .all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+  });
 
 router
   .route("/channel/:channel")
@@ -114,13 +184,13 @@ router
   .delete(async (req, res) => {
     let room_id = req.body.room_id;
 
-    let user = await find_user_by_email(req.user.email);
+    let user = await find_user_by_email(req.session.user.email);
     let room = await find_room_by_id_and_populate_channels(room_id);
     user.rooms.remove({ _id: room_id });
     room.users.remove({ _id: user._id });
     for (var i = 0; i < room.channels.length; i++) {
       if (room.channels[i].users.includes(user._id)) {
-        let user_channels =await find_channel_by_id(room.channels[i]);
+        let user_channels = await find_channel_by_id(room.channels[i]);
         user_channels.users.remove({ _id: user._id });
         user_channels.save();
       }
@@ -140,7 +210,7 @@ router
     let room_detail = await find_room_by_id_and_populate_channels(
       req.params.room
     );
-    let user = await find_user_by_email(req.user.email);
+    let user = await find_user_by_email(req.session.user.email);
     let user_present = room_detail.channels.map((channel) => {
       return channel.users.includes(user._id);
     });
@@ -151,7 +221,7 @@ router
     // Remove the user from that channel
     let channel_id = req.body.channel_id;
     let channel = await find_channel_by_id(channel_id);
-    let user = await find_user_by_email(req.user.email);
+    let user = await find_user_by_email(req.session.user.email);
     channel.users.remove({ _id: user._id });
     channel.save();
     res.json({ message: "Successfully deleted!" });
@@ -164,7 +234,7 @@ router
   .post(async (req, res) => {
     // Add channel in the particular room
     let channelinfo = req.body.data.userinfo;
-    let user = await find_user_by_email(req.user.email);
+    let user = await find_user_by_email(req.session.user.email);
     let room = await find_room_by_id_and_populate_channels(req.params.room);
     let channel = create_new_channel();
 
