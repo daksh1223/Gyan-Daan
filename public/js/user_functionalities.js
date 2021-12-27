@@ -95,7 +95,15 @@ async function toggle_play_stop_video() {
       Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }) + ".mp4",
       { type: "video/mp4" }
     );
-    console.log(recording);
+    let size = recording.size;
+    if (Math.trunc(size / 1024)) {
+      size = Math.trunc(size / 1024);
+      if (Math.trunc(size / 1024)) {
+        size = Math.trunc(size / 1024) + " MB";
+      } else size = size + " KB";
+    } else size = size + " B";
+    console.log(recording, size);
+
     let formData = new FormData();
     formData.append("upload", recording);
     let response = await axios.post("/api/uploadFile", formData);
@@ -106,8 +114,9 @@ async function toggle_play_stop_video() {
     <b>Meet Recording Detail:<hr style="border: 1px solid black;background-color: black;height:1px;">
     Recorded by: ${user__name}<br> 
     </b>
-    <hr style="border: 1px solid black;background-color: black;height:1px;">
     Download Link: <a href="/${response.data.url}" download>Link</a>
+    <br>
+    Download Size: ${size}
     </div>
     `;
     if (!!response.data.uploaded) {
