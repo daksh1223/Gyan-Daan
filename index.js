@@ -9,16 +9,19 @@ const MongoStore = require("connect-mongo");
 const mongoose_morgan = require("mongoose-morgan");
 const multer = require("multer");
 const favicon = require("serve-favicon");
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth2').Strategy;
+const MicrosoftStrategy = require('passport-microsoft').Strategy;
 
 const adminbro = require("./adminbro");
 const { find_channel_by_id } = require("./Repository/channel_repository");
 const { create_new_chat } = require("./Repository/chat_repository");
-const authentication = require("./routers/authentication_router");
 const home_page_router = require("./routers/home_router");
 const room_page_router = require("./routers/room_router");
 const api_router = require("./routers/api_router");
 const File = require("./Schemas/FileScema");
-
+const { find_user_by_email } = require('./Repository/user_repository')
+const User = require('./Schemas/UserSchema')
 require("dotenv").config();
 const dburl = process.env.DB_URL;
 const PORT = process.env.PORT || 3000;
@@ -44,31 +47,94 @@ app.use(
     }),
   })
 );
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(function (req, res, next) {
-  if (req.session.user) {
-    res.locals.user_name = req.session.user.name; // With this one can directly access usrname and email id in the frontend
-    res.locals.user_email = req.session.user.email;
-    res.locals.isEducator = req.session.user.isEducator;
+/////////////////////////////// Authentication Start ///////////////////////////////////////
+app.use(passport.initialize()) // init passport on every route call
+app.use(passport.session())    //allow passport to use "express-session"
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  callbackURL: process.env.GOOGLE_CALLBACK,
+  passReqToCallback: true
+}, async (request, accessToken, refreshToken, profile, done) => {
+  let user = await find_user_by_email(profile.email)
+  if (!user) {
+      user = await User.create({email:profile.email, name: profile.displayName})
   }
-  next();
+  return done(null, user);
+}));
+
+passport.use(new MicrosoftStrategy({  
+callbackURL: process.env.MICROSOFT_CALLBACK,  
+clientID: process.env.MICROSOFT_CLIENT_ID,  
+clientSecret: process.env.MICROSOFT_CLIENT_SECRET,  
+scope: ['openid', 'profile', 'email']  
+}, async (request, accessToken, refreshToken, profile, done) => {
+    let user = await find_user_by_email(profile.emails[0].value)
+    if (!user) {
+      user = await User.create({ email: profile.emails[0].value, name: profile.displayName })
+  }
+    return done(null, user)
+}))
+
+passport.serializeUser((user, done) => {
+  done(null, user)
+})
+passport.deserializeUser((user, done) => {
+  done(null, user)
+})
+app.get('/auth/google',
+  passport.authenticate('google', {
+    scope:
+      ['email', 'profile']
+  }
+  )
+);
+app.get('/auth/google/callback',
+  passport.authenticate('google', {
+    successRedirect: '/home',
+    failureRedirect: '/'
+  }));
+app.get('/auth/microsoft',
+  passport.authenticate('microsoft', {
+    scope:
+      ['openid', 'profile', 'email'] 
+  }
+  )
+);
+app.get('/auth/microsoft/callback',
+  passport.authenticate('microsoft', {
+    successRedirect: '/home',
+    failureRedirect: '/'
+  }));
+app.get("/", (req, res) => {
+  if(req.isAuthenticated())res.redirect('/home')
+  else res.render("login.ejs")
+})
+checkAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated()) {
+    res.locals.user_name = req.user.name
+    res.locals.user_email = req.user.email
+    res.locals.isEducator = req.user.isEducator
+    res.locals.isAdmin = req.user.isAdmin
+    return next()
+  }
+  req.session.redirect_url = req.url
+  res.redirect("/")
+}
+app.use(checkAuthenticated)
+app.use("/logout", (req, res) => {
+  req.logOut()
+  res.redirect("/")
 });
 
-app.use(["/", "/redirect"], authentication.router);
-app.use((req, res, next) => {
-  if (!req.session.user) {
-    req.session.redirect_url = req.url;
-    res.redirect("/");
-  } else {
-    req.session.redirect_url = null;
-    next();
-  }
-});
-app.use("/logout", authentication.router);
+/////////////////////////////// Authentication End ///////////////////////////////////////
+
 app.use("/home", home_page_router.router);
-
 app.use("/room", room_page_router.router);
 app.use("/api", api_router.router);
 
@@ -104,6 +170,7 @@ app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
     });
   }
 });
+
 
 io.on("connection", (socket) => {
   socket.on("join-room", (roomID, user, email) => {
@@ -162,10 +229,10 @@ mongoose
   });
 
 mongoose_morgan.token("remote-user", function (req, res, params) {
-  return req.session && req.session.user ? req.session.user.email : undefined;
+  return req.user ? req.user.email : undefined;
 });
 mongoose_morgan.token("remote-addr", function (req, res, params) {
-  return req.session && req.session.user ? req.session.user.name : undefined;
+  return req.user ? req.user.name : undefined;
 });
 mongoose_morgan.token("status", function (req, res, params) {
   if (req.method == "GET" || req.method == "PUT") {
