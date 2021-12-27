@@ -37,7 +37,8 @@
 </head>
 
 <body>
-        <nav class="navbar navbar-expand-md navbar-dark justify-content-start" style="background-color: black;" >
+    <div class="body_container">
+        <nav class="navbar navbar-expand-md navbar-dark justify-content-start" style="background-color: black;">
 
             <a class="navbar-brand mb-0 h1" href="/home"><i class="fas fa-users"></i> True-Meet</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar6">
@@ -145,41 +146,13 @@
                                 <button type="button" id="modal_close" class="btn btn-secondary"
                                     data-dismiss="modal">Close</button>
                             </div>
-                        </div>
                     </form>
 
                 </div>
             </div>
         </div>
-    
-    <div class="container-fluid mt-5 border-top">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#stat_nav"
-                aria-controls="stat_nav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <span class="navbar-brand">Explore More Courses</span>
-            <div class="collapse navbar-collapse " id="stat_nav">
-                <ul class="navbar-nav d-flex justify-content-around" style="width:100%" id="stat_nav_list">
-                    <li class="active" id='popular_stat_link'>
-                        <button class="nav-link" onclick="stat_link_click('popular')">Popular </button>
-                    </li>
-                    <li " id='oldest_stat_link'>
-                                <button class=" nav-link" onclick="stat_link_click('oldest')">Oldest</button>
-                    </li>
-                    <li " id='latest_stat_link'>
-                                <button class=" nav-link" onclick="stat_link_click('latest')">Latest</button>
-                    </li>
-                    <li " id='rated_stat_link'>
-                                <button class=" nav-link" onclick="stat_link_click('rated')">Highest Rated</b>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-        <div id="stat_rooms_container" class="rooms_container mt-2">
-        </div>
-    </div>
 
+    </div>
 </body>
 
 </html>

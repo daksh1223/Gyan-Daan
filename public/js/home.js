@@ -14,10 +14,8 @@ let colors = [
   "e30022",
   "0000ff",
 ];
-let stats = ['oldest', 'popular', 'latest', 'rated']
 let rooms_container = document.getElementById("rooms_container"); // Container that contains all rooms in which the user is present
 let user_container = document.getElementById("all_users_container"); // Container that contains all the users
-let stat_rooms_container = document.getElementById('stat_rooms_container');
 
 function modal_submission() {
   // For creating a new room
@@ -43,13 +41,13 @@ function modal_submission() {
         console.log(response);
         if (response != "Permission Denied!") {
           rooms_copy.push(response); // After successful creation of a room add that in the rooms_copy and also add it in the front end
-          add_room(response._id, response.name, response.room_color, rooms_container);
+          add_room(response._id, response.name, response.room_color);
         }
       });
     document.getElementById("modal_close").click();
   }
 }
-async function get_rooms(stat) {
+async function get_rooms() {
   response = await axios.get("/api/get_all_rooms"); // Will fetch all the rooms where the user is present
   rooms_copy = response.data.rooms;
   let room_create = document.getElementById("room_create");
@@ -57,18 +55,6 @@ async function get_rooms(stat) {
     room_create.innerHTML = `<i class="fas fa-user-plus"></i> Create a new Course</a>`;
   }
   show_rooms("");
-  switch (stat) {
-    case 'popular': { response = await axios.get(`/api/get_popular_rooms`); }
-      break;
-    case 'oldest' : { response = await axios.get(`/api/get_oldest_rooms`); }
-      break;
-    case 'latest' : { response = await axios.get(`/api/get_latest_rooms`); }
-      break;
-    case 'rated' : { response = await axios.get(`/api/get_highest_rated_rooms`); }
-      break;
-  }
-  
-  show_stat_rooms(response.data)
 }
 
 function show_rooms(prefix) {
@@ -87,7 +73,7 @@ function show_rooms(prefix) {
   }
   for (let i = 0; i < rooms.length; i++) {
     if (!rooms[i]) continue;
-    add_room(rooms[i]._id, rooms[i].name, rooms[i].room_color, rooms_container); // Then add the rooms that fullfill all the conditions
+    add_room(rooms[i]._id, rooms[i].name, rooms[i].room_color); // Then add the rooms that fullfill all the conditions
   }
 }
 
@@ -109,7 +95,7 @@ async function show_users() {
     user_container.appendChild(temp_user); // Add those users in the container
   }
 }
-function add_room(id, room_name, room_color, rooms_container) {
+function add_room(id, room_name, room_color) {
   let room = document.createElement("a");
   room.setAttribute("href", "/room/" + id + "/");
   icon = document.createElement("div");
@@ -128,31 +114,4 @@ function add_room(id, room_name, room_color, rooms_container) {
   room.setAttribute("class", "room_card");
   rooms_container.appendChild(room);
 }
-
-function show_stat_rooms(rooms) {
-  while (stat_rooms_container.firstChild) {
-    stat_rooms_container.removeChild(stat_rooms_container.firstChild); // First remove all the previous present rooms in the container
-  }
-  for (let i = 0; i < rooms.length; i++) {
-    if (!rooms[i]) continue;
-    add_room(rooms[i]._id, rooms[i].name, rooms[i].room_color, stat_rooms_container); // Then add the rooms that fullfill all the conditions
-  }
-}
-
-function activate_stat_link(stat) {
-  document.getElementById(`${stat}_stat_link`).setAttribute('class', 'active')
-}
-
-function deactivate_stat_links() {
-  stats.forEach(element => {
-    document.getElementById(`${element}_stat_link`).removeAttribute("class", "active")
-  })
-}
-
-function stat_link_click(stat) {
-  deactivate_stat_links()
-  activate_stat_link(stat)
-  get_rooms(stat)
-}
-
-get_rooms('popular');
+get_rooms();
