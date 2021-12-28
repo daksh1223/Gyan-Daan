@@ -9,6 +9,10 @@ const { set_new_stream } = require("../Repository/stream_repository.js");
 const {
   find_room_by_id,
   find_room_by_id_and_populate_channels,
+  get_popular_rooms,
+  get_oldest_rooms,
+  get_latest_rooms,
+  get_most_liked_rooms
 } = require("../Repository/room_repository.js");
 const {
   find_channel_by_id,
@@ -275,7 +279,70 @@ router
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
+router.get("/get_popular_rooms/", async (req, res) => {
+  const rooms = await get_popular_rooms()
+  res.json(rooms)
+})
+  .all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+  });
 
+router.get("/get_oldest_rooms/", async (req, res) => {
+  const rooms = await get_oldest_rooms()
+  res.json(rooms)
+})
+  .all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+  });
+
+router.get("/get_latest_rooms/", async (req, res) => {
+  const rooms = await get_latest_rooms()
+  res.json(rooms)
+})
+  .all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+  });
+router.get("/get_most_liked_rooms/", async (req, res) => {
+  const rooms = await get_most_liked_rooms()
+  res.json(rooms)
+})
+  .all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+  });
+router.post("/room/:room_id/toggle_like", async (req, res) => {
+  let room = await find_room_by_id(req.params.room_id)
+  if (room.likes.includes(req.user._id)) {
+    room.likeCount -= 1;
+    room.likes.remove({ _id: req.user._id })
+  }
+  else {
+    room.likeCount += 1;
+    room.likes.push(req.user._id)
+  }
+  room.save()
+})
+  .all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+  });
+router.post("/room/:room_id/join", async (req, res) => {
+  let room = await find_room_by_id(req.params.room_id)
+  let user = await find_user_by_email(req.user.email)
+  if (!room.users.includes(user._id))
+  {
+    room.userCount += 1;
+    room.users.push(req.user._id)
+    user.rooms.push(room._id)
+    room.save()
+    user.save()
+  }
+  else {
+    res.send('Already in the room')
+  }
+  
+})
+  .all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+  });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router
