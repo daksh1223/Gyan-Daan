@@ -27,7 +27,7 @@ const dburl = process.env.DB_URL;
 const PORT = process.env.PORT || 3000;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+let count = 1;
 app.set("view engine", "ejs");
 app.use(favicon(__dirname + "/public/favicon.ico"));
 app.use(express.static("public"));
@@ -60,7 +60,7 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.GOOGLE_CLIENT_SECRET,
   callbackURL: process.env.GOOGLE_CALLBACK,
   passReqToCallback: true
-}, async (request, accessToken, refreshToken, profile, done) => {
+}, async (req, accessToken, refreshToken, profile, done) => {
   let user = await find_user_by_email(profile.email)
   if (!user) {
       user = await User.create({email:profile.email, name: profile.displayName})
@@ -87,19 +87,22 @@ passport.serializeUser((user, done) => {
 passport.deserializeUser((user, done) => {
   done(null, user)
 })
-app.get('/auth/google',
+app.post('/auth/google', (req, res, next) => {
+  req.session.isEducator = (req.body.isEducator==='true')
   passport.authenticate('google', {
     scope:
       ['email', 'profile']
   }
-  )
+  )(req,res,next)
+}
 );
-app.get('/auth/google/callback',
+app.get('/auth/google/callback', (req, res, next) => {
   passport.authenticate('google', {
     successRedirect: '/home',
     failureRedirect: '/'
-  }));
-app.get('/auth/microsoft',
+  })(req,res,next)
+});
+app.post('/auth/microsoft',
   passport.authenticate('microsoft', {
     scope:
       ['openid', 'profile', 'email'] 
@@ -112,26 +115,29 @@ app.get('/auth/microsoft/callback',
     failureRedirect: '/'
   }));
 app.get("/", (req, res) => {
-  if(req.isAuthenticated())res.redirect('/home')
+  if (req.isAuthenticated()) {
+    res.redirect('/home')
+  }
   else res.render("login.ejs")
 })
+
+app.use("/logout", (req, res) => {
+  req.logOut()
+  res.redirect("/")
+});
 checkAuthenticated = (req, res, next) => {
   if (req.isAuthenticated()) {
     res.locals.user_name = req.user.name
     res.locals.user_email = req.user.email
-    res.locals.isEducator = req.user.isEducator
+    res.locals.isEducator = req.session.isEducator
     res.locals.isAdmin = req.user.isAdmin
+    res.locals.userId = req.user._id
     return next()
   }
   req.session.redirect_url = req.url
   res.redirect("/")
 }
 app.use(checkAuthenticated)
-app.use("/logout", (req, res) => {
-  req.logOut()
-  res.redirect("/")
-});
-
 /////////////////////////////// Authentication End ///////////////////////////////////////
 
 app.use("/home", home_page_router.router);
@@ -153,7 +159,6 @@ const upload = multer({
 });
 app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
   // Stuff to be added later
-  console.log(req.file)
   try {
     const newFile = await File.create({
       name: req.file.filename,
@@ -190,7 +195,6 @@ io.on("connection", (socket) => {
 
         if (channel_id != -1) {
           var Channel = await find_channel_by_id(channel_id);
-          console.log(Channel);
           let new_message = create_new_chat(username, data, email, timestring);
           Channel.messages.push(new_message.id);
           Channel.save();

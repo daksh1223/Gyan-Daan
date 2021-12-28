@@ -21,8 +21,8 @@ const get_latest_rooms = async () => {
   const courses = await Rooms.find().sort({ _id: -1 })
   return courses;
 }
-const get_highest_rated_rooms = async () => {
-  const courses = await Rooms.find().sort({ rating : -1 })
+const get_most_liked_rooms = async () => {
+  const courses = await Rooms.find().sort({ likeCount : -1 })
   return courses;
 }
 module.exports = {
@@ -32,5 +32,5 @@ module.exports = {
   get_popular_rooms,
   get_oldest_rooms,
   get_latest_rooms,
-  get_highest_rated_rooms
+  get_most_liked_rooms
 }

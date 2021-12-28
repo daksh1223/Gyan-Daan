@@ -11,21 +11,27 @@
   <title>True Meet | Login</title>
 </head>
 
-<body>
-  <main>
-    <div class="px-4 py-5 my-5 text-center">
+<body class="bg-dark bg-gradient" style="min-height:100vh">
+  <main class="d-flex justify-content-around">
+    <div class="card w-50-lg px-4 py-5 my-5 text-center bg-dark bg-gradient shadow-lg text-white">
       <img class="d-block mx-auto mb-4" src="favicon.ico" alt="" width="72" height="57">
       <h1 class="display-5 fw-bold">Gyan Daan</h1>
       <div class="col-lg-6 mx-auto">
         <p class="lead mb-4">We are a group of volunteers spreading knowledge through technology.<br /> You can <strong>Sign Up</strong>
           or <strong>Sign In</strong> using one of the following methods</p>
         <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
-          <form action="/auth/google" method="GET">
+          <form action="/auth/google" method="POST">
+            <input type="hidden" name="isEducator" value="false" id="googleIsEducator" />
             <button type="submit" class="btn btn-outline-primary btn-lg px-4 gap-3">Google</button>
           </form>
-          <form action="/auth/microsoft" method="GET">
+          <form action="/auth/microsoft" method="POST">
+            <input type="hidden" name="isEducator" value="false" id="microsoftIsEducator" />
             <button type="submit" class="btn btn-outline-primary btn-lg px-4">Microsoft</button>
           </form>
+        </div>
+        <div class="form-check form-switch gap-2 d-flex justify-content-sm-center mt-3">
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" onchange="onSwitchChange()">
+          <label class="form-check-label" for="flexSwitchCheckDefault">Sign in As Educator</label>
         </div>
       </div>
     </div>
@@ -34,5 +40,15 @@
   </main>
 
 </body>
-
+<script>
+  function onSwitchChange(){
+    const isEducator = document.getElementById('flexSwitchCheckDefault').checked
+    document.getElementById('microsoftIsEducator').value = isEducator
+    document.getElementById('googleIsEducator').value = isEducator
+    localStorage.setItem('isEducator', isEducator)
+  }
+  document.getElementById('flexSwitchCheckDefault').checked = (localStorage.getItem('isEducator') === 'true')
+  document.getElementById('microsoftIsEducator').value = (localStorage.getItem('isEducator') === 'true')
+    document.getElementById('googleIsEducator').value = (localStorage.getItem('isEducator') === 'true')
+</script>
 </html>

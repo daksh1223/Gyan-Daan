@@ -8,7 +8,8 @@ const RoomSchema = mongoose.Schema({
   room_color: String, // Color of the room's image
   channels: [{ type: Schema.Types.ObjectId, ref: "Channel" }],
   tags: [{ type: String }],
-  rating: {type: mongoose.Schema.Types.Decimal128, default: 3 }
+  likeCount: { type: Number, default: 0 },
+  likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
 });
 
 const Room = mongoose.model("Room", RoomSchema);

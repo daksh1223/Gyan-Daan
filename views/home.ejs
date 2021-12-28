@@ -29,6 +29,7 @@
         const email = "<%= user_email %>";
         const isEducator = "<%= isEducator %>";
                     const isAdmin = "<%= isAdmin %>";
+        const user_id = "<%= userId %>"
     </script>
     <link rel="stylesheet" type="text/css" href="/css/home.css" />
     <link rel="stylesheet" type="text/css" href="/css/tags.css" />
@@ -151,9 +152,8 @@
                 </div>
             </div>
         </div>
-    
     <div class="container-fluid mt-5 border-top">
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <nav class="navbar navbar-expand-lg navbar-dark  bg-gradient">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#stat_nav"
                 aria-controls="stat_nav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -164,14 +164,14 @@
                     <li class="active" id='popular_stat_link'>
                         <button class="nav-link" onclick="stat_link_click('popular')">Popular </button>
                     </li>
-                    <li " id='oldest_stat_link'>
-                                <button class=" nav-link" onclick="stat_link_click('oldest')">Oldest</button>
+                    <li id='oldest_stat_link'>
+                        <button class="nav-link" onclick="stat_link_click('oldest')">Oldest</button>
                     </li>
-                    <li " id='latest_stat_link'>
-                                <button class=" nav-link" onclick="stat_link_click('latest')">Latest</button>
+                    <li id='latest_stat_link'>
+                        <button class="nav-link" onclick="stat_link_click('latest')">Latest</button>
                     </li>
-                    <li " id='rated_stat_link'>
-                                <button class=" nav-link" onclick="stat_link_click('rated')">Highest Rated</b>
+                    <li id='liked_stat_link'>
+                        <button class=" nav-link" onclick="stat_link_click('liked')">Most Liked</button>
                     </li>
                 </ul>
             </div>
