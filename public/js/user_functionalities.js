@@ -210,3 +210,43 @@ function onParticipantsClick() {
   }
   resize();
 }
+function controls_provide() {
+  let controls_container = document.getElementById("features_container"),
+    val = controls_container.innerHTML;
+
+  if (isEducator != "false") {
+    controls_container.innerHTML =
+      val +
+      ` <button id="mic-btn" type="button" class="btn btn-dark btn-lg pointer" title="User Audio"
+        style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;">
+            <i id="mic-icon" class="fas fa-microphone" style="font-size:3vmin;"></i>
+        </button>
+        <button id="video-btn" type="button" class="btn btn-dark btn-lg pointer" title="User Video"
+            style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;">
+            <i id="video-icon" class="fas fa-video" style="font-size:3vmin;"></i>
+        </button>
+        <button id="screen-share-btn" type="button" class="btn btn-dark btn-lg pointer"
+            style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;"
+            title="Screen Share">
+            <i id="screen-share-icon" class="fas fa-desktop" style="font-size:3vmin;"></i>
+        </button>
+        <button id="record-btn" type="button" class="btn btn-dark btn-lg pointer"
+            style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;" title="Record"
+            onclick="toggle_play_stop_video()">
+            <i id="record-icon" class="fas fa-play-circle" style="font-size:3vmin;"></i>
+        </button>
+        <button id="exit-btn" type="button" class="btn btn-danger btn-lg pointer" title="End Call"
+            style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;"
+            onclick="end_call()">
+            <i id="exit-icon" class="fas fa-phone-slash" style="font-size:3vmin;"></i>
+        </button>`;
+  } else
+    controls_container.innerHTML =
+      val +
+      `<button id="exit-btn" type="button" class="btn btn-danger btn-lg pointer" title="End Call"
+      style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;"
+      onclick="end_call()">
+      <i id="exit-icon" class="fas fa-phone-slash" style="font-size:3vmin;"></i>
+      </button>`;
+}
+controls_provide();
