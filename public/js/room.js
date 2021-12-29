@@ -7,7 +7,9 @@ var current_channel; // ID of the current channel
 var general_channel; // ID of the General channel
 var current_channel_message_id; // ID of the current channel message
 var current_channel_meet_link = null;
-
+let create_meet_container = document.getElementById("create_meet");
+if (isEducator != "false")
+  create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
 const room_data = async (url) => {
   promise = await axios.get(url); // Fetch all the data present in this room
 
@@ -20,7 +22,8 @@ const room_data = async (url) => {
     icon_value += promise.data.room_detail.name[1].toUpperCase();
   }
   // Will set the properties of the room in the frontend
-  room_container.innerHTML = ` 
+
+  let temp = ` 
     <a href="/home" class="home_link" style="float:left;margin-left:3%;margin-top:1%;">
       <i class="fas fa-angle-left"></i> Home</a>
     <div class="icon">
@@ -30,12 +33,22 @@ const room_data = async (url) => {
       <div>
         ${promise.data.room_detail.name}
         <a class="dropdown-toggle" id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="float:right;color:white;margin-right:2%"></a>
-        <ul class="dropdown-menu" >
-          <li>
+        <ul class="dropdown-menu" >`;
+  if (isEducator != "false") {
+    temp += `  <li>
             <a class="dropdown-item" href="#" onclick="add_user('${promise.data.room_detail._id}')">
               <i class="fas fa-user-plus"></i> Add users
             </a>
+
           </li>
+          <li>
+            <a class="dropdown-item" href="#" onclick="remove_user('${promise.data.room_detail._id}')">
+              <i class="fas fa-user-minus"></i> Remove users
+            </a>
+            
+          </li>`;
+  }
+  temp += `
           <li>
             <a href="#" class="dropdown-item" onclick="leave_room('${promise.data.room_detail._id}','${promise.data.room_detail.channels[0]._id}')">
               <i class="fas fa-sign-out-alt")></i> Leave Room 
@@ -45,6 +58,7 @@ const room_data = async (url) => {
       </div>
     </div>
   `;
+  room_container.innerHTML = temp;
   room_container.style.display = "flex";
   room_container.style.flexDirection = "column";
   room.appendChild(room_container); // Append the container in the room
@@ -65,7 +79,7 @@ const room_data = async (url) => {
 
       temp_channel_setting_container = document.createElement("div");
       if (id) {
-        temp_channel_container.innerHTML = `
+        let temp = `
       <a class="container_element"  style="float:left;" href="#" id=${promise.data.room_detail.channels[id]._id} onclick="channel_data('${promise.data.room_detail.channels[id]._id}')">
       ${promise.data.room_detail.channels[id].name}
       </a>
@@ -73,13 +87,24 @@ const room_data = async (url) => {
           <a class="dropdown-toggle" id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="float:right;color:white;">
           </a>
   
-          <ul class="dropdown-menu">
+          <ul class="dropdown-menu">`;
+        if (isEducator != "false") {
+          temp += `
             <li>
                 <a class="dropdown-item" href="#" onclick="add_user('${promise.data.room_detail.channels[id]._id}')">
                   <i class="fas fa-user-plus"></i> Add users
                 </a>
             </li>
-      
+            <li>
+            <a class="dropdown-item" href="#" onclick="remove_user('${promise.data.room_detail.channels[id]._id}')">
+              <i class="fas fa-user-minus"></i> Remove users
+            </a>
+            
+          </li>
+      `;
+        }
+
+        temp += `
             <li>
                 <a class="dropdown-item" href="#" onclick="leave_channel('${promise.data.room_detail.channels[id]._id}')">
                   <i class="fas fa-sign-out-alt"></i> Leave Channel
@@ -88,6 +113,7 @@ const room_data = async (url) => {
           </ul>
       </div>
       `;
+        temp_channel_container.innerHTML = temp;
       } else {
         temp_channel_container.innerHTML = `
       <a class="container_element"  style="float:left;" href="#" id=${promise.data.room_detail.channels[id]._id} onclick="channel_data('${promise.data.room_detail.channels[id]._id}')">
@@ -135,8 +161,9 @@ const channel_data = async (cid) => {
     // Add current channel's users
     temp_user = document.createElement("div");
     temp_user.style.color = "white";
+    temp_user.setAttribute("id", channel.data.users[i].email);
     temp_user.setAttribute("title", "Email Id: " + channel.data.users[i].email);
-    temp_user.setAttribute("class", "container_element pointer");
+    temp_user.setAttribute("class", "container_element users pointer");
     temp_user.innerHTML = channel.data.users[i].name;
     user_container.appendChild(temp_user);
   }
@@ -307,15 +334,14 @@ function setup() {
   </i>
 </a>
 `;
-if (document.getElementsByClassName("fr-desktop").length > 0) {
-    
-  document.getElementsByClassName("fr-toolbar")[0].appendChild(submit_button);
-} else {
-  submit_button.style.display ="flex";
-  submit_button.style.alignContent="center";
-  submit_button.style.marginRight="1%";
-  document.getElementById("chat_sender").prepend(submit_button);
-}
+  if (document.getElementsByClassName("fr-desktop").length > 0) {
+    document.getElementsByClassName("fr-toolbar")[0].appendChild(submit_button);
+  } else {
+    submit_button.style.display = "flex";
+    submit_button.style.alignContent = "center";
+    submit_button.style.marginRight = "1%";
+    document.getElementById("chat_sender").prepend(submit_button);
+  }
 }
 
 const get_data = (username, message, timestring, channel_id) => {
@@ -444,8 +470,8 @@ function channel_modal_submission() {
         var temp_channel_container = document.createElement("div");
 
         var temp_channel = document.createElement("a");
-      
-        temp_channel_container.innerHTML = `
+
+        let temp = `
           <a href="#" id=${response._id} class="container_element" style="float:left;" onclick="channel_data('${response._id}')" >
             ${response.name}
           </a>
@@ -454,11 +480,23 @@ function channel_modal_submission() {
 
             </a>
             <ul class="dropdown-menu">
+            `;
+        if (isEducator != "false") {
+          temp += `
               <li>
                 <a class="dropdown-item" href="#" onclick="add_user('${response._id}')">
                   <i class="fas fa-user-plus"></i> Add users
                 </a>
               </li>
+              <li>
+            <a class="dropdown-item" href="#" onclick="remove_user('${response._id}')">
+              <i class="fas fa-user-minus"></i> Remove users
+            </a>
+            
+          </li>`;
+        }
+
+        temp += `
               <li>
                <a class="dropdown-item" href="#" onclick="leave_channel('${response._id}')">
                   <i class="fas fa-sign-out-alt"></i> Leave Channel
@@ -467,6 +505,7 @@ function channel_modal_submission() {
             </ul>
           </div>
         `;
+        temp_channel_container.innerHTML = temp;
         temp_channel_container.setAttribute("id", response._id + "container");
         temp_channel_container.setAttribute("class", "container_element");
         channel_container.appendChild(temp_channel_container);
@@ -506,7 +545,7 @@ async function meet_modal_submission() {
         >click here</a></button>
         </div>
         `;
-      // Will send a new message to other users by the name of True-Meet Bot
+    // Will send a new message to other users by the name of True-Meet Bot
     await socket.emit(
       "receive_channel_message",
       "True-Meet Bot",
@@ -573,6 +612,12 @@ function add_user(cid) {
   document.getElementsByClassName("add_users_link")[0].setAttribute("id", cid);
   document.getElementsByClassName("add_users_link")[0].click();
 }
+function remove_user(cid) {
+  document
+    .getElementsByClassName("remove_users_link")[0]
+    .setAttribute("id", cid);
+  document.getElementsByClassName("remove_users_link")[0].click();
+}
 async function add_users_modal_submission() {
   // Modal for adding user in the room or channel
   var users = document.getElementById("add_user_tags").value;
@@ -591,6 +636,7 @@ async function add_users_modal_submission() {
         temp_user = document.createElement("div");
         temp_user.style.color = "white";
         temp_user.setAttribute("title", "Email Id: " + response.data[i].email);
+        temp_user.setAttribute("id", response.data[i].email);
         temp_user.setAttribute("class", "container_element pointer");
         temp_user.innerHTML = response.data[i].name;
         user_container.appendChild(temp_user);
@@ -613,6 +659,7 @@ async function add_users_modal_submission() {
         temp_user.style.color = "white";
         temp_user.setAttribute("class", "container_element");
         temp_user.setAttribute("title", "Email Id: " + response.data[i].email);
+        temp_user.setAttribute("id", response.data[i].email);
         temp_user.innerHTML = response.data[i].name;
         user_container.appendChild(temp_user);
       }
@@ -639,4 +686,44 @@ async function show_users() {
 `;
     user_container.appendChild(temp_user);
   }
+}
+
+async function user_deletion_modal_submission() {
+  // Modal for adding user in the room or channel
+  var users = document.getElementById("user_deletion_tags").value;
+  users = users.split(" ");
+  console.log(users);
+  if (ROOM_ID == document.getElementsByClassName("remove_users_link")[0].id) {
+    var response = await axios.post("/api/remove_users", {
+      room_id: ROOM_ID,
+      users: users,
+    });
+    console.log(response.data);
+    user_container = document.getElementById("users_container");
+
+    for (var i = 0; i < response.data.length; i++) {
+      temp_user = document.getElementById(response.data[i].email);
+      console.log(temp_user);
+      if (temp_user) user_container.removeChild(temp_user);
+    }
+  } else {
+    var response = await axios.post("/api/remove_users", {
+      channel_id: document.getElementsByClassName("remove_users_link")[0].id,
+      channel_room: ROOM_ID,
+      users: users,
+    });
+    console.log(response.data);
+    if (
+      document.getElementsByClassName("remove_users_link")[0].id ==
+      current_channel
+    ) {
+      user_container = document.getElementById("users_container");
+
+      for (var i = 0; i < response.data.length; i++) {
+        temp_user = document.getElementById(response.data[i].email);
+        user_container.removeChild(temp_user);
+      }
+    }
+  }
+  document.getElementById("user_deletion_modal_close").click();
 }

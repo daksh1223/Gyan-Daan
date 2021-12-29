@@ -51,7 +51,7 @@ function modal_submission() {
     document.getElementById("modal_close").click();
   }
 }
-async function get_rooms(stat) {
+async function get_rooms() {
   response = await axios.get("/api/get_all_rooms"); // Will fetch all the rooms where the user is present
   rooms_copy = response.data.rooms;
   let room_create = document.getElementById("room_create");

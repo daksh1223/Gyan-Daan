@@ -55,9 +55,6 @@ client.on("stream-subscribed", async function (evt) {
 
   remote_streams[streamId] = remote_stream;
   var response = await add_stream_to_container(remote_stream);
-
-  document.getElementById("mic-btn").click();
-  document.getElementById("mic-btn").click();
   resize(); // Will resize the videos container
 });
 
@@ -90,8 +87,10 @@ function Join_Channel_On_Initialization(channelName, uid, token) {
     channelName,
     uid,
     function (uid) {
-      add_camera_stream(uid);
-      local_streams.camera.id = uid; // Set the id of camera stream in the local_streams
+      if (isEducator != "false") {
+        add_camera_stream(uid);
+        local_streams.camera.id = uid; // Set the id of camera stream in the local_streams
+      }
     },
     function (err) {
       console.log(err);

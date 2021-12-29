@@ -9,19 +9,16 @@ const MongoStore = require("connect-mongo");
 const mongoose_morgan = require("mongoose-morgan");
 const multer = require("multer");
 const favicon = require("serve-favicon");
-const passport = require('passport')
-const GoogleStrategy = require('passport-google-oauth2').Strategy;
-const MicrosoftStrategy = require('passport-microsoft').Strategy;
 
 const adminbro = require("./adminbro");
 const { find_channel_by_id } = require("./Repository/channel_repository");
 const { create_new_chat } = require("./Repository/chat_repository");
+const authentication = require("./routers/authentication_router");
 const home_page_router = require("./routers/home_router");
 const room_page_router = require("./routers/room_router");
 const api_router = require("./routers/api_router");
 const File = require("./Schemas/FileScema");
-const { find_user_by_email } = require('./Repository/user_repository')
-const User = require('./Schemas/UserSchema')
+
 require("dotenv").config();
 const dburl = process.env.DB_URL;
 const PORT = process.env.PORT || 3000;
@@ -47,7 +44,6 @@ app.use(
     }),
   })
 );
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -141,6 +137,7 @@ app.use(checkAuthenticated)
 /////////////////////////////// Authentication End ///////////////////////////////////////
 
 app.use("/home", home_page_router.router);
+
 app.use("/room", room_page_router.router);
 app.use("/api", api_router.router);
 
@@ -175,7 +172,6 @@ app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
     });
   }
 });
-
 
 io.on("connection", (socket) => {
   socket.on("join-room", (roomID, user, email) => {
@@ -233,10 +229,10 @@ mongoose
   });
 
 mongoose_morgan.token("remote-user", function (req, res, params) {
-  return req.user ? req.user.email : undefined;
+  return req.session && req.session.user ? req.session.user.email : undefined;
 });
 mongoose_morgan.token("remote-addr", function (req, res, params) {
-  return req.user ? req.user.name : undefined;
+  return req.session && req.session.user ? req.session.user.name : undefined;
 });
 mongoose_morgan.token("status", function (req, res, params) {
   if (req.method == "GET" || req.method == "PUT") {

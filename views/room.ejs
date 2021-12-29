@@ -15,6 +15,7 @@
         const ROOM_ID = "<%=room_id %>";
         const user_name = "<%=user_name %>";
         const email = "<%= user_email %>";
+        const isEducator = "<%= isEducator %>";
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
         type="text/css" />
@@ -79,8 +80,10 @@
 
 
                             <li>
-                                <a class="dropdown-item" href='/logout'>
-                                    <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
+
+                                <a class="dropdown-item"
+                                    href='https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=https://true-meet.herokuapp.com/logout/'>
+                                    <i class="fas fa-sign-out-alt"></i> Sign out
                                 </a>
                             </li>
                         </ul>
@@ -250,7 +253,9 @@
             <a class="add_users_link" href="#" data-toggle="modal" data-target="#adduserModal" style="display:none;"
                 style="float:right;margin-right:3%;">
                 Add users </a>
-
+            <a class="remove_users_link" href="#" data-toggle="modal" data-target="#userdeletionmodal"
+                style="display:none;" style="float:right;margin-right:3%;">
+                Remove users </a>
             <div class="modal fade" id="adduserModal" tabindex="-1" role="dialog"
                 aria-labelledby="adduserModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -284,31 +289,63 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"
-                aria-labelledby="user_display_modalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="userdeletionmodal" tabindex="-1" role="dialog"
+                aria-labelledby="userdeletionmodalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content"
-                        style="background: #292929;box-shadow: 0px 0px 15px black;color:white;z-index: 9999;">
+                        style="background: #292929;box-shadow: 0px 0px 15px black;color: white;z-index: 9999;">
                         <div class="modal-header" style="border-color: #292929;">
-                            <h5 class="modal-title" id="user_display_modalLongTitle">Members</h5>
+                            <h5 class="modal-title" id="userdeletionmodalLongTitle">Remove Users</h5>
                         </div>
-                        <form>
+                        <form style="margin-left:1%;margin-right: 1%;">
+                            <div class="form-group">
+                                <label>Remove Users:</label>
+                                <input type="text" class="form-control" id="user_deletion_tags" data-role="tagsinput">
+                                <small class="form-text " id="userdeletionmodals_muted_text"
+                                    style="color:white;font-weight:400;">
+                                    Remove users that are currently present in the course/channel by typing their email id.
+                                    Press enter after typing user's email to add a new user.
+                                </small>
+                            </div>
 
-                            <div class="modal-body" style="border-color: #292929;overflow:auto;">
-                                <div class="form-group" id="all_users_container">
-
-                                </div>
-                                <div class="modal-footer" style="border-color: #292929;">
-                                    <button type="button" id="modal_close" class="btn btn-secondary"
-                                        data-dismiss="modal">Close</button>
-                                </div>
+                            <div class="modal-footer" style="border-color: #292929;">
+                                <button type="button" id="user_deletion_modal_close" class="btn btn-secondary"
+                                    data-dismiss="modal">Close</button>
+                                <button class="btn btn-primary" type="button"
+                                    onclick="user_deletion_modal_submission()">Remove
+                                    users</button>
+                            </div>
                         </form>
 
                     </div>
                 </div>
             </div>
-
         </div>
+        <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"
+            aria-labelledby="user_display_modalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content"
+                    style="background: #292929;box-shadow: 0px 0px 15px black;color:white;z-index: 9999;">
+                    <div class="modal-header" style="border-color: #292929;">
+                        <h5 class="modal-title" id="user_display_modalLongTitle">Members</h5>
+                    </div>
+                    <form>
+
+                        <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                            <div class="form-group" id="all_users_container">
+
+                            </div>
+                            <div class="modal-footer" style="border-color: #292929;">
+                                <button type="button" id="modal_close" class="btn btn-secondary"
+                                    data-dismiss="modal">Close</button>
+                            </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
 </body>
 
 </html>
