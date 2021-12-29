@@ -68,7 +68,6 @@ app.use((req, res, next) => {
 });
 app.use("/logout", authentication.router);
 app.use("/home", home_page_router.router);
-
 app.use("/room", room_page_router.router);
 app.use("/api", api_router.router);
 
@@ -85,9 +84,12 @@ const multerStorage = multer.diskStorage({
 const upload = multer({
   storage: multerStorage,
 });
+app.get("/donate", (req, res) => {
+  res.render("Donate");
+});
 app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
   // Stuff to be added later
-  console.log(req.file)
+  console.log(req.file);
   try {
     const newFile = await File.create({
       name: req.file.filename,

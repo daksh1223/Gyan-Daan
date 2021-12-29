@@ -214,7 +214,7 @@ function controls_provide() {
   let controls_container = document.getElementById("features_container"),
     val = controls_container.innerHTML;
 
-  if (isEducator != "false") {
+  if (allow_students_stream != "false" || isEducator != "false") {
     controls_container.innerHTML =
       val +
       ` <button id="mic-btn" type="button" class="btn btn-dark btn-lg pointer" title="User Audio"

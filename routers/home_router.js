@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const home_controller = require("../controllers/home_controller");
 
+
 router
   .route("/")
   .get(async (req, res) => {

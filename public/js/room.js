@@ -8,8 +8,13 @@ var general_channel; // ID of the General channel
 var current_channel_message_id; // ID of the current channel message
 var current_channel_meet_link = null;
 let create_meet_container = document.getElementById("create_meet");
-if (isEducator != "false")
+if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
+  document.getElementById("channel_features")
+    .innerHTML+=(` <a href="#" class="btn btn-link" style="float:right;transition: all ease-in-out 0.2s;
+  cursor: pointer; " title="Add Channel" data-toggle="modal"
+  data-target="#channel_creation_modal"><i class="fas fa-plus"></i></a>`);
+}
 const room_data = async (url) => {
   promise = await axios.get(url); // Fetch all the data present in this room
 
@@ -518,12 +523,14 @@ async function meet_modal_submission() {
   const name = document.getElementById("meet_name").value;
   const time = document.getElementById("meet_time").value;
   const date = document.getElementById("meet_date").value;
-  console.log(name, date, time);
+  const allow_students_stream= document.getElementById("Allow_Students_Stream").checked;
+  console.log(name, date, time,allow_students_stream);
   if (name.length && time.length && date.length) {
     userinfo = {
       name: name,
       channel_id: current_channel,
       is_meet: true,
+      allow_students_stream
     };
 
     response = await axios.post("/api/room/" + ROOM_ID + "/add_channel", {

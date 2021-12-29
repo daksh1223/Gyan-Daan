@@ -42,7 +42,7 @@ router
         let token_values = token_builder(req.params.meetid); // Generate access tokens required to join the video call
         let user = req.session.user.name; // If user has logged in
         if (!user) user = "Anonymous"; 
-
+        let meet=await find_channel_by_id(req.params.meetid);
         res.render("videoroom", { // Render the video room with other parameters alongside.
           ROOMID: req.params.room,
           user: user,
@@ -52,6 +52,7 @@ router
           channelName: req.params.meetid,
           token: token_values.token,
           screentoken: token_values.screentoken,
+          allow_students_stream: meet.meet_allow_students_stream
         });
       } else {
         res.render("404"); //If meet doesn't exist

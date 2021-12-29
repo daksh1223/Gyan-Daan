@@ -116,11 +116,11 @@ router
           if (user_present) {
             // Check whether the user is present in the room. If present then remove from all the channel.
             user_names.push(user_to_remove);
-            console.log(room.users,user_to_remove._id)
+            console.log(room.users, user_to_remove._id);
             room.users = room.users.filter((user) => {
               return user != String(user_to_remove._id);
             });
-            console.log(room.users)
+            console.log(room.users);
             for (let i = 0; i < room.channels.length; i++) {
               console.log(all_channels[i].users);
               all_channels[i].users = all_channels[i].users.filter(
@@ -264,11 +264,13 @@ router
       let parent_channel = await find_channel_by_id(channelinfo.channel_id);
       parent_channel.meets.push(channel);
       channel.is_meet = true;
+      channel.meet_allow_students_stream=channelinfo.allow_students_stream;
       channel.meet_link = `/room/${room._id}/meetroom/${parent_channel._id}/meet/${channel._id}`;
       parent_channel.save();
     }
 
     channel.save();
+    console.log(channel)
     user.save();
     res.json(channel);
   })
@@ -298,5 +300,6 @@ router
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
+
 
 exports.router = router;
