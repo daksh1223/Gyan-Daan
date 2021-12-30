@@ -11,7 +11,7 @@ const router_builder = (connection) => {
   return (router = AdminBroExpress.buildRouter(adminBro));
 };
 const admin_checker = (req, res, next) => {
-  if (req.session.user.isAdmin) next();
+  if (req.user.isAdmin) next();
   else res.render("permission_denied");
 };
 module.exports = { rootPath, router_builder, admin_checker };

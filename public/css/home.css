@@ -5,11 +5,11 @@
 html
 {
   height: 100vh;
-}
-.body_container {
-  height: 100vh;
   background-color: #292929;
-  overflow:auto;
+} 
+.body_container {
+  background-color: #292929;
+  overflow:hidden;
 }
 .body_container::-webkit-scrollbar {
   width: 8px;

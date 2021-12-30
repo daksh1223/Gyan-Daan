@@ -19,7 +19,7 @@ router
       req.session.redirect_url,
       req.query.code
     );
-    req.session.user = response.user;
+    req.user = response.user;
     res.redirect(response.redirect_url);
   })
   .all((req, res) => {

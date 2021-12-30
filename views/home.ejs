@@ -65,7 +65,7 @@
                                 </li>
                                 <li>
                                     <a class="dropdown-item"
-                                        href='https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=https://true-meet.herokuapp.com/logout/'>
+                                        href='/logout'>
                                         <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
                                     </a>
                                 </li>
@@ -145,13 +145,15 @@
                                 <button type="button" id="modal_close" class="btn btn-secondary"
                                     data-dismiss="modal">Close</button>
                             </div>
+                        </div>
                     </form>
 
                 </div>
             </div>
         </div>
+        <% if(!isEducator){ %>
         <div class="container-fluid mt-5 border-top">
-            <nav class="navbar navbar-expand-lg navbar-dark  bg-gradient">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-gradient">
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#stat_nav"
                     aria-controls="stat_nav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -160,24 +162,24 @@
                 <div class="collapse navbar-collapse " id="stat_nav">
                     <ul class="navbar-nav d-flex justify-content-around" style="width:100%" id="stat_nav_list">
                         <li class="active" id='popular_stat_link'>
-                            <button class="nav-link" onclick="stat_link_click('popular')">Popular </button>
+                            <h6 class="nav-link" style="cursor:pointer;" onclick="stat_link_click('popular')">Popular </h6>
                         </li>
                         <li id='oldest_stat_link'>
-                            <button class="nav-link" onclick="stat_link_click('oldest')">Oldest</button>
+                            <h6 class="nav-link" style="cursor:pointer;" onclick="stat_link_click('oldest')">Oldest</h6>
                         </li>
                         <li id='latest_stat_link'>
-                            <button class="nav-link" onclick="stat_link_click('latest')">Latest</button>
+                            <h6 class="nav-link" style="cursor:pointer;" onclick="stat_link_click('latest')">Latest</h6>
                         </li>
                         <li id='liked_stat_link'>
-                            <button class=" nav-link" onclick="stat_link_click('liked')">Most Liked</button>
+                            <h6 class=" nav-link" style="cursor:pointer;" onclick="stat_link_click('liked')">Most Liked</h6>
                         </li>
                     </ul>
                 </div>
             </nav>
             <div id="stat_rooms_container" class="rooms_container mt-2">
             </div>
+            <% } %>
 
-        </div>
     </div>
 </body>
 

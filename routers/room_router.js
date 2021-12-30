@@ -7,7 +7,7 @@ const router = require("express").Router();
 
 router.use("/:room", async (req, res, next) => {
   // Before going to a particular page, this middleware will always check whether that person is present in the room or not.
-  let user = await find_user_by_email(req.session.user.email);
+  let user = await find_user_by_email(req.user.email);
   Rooms.findById(req.params.room)
     .then((room) => {
       if (!room.users.includes(user._id)) res.render("permission_denied"); // If the user is not present
@@ -34,13 +34,13 @@ router
 router
   .route("/:room/meetroom/:channel/meet/:meetid")
   .get(async (req, res) => {
-    let user = await find_user_by_email(req.session.user.email);
+    let user = await find_user_by_email(req.user.email);
     let channel = await find_channel_by_id(req.params.channel);
 
     if (channel.users.includes(user._id)) { // Check whether the current user is present in the channel or not
       if (channel.meets.includes(req.params.meetid)) { // Check whether that meet is present in the channel
         let token_values = token_builder(req.params.meetid); // Generate access tokens required to join the video call
-        let user = req.session.user.name; // If user has logged in
+        let user = req.user.name; // If user has logged in
         if (!user) user = "Anonymous"; 
 
         res.render("videoroom", { // Render the video room with other parameters alongside.

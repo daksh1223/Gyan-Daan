@@ -45,21 +45,28 @@ function modal_submission() {
         console.log(response);
         if (response != "Permission Denied!") {
           rooms_copy.push(response); // After successful creation of a room add that in the rooms_copy and also add it in the front end
+
           add_room(response, rooms_container);
         }
       });
     document.getElementById("modal_close").click();
   }
 }
-async function get_rooms() {
+async function get_rooms(stat) {
   response = await axios.get("/api/get_all_rooms"); // Will fetch all the rooms where the user is present
   rooms_copy = response.data.rooms;
+  if (isEducator === 'true') {
+    rooms_copy=rooms_copy.filter((room)=>{return room.creator===user_id })
+  }
   let room_create = document.getElementById("room_create");
   if (isEducator != "false") {
     room_create.innerHTML = `<i class="fas fa-user-plus"></i> Create a new Course</a>`;
   }
   show_rooms("");
-  switch (stat) {
+  if (!(isEducator==='true'))
+  {
+    console.log(stat)
+    switch (stat) {
     case 'popular': { response = await axios.get(`/api/get_popular_rooms`); }
       break;
     case 'oldest': { response = await axios.get(`/api/get_oldest_rooms`); }
@@ -70,7 +77,8 @@ async function get_rooms() {
       break;
   }
   stat_rooms_copy = response.data
-  show_stat_rooms(stat_rooms_copy)
+    show_stat_rooms(stat_rooms_copy)
+  }
 }
 
 function show_rooms(prefix) {
@@ -189,6 +197,7 @@ async function joinRoom(id) {
   document.getElementById(`join_icon_${id}`).remove()
   const room = stat_rooms_copy.find((element) => { return (element._id === id) })
   room.users.push(user_id)
+  room.userCount+=1
   add_room(room, rooms_container)
   await axios.post(`/api/room/${id}/join`)
 }

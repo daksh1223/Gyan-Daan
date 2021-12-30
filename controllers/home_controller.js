@@ -11,8 +11,10 @@ async function create_room(roominfo, session_user) {
 
   room.name = roominfo.name;
   channel.name = "General"; // By default the newly created room will have a "General" channel present.
-  room.users.push(user);
-  channel.users.push(user);
+  room.users.push(session_user._id);
+  room.userCount += 1;
+  channel.users.push(session_user._id);
+  room.creator = session_user._id;
   room.room_color = roominfo.color;
   channel.is_meet = false;
 

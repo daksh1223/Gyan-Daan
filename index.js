@@ -9,11 +9,14 @@ const MongoStore = require("connect-mongo");
 const mongoose_morgan = require("mongoose-morgan");
 const multer = require("multer");
 const favicon = require("serve-favicon");
+const passport = require('passport')
+const GoogleStrategy = require('passport-google-oauth2').Strategy;
+const MicrosoftStrategy = require('passport-microsoft').Strategy;
 
 const adminbro = require("./adminbro");
 const { find_channel_by_id } = require("./Repository/channel_repository");
 const { create_new_chat } = require("./Repository/chat_repository");
-const authentication = require("./routers/authentication_router");
+const { find_user_by_email } = require("./Repository/user_repository");
 const home_page_router = require("./routers/home_router");
 const room_page_router = require("./routers/room_router");
 const api_router = require("./routers/api_router");
@@ -98,12 +101,14 @@ app.get('/auth/google/callback', (req, res, next) => {
     failureRedirect: '/'
   })(req,res,next)
 });
-app.post('/auth/microsoft',
+app.post('/auth/microsoft', (req, res, next) => {
+  req.session.isEducator = (req.body.isEducator==='true')
   passport.authenticate('microsoft', {
     scope:
-      ['openid', 'profile', 'email'] 
-  }
-  )
+      ['openid', 'profile', 'email']
+  } 
+  )(req,res,next)
+}
 );
 app.get('/auth/microsoft/callback',
   passport.authenticate('microsoft', {
@@ -229,10 +234,10 @@ mongoose
   });
 
 mongoose_morgan.token("remote-user", function (req, res, params) {
-  return req.session && req.session.user ? req.session.user.email : undefined;
+  return req.session && req.user ? req.user.email : undefined;
 });
 mongoose_morgan.token("remote-addr", function (req, res, params) {
-  return req.session && req.session.user ? req.session.user.name : undefined;
+  return req.session && req.user ? req.user.name : undefined;
 });
 mongoose_morgan.token("status", function (req, res, params) {
   if (req.method == "GET" || req.method == "PUT") {

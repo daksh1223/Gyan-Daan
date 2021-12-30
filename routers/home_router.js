@@ -5,7 +5,6 @@ const { find_user_by_email } = require('../Repository/user_repository')
 router
   .route("/")
   .get(async (req, res) => {
-    
     if (req.session.isEducator !== req.user.isEducator) {
       const user = await find_user_by_email(req.user.email)
       user.isEducator = req.session.isEducator
@@ -26,10 +25,10 @@ router
   .route("/add_room")
   .post(async (req, res) => {
     // Create the room using the create room function and then return that room in JSON format.
-    if (req.session.user.isEducator) {
+    if (req.user.isEducator) {
       const room = await home_controller.create_room(
         req.body.data.roominfo,
-        req.session.user
+        req.user
       );
       res.json(room);
     } else res.json("Permission Denied!");
