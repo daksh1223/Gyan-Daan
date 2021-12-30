@@ -77,7 +77,11 @@
                                     data-toggle="modal" data-target="#user_display_modal">
                                     <i class="fas fa-user-tag" style="color:black;"></i> True-Meet<br>Members</a>
                             </li>
-
+                            <li>
+                                <a class="dropdown-item" href='#' type="button"
+                                    onclick="(()=>{location='/donate';})();">
+                                    <i class="fas fa-donate" style="color:black;"></i> Donate</a>
+                            </li>
 
                             <li>
 
@@ -97,16 +101,14 @@
             style="height:100%;width:20%;background-color: #141414;border-right: 2px solid;border-color:grey;overflow:auto;">
             <div id="channels" style="width:100%;">
                 <div id="room_name"></div>
-                <div
-                    style="width:100%;display:flex;flex-direction:row;display:inline-block;width:100%;font-size: 100%;">
+                <div style="width:100%;display:flex;flex-direction:row;display:inline-block;width:100%;font-size: 100%;"
+                    id="channel_features">
                     <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapsechannels"
                         aria-expanded="false" aria-controls="collapsechannels"
                         style="text-decoration: none;float:left;">
                         Channels
                     </button>
-                    <a href="#" class="btn btn-link" style="float:right;transition: all ease-in-out 0.2s;
-                        cursor: pointer; " title="Add Channel" data-toggle="modal"
-                        data-target="#channel_creation_modal"><i class="fas fa-plus"></i></a>
+
                 </div>
                 <div id="collapsechannels" class="collapse" aria-labelledby="channels" data-parent="#channels">
                     <div id="channels_container" class="card-body" style="display:flex;flex-direction:column;">
@@ -149,7 +151,7 @@
                 </b>
                 <a id="create_meet" class="custom_link" href="#" data-toggle="modal" data-target="#meetcreationmodal"
                     style="float:right;margin-right:3%;">
-                    <i class="fa fa-video"></i> Start/Schedule a meet </a>
+                </a>
                 <a id="join_meet" class="custom_link" href="#" style="display:none;margin-right:3%;float:right;">
                     <button class="btn btn-secondary" id="join_meet_btn"></button>
                 </a>
@@ -237,6 +239,12 @@
                                     <input type="time" class="form-control" id="meet_time" style="color: black;"
                                         required>
                                 </div>
+                                <div class="form-group" style="display: flex;">
+                                    <label for="Allow_Students_Stream">Allow students to stream their
+                                        audio/video</label>
+                                    <input type="checkbox" class="form-control" id="Allow_Students_Stream"
+                                        style="color: black;width: min-content; margin-top: -1%;margin-left:2%;" />
+                                </div>
 
                             </div>
                             <div class="modal-footer" style="border-color: #292929;">
@@ -303,7 +311,8 @@
                                 <input type="text" class="form-control" id="user_deletion_tags" data-role="tagsinput">
                                 <small class="form-text " id="userdeletionmodals_muted_text"
                                     style="color:white;font-weight:400;">
-                                    Remove users that are currently present in the course/channel by typing their email id.
+                                    Remove users that are currently present in the course/channel by typing their email
+                                    id.
                                     Press enter after typing user's email to add a new user.
                                 </small>
                             </div>

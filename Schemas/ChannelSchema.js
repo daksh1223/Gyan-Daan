@@ -7,6 +7,7 @@ const ChannelSchema = mongoose.Schema({
   is_meet: Schema.Types.Boolean, // To check whether it is a normal channel or a meet channel 
   messages: [{ type: Schema.Types.ObjectId, ref: "Chat" }],
   meet_link: String,
+  meet_allow_students_stream:{ type:Boolean,default:false},
   meets: [{ type: Schema.Types.ObjectId, ref: "Channel" }], // All meet channels present in a normal channel
 });
 

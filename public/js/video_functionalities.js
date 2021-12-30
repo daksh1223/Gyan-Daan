@@ -87,7 +87,7 @@ function Join_Channel_On_Initialization(channelName, uid, token) {
     channelName,
     uid,
     function (uid) {
-      if (isEducator != "false") {
+      if (allow_students_stream != "false" || isEducator != "false") {
         add_camera_stream(uid);
         local_streams.camera.id = uid; // Set the id of camera stream in the local_streams
       }
