@@ -14,6 +14,7 @@ const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const MicrosoftStrategy = require('passport-microsoft').Strategy;
 
 const adminbro = require("./adminbro");
+const User = require("./Schemas/UserSchema.js");
 const { find_channel_by_id } = require("./Repository/channel_repository");
 const { create_new_chat } = require("./Repository/chat_repository");
 const { find_user_by_email } = require("./Repository/user_repository");
