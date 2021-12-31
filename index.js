@@ -14,6 +14,7 @@ const GoogleStrategy = require('passport-google-oauth2').Strategy;
 const MicrosoftStrategy = require('passport-microsoft').Strategy;
 
 const adminbro = require("./adminbro");
+const User = require("./Schemas/UserSchema.js");
 const { find_channel_by_id } = require("./Repository/channel_repository");
 const { create_new_chat } = require("./Repository/chat_repository");
 const { find_user_by_email } = require("./Repository/user_repository");
@@ -142,7 +143,6 @@ app.use(checkAuthenticated)
 /////////////////////////////// Authentication End ///////////////////////////////////////
 
 app.use("/home", home_page_router.router);
-
 app.use("/room", room_page_router.router);
 app.use("/api", api_router.router);
 
@@ -158,6 +158,9 @@ const multerStorage = multer.diskStorage({
 });
 const upload = multer({
   storage: multerStorage,
+});
+app.get("/donate", (req, res) => {
+  res.render("Donate");
 });
 app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
   // Stuff to be added later
