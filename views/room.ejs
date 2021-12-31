@@ -86,7 +86,7 @@
                             <li>
 
                                 <a class="dropdown-item"
-                                    href='https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=https://true-meet.herokuapp.com/logout/'>
+                                    href='/logout/'>
                                     <i class="fas fa-sign-out-alt"></i> Sign out
                                 </a>
                             </li>
@@ -164,9 +164,9 @@
                 </div>
 
                 <div id="chat_sender" style="display: flex;align-items: flex-end;margin-bottom: 1%;">
-                    <label style="cursor:pointer;margin-bottom: 10px;"><img src="https://i.ibb.co/zNL2yg0/ib-attach.png"
-                            alt="attachment" width="25" height="25">
-                            <input type="file" class="admin__input" id="myFile" name="upload" onChange="handleChatFileUpload()"/></img></label>
+                    <label style="cursor:pointer;margin-bottom: 10px;"><i title="upload File" class="fas fa-paperclip fa-lg"
+                            style="color: white;"></i>
+                        <input type="file" class="admin__input" id="myFile" name="upload" onChange="handleChatFileUpload()" /></label>
                             <textarea id="editor" oninput="auto_grow(this)" placeholder="Type here..." rows=1></textarea>
                             <i id="submit_button" title="Send Message" onclick="send_chat_message()" class="fa fa-send fa-lg"
                                 style="color:white;cursor:pointer;margin-bottom: 15px ;">

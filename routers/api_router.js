@@ -191,9 +191,10 @@ router
 
     let user = await find_user_by_email(req.user.email);
     let room = await find_room_by_id_and_populate_channels(room_id);
+    console.log(room)
     user.rooms.remove({ _id: room_id });
     room.users.remove({ _id: user._id });
-    room.userCount -= 1;
+    room.userCount = room.userCount-1;
     for (var i = 0; i < room.channels.length; i++) {
       if (room.channels[i].users.includes(user._id)) {
         let user_channels = await find_channel_by_id(room.channels[i]);
@@ -201,8 +202,9 @@ router
         user_channels.save();
       }
     }
-    user.save();
-    room.save();
+    console.log(room)
+    await user.save();
+    await room.save();
     res.json({ message: "Successfully deleted!" });
   })
   .all((req, res) => {
@@ -329,18 +331,22 @@ router.post("/room/:room_id/toggle_like", async (req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
 router.post("/room/:room_id/join", async (req, res) => {
+  console.log(req.user)
   let room = await find_room_by_id(req.params.room_id)
   let user = await find_user_by_email(req.user.email)
   if (!room.users.includes(user._id))
   {
     room.userCount += 1;
     room.users.push(req.user._id)
-    room.userCount+=1
     user.rooms.push(room._id)
+    let channel = await find_channel_by_id(room.channels[0])
+    channel.users.push(user._id);
+    channel.save()
     room.save()
     user.save()
   }
   else {
+    console.log('here')
     res.send('Already in the room')
   }
   

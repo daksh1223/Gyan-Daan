@@ -7,6 +7,7 @@ router
   .route("/")
   .get(async (req, res) => {
     if (req.session.isEducator !== req.user.isEducator) {
+      req.user.isEducator = req.session.isEducator
       const user = await find_user_by_email(req.user.email)
       user.isEducator = req.session.isEducator
       user.save()
@@ -26,6 +27,7 @@ router
   .route("/add_room")
   .post(async (req, res) => {
     // Create the room using the create room function and then return that room in JSON format.
+    console.log(req.user)
     if (req.user.isEducator) {
       const room = await home_controller.create_room(
         req.body.data.roominfo,

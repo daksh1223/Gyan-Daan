@@ -496,6 +496,7 @@ async function leave_room(room_id, channel_id) {
     data: { channel_id: channel_id },
   });
 
+  console.log(response)
   response = await axios.delete("/api/room/", {
     data: { room_id: ROOM_ID },
   });

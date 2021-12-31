@@ -26,7 +26,7 @@
     </div>
     <div class="row" style="margin-left:20%; color:rgb(172, 172, 172)">
       <div class="col" style="max-width:35%;">
-        <div class="option" onclick="onSwitchChange()">
+        <div class="option" onclick="onStudentClick()">
           <input type="radio" name="card" id="silver" value="silver">
           <label for="silver" aria-label="Silver" >
             <span></span>
@@ -37,7 +37,7 @@
           </label>
         </div>
 
-        <div class="option" onclick="onSwitchChange()">
+        <div class="option" onclick="onEducatorClick()">
           <input type="radio" name="card" id="royal" value="royal">
           <label for="royal" aria-label="Royal blue">
             <span></span>
@@ -49,12 +49,12 @@
          <div class="vline mx-auto"></div>
       </div>
       <div class="col">
-        <form action="/auth/google" method="POST" >
-          <input type="hidden" name="isEducator" value="false" id="googleIsEducator" />
+        <form action="/auth/google" method="POST"  >
+          <input type="hidden" name="isEducator" id="googleIsEducator" />
           <button type="submit" class="mb-1 text-white" style="width:320px; height:60px"><i class="fab fa-google me-2"></i> Sign in with Google</button>
         </form>
-        <form action="/auth/microsoft" method="POST">
-          <input type="hidden" name="isEducator" value="false" id="microsoftIsEducator" />
+        <form action="/auth/microsoft" method="POST" >
+          <input type="hidden" name="isEducator" id="microsoftIsEducator" />
           <button type="submit" class="text-white" style="width:320px; height:60px"><i class="fab fa-microsoft me-2"></i>Sign in with Microsoft</button>
         </form>
       </div>
@@ -63,16 +63,18 @@
 
 </body>
 <script>
-  function onSwitchChange() {
-    setTimeout(()=> {
-      const isEducator = document.getElementById('royal').checked
-      console.log(isEducator)
-      document.getElementById('microsoftIsEducator').value = isEducator
-      document.getElementById('googleIsEducator').value = isEducator
-      localStorage.setItem('isEducator', isEducator)
-    }, 400)
-    
+  function onEducatorClick(){
+    document.getElementById('googleIsEducator').value = true;
+    document.getElementById('microsoftIsEducator').value = true;
+    localStorage.setItem('isEducator', 'true');
   }
+
+  function onStudentClick(){
+    document.getElementById('googleIsEducator').value = false;
+    document.getElementById('microsoftIsEducator').value = false;
+    localStorage.setItem('isEducator', 'false');
+  }
+  
   document.getElementById('royal').checked = (localStorage.getItem('isEducator') === 'true')
   document.getElementById('silver').checked = (localStorage.getItem('isEducator') === 'false')
   document.getElementById('microsoftIsEducator').value = (localStorage.getItem('isEducator') === 'true')

@@ -153,7 +153,7 @@ const send_chat_message = async () => {
   messages = document.getElementById("chat_messages");
 
   var message = message_in_html_form;
-  console.log(message);
+
   await socket.emit(
     "receive_channel_message",
     user__name,
@@ -161,7 +161,6 @@ const send_chat_message = async () => {
     user__email,
     channelName
   );
-  console.log("YES");
   generate_message(
     user__name,
     message,
@@ -169,7 +168,6 @@ const send_chat_message = async () => {
     channelName,
     true
   );
-  console.log("Done");
 };
 function add_user(username, email, id) {
   // Will add the new user in the participant list

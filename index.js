@@ -88,6 +88,7 @@ passport.deserializeUser((user, done) => {
   done(null, user)
 })
 app.post('/auth/google', (req, res, next) => {
+
   req.session.isEducator = (req.body.isEducator==='true')
   passport.authenticate('google', {
     scope:

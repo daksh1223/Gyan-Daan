@@ -143,7 +143,7 @@ function add_room(cur_room, rooms_container) {
       ${like_counts[`${id}`]}
       </small>
         ${room_name} 
-      <small title="Total Students"  style="float:right;">${cur_room.userCount}</small>
+      <small title="Total Students" class="user_count_${id}" style="float:right;">${cur_room.userCount}</small>
      </div>
      <div class="room"> ${join_icon}</div>
     `;
@@ -197,7 +197,11 @@ async function joinRoom(id) {
   document.getElementById(`join_icon_${id}`).remove()
   const room = stat_rooms_copy.find((element) => { return (element._id === id) })
   room.users.push(user_id)
-  room.userCount+=1
+  room.userCount += 1
+  const user_counts = document.getElementsByClassName(`user_count_${id}`)
+  for (let i = 0; i < user_counts.length; i++){
+    user_counts[i].innerHTML = room.userCount;
+  }
   add_room(room, rooms_container)
   await axios.post(`/api/room/${id}/join`)
 }
