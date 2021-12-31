@@ -13,6 +13,9 @@ const fileSchema = new mongoose.Schema({
   path: {
     type: String,
   },
+  displayName: {
+    type: String,
+  }
 });
 
 // Creating a Model from that Schema

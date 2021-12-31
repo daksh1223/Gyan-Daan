@@ -226,122 +226,6 @@ const room = room_data(url);
 function setup() {
   // For setting up the froala editor (Rich Text editor)
   socket.emit("join-room", ROOM_ID);
-
-  $("#editor").froalaEditor({
-    toolbarButtons: [
-      "color",
-      "inlineStyle",
-      "|",
-      "formatOL",
-      "formatUL",
-      "outdent",
-      "indent",
-      "insertLink",
-      "insertImage",
-      "insertVideo",
-      "insertFile",
-      "|",
-      "specialCharacters",
-      "insertHR",
-      "selectAll",
-      "|",
-      "html",
-      "|",
-      "undo",
-      "redo",
-      "|",
-    ],
-    toolbarButtonsMD: [
-      "color",
-      "inlineStyle",
-      "|",
-      "formatOL",
-      "formatUL",
-      "outdent",
-      "indent",
-      "insertLink",
-      "insertImage",
-      "insertVideo",
-      "insertFile",
-      "|",
-      "specialCharacters",
-      "selectAll",
-      "|",
-      "undo",
-      "redo",
-      "|",
-    ],
-    toolbarButtonsSM: [
-      "color",
-      "inlineStyle",
-      "|",
-      "formatOL",
-      "formatUL",
-      "outdent",
-      "indent",
-      "insertLink",
-      "insertImage",
-      "insertVideo",
-      "insertFile",
-      "|",
-      "specialCharacters",
-      "selectAll",
-      "|",
-      "undo",
-      "redo",
-      "|",
-    ],
-    toolbarButtonsXS: [
-      "color",
-      "|",
-      "insertImage",
-      "insertVideo",
-      "insertLink",
-      "insertFile",
-      "|",
-      "specialCharacters",
-      "|",
-    ],
-
-    theme: "dark",
-    heightMin: 80,
-    heightMax: 80,
-    width: "100%",
-    imageDefaultWidth: 50,
-    imageResizeWithPercent: true,
-    charCounterCount: true,
-    toolbarBottom: true,
-    tabSpaces: 4,
-  });
-
-  socket.on("send_channel_message", get_data); // When other users sends a message the socket will recieve "send_channel_message" signal
-  document.getElementById("defaultCanvas0").style.display = "none";
-
-  var froala_box = document.getElementsByClassName("fr-box")[0];
-  if (
-    froala_box.childNodes.length >= 2 &&
-    froala_box.childNodes[1].tagName == "DIV" &&
-    froala_box.childNodes[1].style.position == "absolute"
-  ) {
-    froala_box.childNodes[1].remove();
-  }
-  var submit_button = document.createElement("div");
-  submit_button.innerHTML = `
-  <a href="#" id="submit_button" type="button" class="fr-command fr-btn fr-btn-font_awesome pointer"
-  style="text-decoration:none;display:flex;align-items:center;float:right;margin-right:1%;"
-  title="Send Message" onclick="send_chat_message()">
-  <i class="fa fa-send fa-lg" style="color:white;">
-  </i>
-</a>
-`;
-  if (document.getElementsByClassName("fr-desktop").length > 0) {
-    document.getElementsByClassName("fr-toolbar")[0].appendChild(submit_button);
-  } else {
-    submit_button.style.display = "flex";
-    submit_button.style.alignContent = "center";
-    submit_button.style.marginRight = "1%";
-    document.getElementById("chat_sender").prepend(submit_button);
-  }
 }
 
 const get_data = (username, message, timestring, channel_id) => {
@@ -393,8 +277,19 @@ const generate_message = (
   }
 };
 const send_chat_message = async () => {
-  var message_in_html_form = $("#editor").froalaEditor("html.get");
-  $("#editor").froalaEditor("html.set", null);
+  var message_in_html_form = ''
+  if (document.getElementById('myFile').files.length) {
+    const file = document.getElementById('myFile').files[0];
+    let form = new FormData();
+    form.append('upload', file)
+    const response = await axios.post('/api/uploadFile', form)
+    if (response.data) message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`
+    else return;
+    document.getElementById('editor').value = '';
+    document.getElementById('editor').readOnly = false;
+    document.getElementById('editor').style.backgroundColor = 'white';
+  }
+  else { message_in_html_form = '<pre>' + document.getElementById('editor').value + '</pre>' }
   // After sending the message set the editor's content as null.
   messages = document.getElementById("chat_messages");
   var message = message_in_html_form;
@@ -726,4 +621,16 @@ async function user_deletion_modal_submission() {
     }
   }
   document.getElementById("user_deletion_modal_close").click();
+}
+function auto_grow(element) {
+    element.style.height = "5px";
+    element.style.height = (element.scrollHeight)+"px";
+}
+
+function handleChatFileUpload() {
+  const file = document.getElementById('myFile').files[0];
+  document.getElementById('editor').value = file.name;
+  document.getElementById('editor').readOnly = true;
+  document.getElementById('editor').style.backgroundColor = '#909090';
+
 }

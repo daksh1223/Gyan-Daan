@@ -154,7 +154,7 @@ const multerStorage = multer.diskStorage({
   filename: (req, file, cb) => {
     const ext = file.mimetype.split("/")[1];
     cb(null, `${file.fieldname}-${Date.now()}.${ext}`);
-  },
+  }
 });
 const upload = multer({
   storage: multerStorage,
@@ -164,13 +164,10 @@ app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
   try {
     const newFile = await File.create({
       name: req.file.filename,
-      path: `uploads/${req.file.filename}`,
+      path: `/uploads/${req.file.filename}`,
+      displayName: req.file.originalname
     });
-    res.status(200).json({
-      uploaded: 1,
-      fileName: req.file.fileName,
-      url: `uploads/${req.file.filename}`,
-    });
+    res.send(newFile);
   } catch (error) {
     res.json({
       error,
