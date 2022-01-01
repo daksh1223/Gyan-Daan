@@ -10,10 +10,11 @@ var current_channel_meet_link = null;
 let create_meet_container = document.getElementById("create_meet");
 if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
-  document.getElementById("channel_features")
-    .innerHTML+=(` <a href="#" class="btn btn-link" style="float:right;transition: all ease-in-out 0.2s;
+  document.getElementById(
+    "channel_features"
+  ).innerHTML += ` <a href="#" class="btn btn-link" style="float:right;transition: all ease-in-out 0.2s;
   cursor: pointer; " title="Add Channel" data-toggle="modal"
-  data-target="#channel_creation_modal"><i class="fas fa-plus"></i></a>`);
+  data-target="#channel_creation_modal"><i class="fas fa-plus"></i></a>`;
 }
 const room_data = async (url) => {
   promise = await axios.get(url); // Fetch all the data present in this room
@@ -282,20 +283,23 @@ const generate_message = (
   }
 };
 const send_chat_message = async () => {
-  var message_in_html_form = ''
-  if (document.getElementById('myFile').files.length) {
-    const file = document.getElementById('myFile').files[0];
+  var message_in_html_form = "";
+  if (document.getElementById("myFile").files.length) {
+    const file = document.getElementById("myFile").files[0];
     let form = new FormData();
-    form.append('upload', file)
-    const response = await axios.post('/api/uploadFile', form)
-    if (response.data) message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`
+    form.append("upload", file);
+    const response = await axios.post("/api/uploadFile", form);
+    if (response.data)
+      message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`;
     else return;
-    document.getElementById('editor').value = '';
-    document.getElementById('editor').readOnly = false;
-    document.getElementById('editor').style.backgroundColor = 'white';
+  } else {
+    message_in_html_form =
+      "<pre>" + document.getElementById("editor").value + "</pre>";
   }
-  else { message_in_html_form = '<pre>' + document.getElementById('editor').value + '</pre>' }
   // After sending the message set the editor's content as null.
+  document.getElementById("editor").value = "";
+  document.getElementById("editor").readOnly = false;
+  document.getElementById("editor").style.backgroundColor = "white";
   messages = document.getElementById("chat_messages");
   var message = message_in_html_form;
 
@@ -418,14 +422,16 @@ async function meet_modal_submission() {
   const name = document.getElementById("meet_name").value;
   const time = document.getElementById("meet_time").value;
   const date = document.getElementById("meet_date").value;
-  const allow_students_stream= document.getElementById("Allow_Students_Stream").checked;
-  console.log(name, date, time,allow_students_stream);
+  const allow_students_stream = document.getElementById(
+    "Allow_Students_Stream"
+  ).checked;
+  console.log(name, date, time, allow_students_stream);
   if (name.length && time.length && date.length) {
     userinfo = {
       name: name,
       channel_id: current_channel,
       is_meet: true,
-      allow_students_stream
+      allow_students_stream,
     };
 
     response = await axios.post("/api/room/" + ROOM_ID + "/add_channel", {
@@ -496,7 +502,7 @@ async function leave_room(room_id, channel_id) {
     data: { channel_id: channel_id },
   });
 
-  console.log(response)
+  console.log(response);
   response = await axios.delete("/api/room/", {
     data: { room_id: ROOM_ID },
   });
@@ -631,14 +637,14 @@ async function user_deletion_modal_submission() {
   document.getElementById("user_deletion_modal_close").click();
 }
 function auto_grow(element) {
-    element.style.height = "5px";
-    element.style.height = (element.scrollHeight)+"px";
+  element.style.height = "5px";
+  element.style.height = element.scrollHeight + "px";
 }
 
 function handleChatFileUpload() {
-  const file = document.getElementById('myFile').files[0];
-  document.getElementById('editor').value = file.name;
-  document.getElementById('editor').readOnly = true;
-  document.getElementById('editor').style.backgroundColor = '#909090';
-
+  const file = document.getElementById("myFile").files[0];
+  document.getElementById("editor").value = file.name;
+  document.getElementById("editor").readOnly = true;
+  document.getElementById("editor").style.backgroundColor = "#909090";
 }
+socket.on("send_channel_message", generate_message);

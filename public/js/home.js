@@ -1,6 +1,6 @@
 let rooms_copy = []; // It will contain all the rooms that the user can access
 let rooms = []; // The rooms that the user can access and which contains the string typed in the search bar
-let stat_rooms_copy = []
+let stat_rooms_copy = [];
 let colors = [
   // Contains 11 colors which will be used to decide the color of a new room
   "800080",
@@ -15,12 +15,20 @@ let colors = [
   "e30022",
   "0000ff",
 ];
-let stats = ['oldest', 'popular', 'latest', 'liked']
+let stats = ["oldest", "popular", "latest", "liked"];
 let rooms_container = document.getElementById("rooms_container"); // Container that contains all rooms in which the user is present
 let user_container = document.getElementById("all_users_container"); // Container that contains all the users
-let stat_rooms_container = document.getElementById('stat_rooms_container');
-let like_icons = {}, like_counts = {};
-
+let stat_rooms_container = document.getElementById("stat_rooms_container");
+let like_icons = {},
+  like_counts = {};
+if (isEducator === "true") {
+  document.getElementById("navbar_menu").innerHTML =
+    `<li>
+  <a class="dropdown-item" href='#' type="button"
+      onclick="(()=>{location='/Requested-Courses';})();">
+      <i class="fas fa-user-plus" style="color:black;"></i> Requested<br>Courses</a>
+</li>` + document.getElementById("navbar_menu").innerHTML;
+}
 function modal_submission() {
   // For creating a new room
   let name = document.getElementById("room_name").value;
@@ -52,32 +60,60 @@ function modal_submission() {
     document.getElementById("modal_close").click();
   }
 }
+async function Roomrequest_submission() {
+  let name = document.getElementById("Roomrequest_name").value;
+  let requirements = document.getElementById("Roomrequest_description").value;
+  let tags = document.getElementById("Roomrequest_tags").value;
+  if (!name.length) return;
+  let response = await axios.post("/api/course_request", {
+    name: name,
+    requirements: requirements,
+    tags: tags,
+  });
+  document.getElementById("Requestmodal_close").click();
+}
 async function get_rooms(stat) {
   response = await axios.get("/api/get_all_rooms"); // Will fetch all the rooms where the user is present
   rooms_copy = response.data.rooms;
-  if (isEducator === 'true') {
-    rooms_copy=rooms_copy.filter((room)=>{return room.creator===user_id })
+  if (isEducator === "true") {
+    rooms_copy = rooms_copy.filter((room) => {
+      return room.creator === user_id;
+    });
   }
   let room_create = document.getElementById("room_create");
+  let room_request = document.getElementById("room_request");
   if (isEducator != "false") {
     room_create.innerHTML = `<i class="fas fa-user-plus"></i> Create a new Course</a>`;
+  } else {
+    room_request.innerHTML = `<i class="fas fa-user-plus"></i> Request for a new Course</a>`;
   }
   show_rooms("");
-  if (!(isEducator==='true'))
-  {
-    console.log(stat)
+  if (!(isEducator === "true")) {
+    console.log(stat);
     switch (stat) {
-    case 'popular': { response = await axios.get(`/api/get_popular_rooms`); }
-      break;
-    case 'oldest': { response = await axios.get(`/api/get_oldest_rooms`); }
-      break;
-    case 'latest': { response = await axios.get(`/api/get_latest_rooms`); }
-      break;
-    case 'liked': { response = await axios.get(`/api/get_most_liked_rooms`); }
-      break;
-  }
-  stat_rooms_copy = response.data
-    show_stat_rooms(stat_rooms_copy)
+      case "popular":
+        {
+          response = await axios.get(`/api/get_popular_rooms`);
+        }
+        break;
+      case "oldest":
+        {
+          response = await axios.get(`/api/get_oldest_rooms`);
+        }
+        break;
+      case "latest":
+        {
+          response = await axios.get(`/api/get_latest_rooms`);
+        }
+        break;
+      case "liked":
+        {
+          response = await axios.get(`/api/get_most_liked_rooms`);
+        }
+        break;
+    }
+    stat_rooms_copy = response.data;
+    show_stat_rooms(stat_rooms_copy);
   }
 }
 
@@ -120,19 +156,21 @@ async function show_users() {
   }
 }
 function add_room(cur_room, rooms_container) {
-  let room_name = cur_room.name, id = cur_room._id, room_color = cur_room.room_color
+  let room_name = cur_room.name,
+    id = cur_room._id,
+    room_color = cur_room.room_color;
   let room = document.createElement("div");
   let icon_value = room_name[0].toUpperCase(); // If minimum two letters are present then the icon value will be of size 2 else 1
   if (room_name.length > 1) {
     icon_value += room_name[1].toUpperCase();
   }
-  let join_icon = ''
-  like_counts[`${id}`]=cur_room.likeCount
+  let join_icon = "";
+  like_counts[`${id}`] = cur_room.likeCount;
   if (cur_room.likes.includes(user_id)) {
-    like_icons[`${id}`] = '<i title="Liked" class="fas fa-thumbs-up"></i>'
-  }
-  else like_icons[`${id}`] = '<i title="Like" class="far fa-thumbs-up"></i>'
-  if (!cur_room.users.includes(user_id)) join_icon = `<button title="Join" class="btn btn-primary" id="join_icon_${id}" onClick="joinRoom('${id}')" style="cursor:pointer;">Enroll</button>`
+    like_icons[`${id}`] = '<i title="Liked" class="fas fa-thumbs-up"></i>';
+  } else like_icons[`${id}`] = '<i title="Like" class="far fa-thumbs-up"></i>';
+  if (!cur_room.users.includes(user_id))
+    join_icon = `<button title="Join" class="btn btn-primary" id="join_icon_${id}" onClick="joinRoom('${id}')" style="cursor:pointer;">Enroll</button>`;
   room.innerHTML = `
      <div class="icon">
         <a href="/room/${id}/"><img src="https://place-hold.it/100/${room_color}/fff&text=${icon_value}&fontsize=20" style="border-radius:4px;height:40%;width:40%;"></img></a>
@@ -143,7 +181,9 @@ function add_room(cur_room, rooms_container) {
       ${like_counts[`${id}`]}
       </small>
         ${room_name} 
-      <small title="Total Students" class="user_count_${id}" style="float:right;">${cur_room.userCount}</small>
+      <small title="Total Students" class="user_count_${id}" style="float:right;">${
+    cur_room.userCount
+  }</small>
      </div>
      <div class="room"> ${join_icon}</div>
     `;
@@ -162,48 +202,55 @@ function show_stat_rooms(rooms) {
 }
 
 function activate_stat_link(stat) {
-  document.getElementById(`${stat}_stat_link`).setAttribute('class', 'active')
+  document.getElementById(`${stat}_stat_link`).setAttribute("class", "active");
 }
 
 function deactivate_stat_links() {
-  stats.forEach(element => {
-    document.getElementById(`${element}_stat_link`).removeAttribute("class", "active")
-  })
+  stats.forEach((element) => {
+    document
+      .getElementById(`${element}_stat_link`)
+      .removeAttribute("class", "active");
+  });
 }
 
 function stat_link_click(stat) {
-  deactivate_stat_links()
-  activate_stat_link(stat)
-  get_rooms(stat)
+  deactivate_stat_links();
+  activate_stat_link(stat);
+  get_rooms(stat);
 }
 
 async function toggleLike(id) {
-  const like_buttons = document.getElementsByClassName(`like_icon_${id}`)
-  if (like_icons[`${id}`] === '<i title="Liked" class="fas fa-thumbs-up"></i>') {
+  const like_buttons = document.getElementsByClassName(`like_icon_${id}`);
+  if (
+    like_icons[`${id}`] === '<i title="Liked" class="fas fa-thumbs-up"></i>'
+  ) {
     like_icons[`${id}`] = '<i title="Like" class="far fa-thumbs-up"></i>';
-    like_counts[`${id}`]-=1
-  }
-  else {
-    like_icons[`${id}`] = '<i title="Liked" class="fas fa-thumbs-up"></i>'
-    like_counts[`${id}`]+=1
+    like_counts[`${id}`] -= 1;
+  } else {
+    like_icons[`${id}`] = '<i title="Liked" class="fas fa-thumbs-up"></i>';
+    like_counts[`${id}`] += 1;
   }
   for (let i = 0; i < like_buttons.length; i++) {
-    like_buttons[i].innerHTML = `${like_icons[`${id}`]} ${like_counts[`${id}`]}`  
+    like_buttons[i].innerHTML = `${like_icons[`${id}`]} ${
+      like_counts[`${id}`]
+    }`;
   }
-  await axios.post(`/api/room/${id}/toggle_like`)
+  await axios.post(`/api/room/${id}/toggle_like`);
 }
 
 async function joinRoom(id) {
-  document.getElementById(`join_icon_${id}`).remove()
-  const room = stat_rooms_copy.find((element) => { return (element._id === id) })
-  room.users.push(user_id)
-  room.userCount += 1
-  const user_counts = document.getElementsByClassName(`user_count_${id}`)
-  for (let i = 0; i < user_counts.length; i++){
+  document.getElementById(`join_icon_${id}`).remove();
+  const room = stat_rooms_copy.find((element) => {
+    return element._id === id;
+  });
+  room.users.push(user_id);
+  room.userCount += 1;
+  const user_counts = document.getElementsByClassName(`user_count_${id}`);
+  for (let i = 0; i < user_counts.length; i++) {
     user_counts[i].innerHTML = room.userCount;
   }
-  add_room(room, rooms_container)
-  await axios.post(`/api/room/${id}/join`)
+  add_room(room, rooms_container);
+  await axios.post(`/api/room/${id}/join`);
 }
 
-get_rooms('popular');
+get_rooms("popular");

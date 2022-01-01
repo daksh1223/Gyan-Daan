@@ -4,10 +4,10 @@
 html {
   height: 100vh;
   background-color: #292929;
-} 
+}
 .body_container {
   background-color: #292929;
-  overflow:hidden;
+  overflow: hidden;
 }
 .body_container::-webkit-scrollbar {
   width: 8px;
@@ -65,7 +65,35 @@ img {
   text-decoration: none;
   color: white;
 }
-.form_attr{
+.form_attr {
   align-self: center;
-  justify-content:center;
+  justify-content: center;
+}
+#requests_container {
+  display: grid;
+  margin-top: 2%;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+}
+.request{
+  display:flex;
+  flex-direction: column;
+  border:2px solid white;
+  overflow: hidden;
+  margin-left:5%;
+  padding:5%; 
+}
+.request_elem{
+  overflow: hidden;
+  text-overflow: ellipsis;
+} 
+#request_container{
+  display: flex;
+  margin-top: 2%;
+  flex-direction: column;
+  overflow: hidden;
+  border:2px solid white;
+  padding:5%; 
+}
+.req_elem{
+  word-wrap: break-word;
 }
