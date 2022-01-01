@@ -259,5 +259,12 @@ async function joinRoom(id) {
   add_room(room, rooms_container);
   await axios.post(`/api/room/${id}/join`);
 }
-
+const checkIfVerified = () => {
+  
+  if (isVerified=='true') {
+    $("#RoomcreationModal").modal('show');
+  } else {
+    alert("You are not verified by the administrator yet. If you have not uploaded your government id yet please upload it in the profile section ");
+  }
+}
 get_rooms("popular");

@@ -139,14 +139,19 @@ app.use("/logout", (req, res) => {
   res.redirect("/");
 });
 checkAuthenticated = (req, res, next) => {
+
   if (req.isAuthenticated()) {
     res.locals.user_name = req.user.name;
     res.locals.user_email = req.user.email;
     res.locals.isEducator = req.session.isEducator;
     res.locals.isAdmin = req.user.isAdmin;
     res.locals.userId = req.user._id;
+    res.locals.user_profilePic = req.user.profilepicUrl;
+    res.locals.user_isVerified = req.user.isVerified;
     return next();
   }
+
+
   req.session.redirect_url = req.url;
   res.redirect("/");
 };
@@ -156,7 +161,10 @@ app.use(checkAuthenticated);
 app.use("/home", home_page_router.router);
 app.use("/room", room_page_router.router);
 app.use("/api", api_router.router);
+app.get("/profile/:email", async(req, res) => {
 
+  res.render("profile", { email: req.params.email  });
+})
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {

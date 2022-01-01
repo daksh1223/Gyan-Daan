@@ -12,6 +12,7 @@ router
       user.isEducator = req.session.isEducator
       user.save()
     }
+
     if (req.session.redirect_url) {
       const redirect_url = req.session.redirect_url
       req.session.redirect_url = null

@@ -109,3 +109,10 @@ img {
 .req_elem {
   word-wrap: break-word;
 }
+.avatar{
+border-radius: 50%;
+width:2.5vw; 
+height:5vh;
+
+float:left;
+}
