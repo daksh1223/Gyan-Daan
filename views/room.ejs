@@ -15,6 +15,7 @@
         const ROOM_ID = "<%=room_id %>";
         const user_name = "<%=user_name %>";
         const email = "<%= user_email %>";
+        const isEducator = "<%= isEducator %>";
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
         type="text/css" />
@@ -76,11 +77,16 @@
                                     data-toggle="modal" data-target="#user_display_modal">
                                     <i class="fas fa-user-tag" style="color:black;"></i> True-Meet<br>Members</a>
                             </li>
-
+                            <li>
+                                <a class="dropdown-item" href='#' type="button"
+                                    onclick="(()=>{location='/donate';})();">
+                                    <i class="fas fa-donate" style="color:black;"></i> Donate</a>
+                            </li>
 
                             <li>
-                                <a class="dropdown-item" href='/logout'>
-                                    <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
+
+                                <a class="dropdown-item" href='/logout/'>
+                                    <i class="fas fa-sign-out-alt"></i> Sign out
                                 </a>
                             </li>
                         </ul>
@@ -94,16 +100,14 @@
             style="height:100%;width:20%;background-color: #141414;border-right: 2px solid;border-color:grey;overflow:auto;">
             <div id="channels" style="width:100%;">
                 <div id="room_name"></div>
-                <div
-                    style="width:100%;display:flex;flex-direction:row;display:inline-block;width:100%;font-size: 100%;">
+                <div style="width:100%;display:flex;flex-direction:row;display:inline-block;width:100%;font-size: 100%;"
+                    id="channel_features">
                     <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapsechannels"
                         aria-expanded="false" aria-controls="collapsechannels"
                         style="text-decoration: none;float:left;">
                         Channels
                     </button>
-                    <a href="#" class="btn btn-link" style="float:right;transition: all ease-in-out 0.2s;
-                        cursor: pointer; " title="Add Channel" data-toggle="modal"
-                        data-target="#channel_creation_modal"><i class="fas fa-plus"></i></a>
+
                 </div>
                 <div id="collapsechannels" class="collapse" aria-labelledby="channels" data-parent="#channels">
                     <div id="channels_container" class="card-body" style="display:flex;flex-direction:column;">
@@ -146,7 +150,7 @@
                 </b>
                 <a id="create_meet" class="custom_link" href="#" data-toggle="modal" data-target="#meetcreationmodal"
                     style="float:right;margin-right:3%;">
-                    <i class="fa fa-video"></i> Start/Schedule a meet </a>
+                </a>
                 <a id="join_meet" class="custom_link" href="#" style="display:none;margin-right:3%;float:right;">
                     <button class="btn btn-secondary" id="join_meet_btn"></button>
                 </a>
@@ -158,18 +162,19 @@
 
                 </div>
 
-                <div style="display: flex;flex-direction:row;" id="chat_sender">
-                    <div id="editor" style="float:right;"></div>
-
+                <div id="chat_sender" style="display: flex;align-items: flex-end;margin-bottom: 1%;">
+                    <label style="cursor:pointer;margin-bottom: 10px;"><i title="upload File"
+                            class="fas fa-paperclip fa-lg" style="color: white;"></i>
+                        <input type="file" class="admin__input" id="myFile" name="upload"
+                            onChange="handleChatFileUpload()" /></label>
+                    <div id="editor_container" style="display: flex;">
+                        <textarea id="editor" oninput="auto_grow(this)" placeholder="Type here..." rows=1></textarea>
+                        <i id="editor_clear" onclick="clear_editor()" title="clean" class="fas fa-window-close fa-lg"></i>
+                    </div>
+                    <i id="submit_button" title="Send Message" onclick="send_chat_message()" class="fa fa-send fa-lg"
+                        style="color:white;cursor:pointer;margin-bottom: 15px ;">
+                    </i>
                 </div>
-                <script type="text/javascript"
-                    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-                <script type="text/javascript"
-                    src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/codemirror.min.js"></script>
-                <script type="text/javascript"
-                    src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.25.0/mode/xml/xml.min.js"></script>
-                <script type="text/javascript"
-                    src="https://cdnjs.cloudflare.com/ajax/libs/froala-editor/2.6.0//js/froala_editor.pkgd.min.js"></script>
 
             </div>
             <div class="modal fade" id="channel_creation_modal" tabindex="-1" role="dialog"
@@ -234,6 +239,12 @@
                                     <input type="time" class="form-control" id="meet_time" style="color: black;"
                                         required>
                                 </div>
+                                <div class="form-group" style="display: flex;">
+                                    <label for="Allow_Students_Stream">Allow students to stream their
+                                        audio/video</label>
+                                    <input type="checkbox" class="form-control" id="Allow_Students_Stream"
+                                        style="color: black;width: min-content; margin-top: -1%;margin-left:2%;" />
+                                </div>
 
                             </div>
                             <div class="modal-footer" style="border-color: #292929;">
@@ -250,7 +261,9 @@
             <a class="add_users_link" href="#" data-toggle="modal" data-target="#adduserModal" style="display:none;"
                 style="float:right;margin-right:3%;">
                 Add users </a>
-
+            <a class="remove_users_link" href="#" data-toggle="modal" data-target="#userdeletionmodal"
+                style="display:none;" style="float:right;margin-right:3%;">
+                Remove users </a>
             <div class="modal fade" id="adduserModal" tabindex="-1" role="dialog"
                 aria-labelledby="adduserModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
@@ -284,31 +297,64 @@
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"
-                aria-labelledby="user_display_modalCenterTitle" aria-hidden="true">
+            <div class="modal fade" id="userdeletionmodal" tabindex="-1" role="dialog"
+                aria-labelledby="userdeletionmodalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content"
-                        style="background: #292929;box-shadow: 0px 0px 15px black;color:white;z-index: 9999;">
+                        style="background: #292929;box-shadow: 0px 0px 15px black;color: white;z-index: 9999;">
                         <div class="modal-header" style="border-color: #292929;">
-                            <h5 class="modal-title" id="user_display_modalLongTitle">Members</h5>
+                            <h5 class="modal-title" id="userdeletionmodalLongTitle">Remove Users</h5>
                         </div>
-                        <form>
+                        <form style="margin-left:1%;margin-right: 1%;">
+                            <div class="form-group">
+                                <label>Remove Users:</label>
+                                <input type="text" class="form-control" id="user_deletion_tags" data-role="tagsinput">
+                                <small class="form-text " id="userdeletionmodals_muted_text"
+                                    style="color:white;font-weight:400;">
+                                    Remove users that are currently present in the course/channel by typing their email
+                                    id.
+                                    Press enter after typing user's email to add a new user.
+                                </small>
+                            </div>
 
-                            <div class="modal-body" style="border-color: #292929;overflow:auto;">
-                                <div class="form-group" id="all_users_container">
-
-                                </div>
-                                <div class="modal-footer" style="border-color: #292929;">
-                                    <button type="button" id="modal_close" class="btn btn-secondary"
-                                        data-dismiss="modal">Close</button>
-                                </div>
+                            <div class="modal-footer" style="border-color: #292929;">
+                                <button type="button" id="user_deletion_modal_close" class="btn btn-secondary"
+                                    data-dismiss="modal">Close</button>
+                                <button class="btn btn-primary" type="button"
+                                    onclick="user_deletion_modal_submission()">Remove
+                                    users</button>
+                            </div>
                         </form>
 
                     </div>
                 </div>
             </div>
-
         </div>
+        <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"
+            aria-labelledby="user_display_modalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content"
+                    style="background: #292929;box-shadow: 0px 0px 15px black;color:white;z-index: 9999;">
+                    <div class="modal-header" style="border-color: #292929;">
+                        <h5 class="modal-title" id="user_display_modalLongTitle">Members</h5>
+                    </div>
+                    <form>
+
+                        <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                            <div class="form-group" id="all_users_container">
+
+                            </div>
+                            <div class="modal-footer" style="border-color: #292929;">
+                                <button type="button" id="modal_close" class="btn btn-secondary"
+                                    data-dismiss="modal">Close</button>
+                            </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
 </body>
 
 </html>

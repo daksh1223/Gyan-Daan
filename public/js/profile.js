@@ -13,7 +13,8 @@ const fileUrl = async (id) => {
 	let formData = new FormData();
 	formData.append("upload", document.getElementById(id).files[0]);
 	let data = await axios.post("/api/uploadFile", formData);
-	return data.data.url;
+
+	return data.data.path;
 };
 async function onSubmit() {
 	
@@ -37,6 +38,8 @@ async function onSubmit() {
 		tags,
 		profilepicUrl,
 	});
+
+	window.location='/home';
 }
 
 
@@ -56,15 +59,13 @@ function previewProfileImage() {
 
 
 const addTagsandProfile = () => { 
-		let profielurl = profilepicUrl || "images/user.jpg";
-	$("#profile_pic").attr("src", '/' + profielurl);
-	console.log(tags)
+	let profielurl = profilepicUrl;
+	$("#profile_pic").attr("src",profielurl);
 	let tagsString = '';
 	for (let i = 0; i < tags.length; i++) {
 		tagsString=tagsString+tags[i]+','
 		//console.log(tags[i],document.getElementById('user_tags').value)
 	}
-	console.log(tagsString)
 	$("#user_tags").tagsinput();
 	$("#user_tags").tagsinput("add", tagsString);
 		
@@ -81,20 +82,48 @@ const profileEJS = async() => {
 	let htmlString;
 
 	if (reqUser.email == loggedUser.email) {
+		let about = "";
+		let verification='Pending';
+		if (loggedUser.isVerified) {
+			verification = 'Verified'
+		} 
+		if (loggedUser.about) { 
+			about = loggedUser.about;
+		}
 			let idHtml = "";
 
-			if (!loggedUser.idUrl) {
-				idHtml = `<div class='form-group' id='filePar'>
+		if (!loggedUser.idUrl) {
+			idHtml = `<div class='form-group' id='filePar'>
 				<label for='file' class='control-label'>
 					Government Id
 				</label>
 				<input type='file' class='form-control' id='file' />
 				<span class='glyphicon'></span>
 				<span class='help-block'></span>
-			</div>;`;
-			}
+			</div>;
+			<div class='form-group'>
+			<label class='control-label'>Verification - Id not submitted yet!</label>
+			</div>
+			`;
+
+		} else { 
+           
+			idHtml = `<div class='form-group'>
+			<label class='control-label'>government Id - submitted</label>
+			</div>
+			<div class='form-group'>
+			<label class='control-label'>Verification - ${verification}</label>
+			</div>
+			
+			`;
+		}
 
 		htmlString = `<form class="form-container">
+		<a href="/home">
+			<span style="color:white" class="material-icons">
+home
+</span>
+</a>
 				<div style="display:flex;justify-content:space-around">
 				<div>
 					
@@ -132,7 +161,7 @@ edit
             
                 
 
-					<textarea class="form-control" id="about"placeholder="Enter text"style="max-width: 100%; min-width: 100%">${loggedUser.about}</textarea>
+					<textarea class="form-control" id="about"placeholder="Enter text"style="max-width: 100%; min-width: 100%">${about}</textarea>
                    
 			
 				</div>
@@ -150,6 +179,10 @@ edit
 				</button>
 			</form>`;
 	} else { 
+		let verification = "Pending";
+		if (reqUser.isVerified) {
+			verification = "Verified";
+		} 
 		let tagsHtml = "";
 		for (let i = 0; i < tags.length; i++) { 
 
@@ -160,6 +193,11 @@ edit
 		}
 		htmlString = `
 		<form class="form-container">
+		<a href="/home">
+			<span style="color:white" class="material-icons">
+home
+</span>
+</a>
 				<div style="display:flex;justify-content:space-around">
 	<img src="#" id='profile_pic' class="avatar"/>
 
@@ -199,6 +237,9 @@ edit
 					${tagsHtml}
 				</div>
 				</div>
+				<div class='form-group'>
+			<label class='control-label'>Verification - ${verification}</label>
+			</div>
 				</form>
 				`;
 	}

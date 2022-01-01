@@ -1,5 +1,6 @@
 const router = require("express").Router();
 const Streams = require("../Schemas/StreamSchema");
+const CourseRequest = require("../Schemas/CourseRequestSchema");
 const {
   find_user_by_email,
   get_user_rooms,
@@ -12,7 +13,7 @@ const {
   get_popular_rooms,
   get_oldest_rooms,
   get_latest_rooms,
-  get_most_liked_rooms
+  get_most_liked_rooms,
 } = require("../Repository/room_repository.js");
 const {
   find_channel_by_id,
@@ -98,6 +99,76 @@ router
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
+router
+  .route("/remove_users") //Will be called to remove users in a room or channel
+  .post(async (req, res) => {
+    //Will only allow post requests
+    let users_to_remove = req.body.users;
+    let user_names = [];
+    if (req.body.room_id) {
+      // Check whether the post request is for a room or channel
+      let room = await find_room_by_id(req.body.room_id);
+      let all_channels = [];
+      for (let i = 0; i < room.channels.length; i++) {
+        let temp = await find_channel_by_id(room.channels[i]._id);
+        all_channels.push(temp);
+      }
+      for (var i = 0; i < users_to_remove.length; i++) {
+        let user_to_remove = await find_user_by_email(users_to_remove[i]);
+        if (user_to_remove) {
+          // Check whether the user to be removed exists or not
+          let user_present = room.users.includes(user_to_remove._id);
+
+          if (user_present) {
+            // Check whether the user is present in the room. If present then remove from all the channel.
+            user_names.push(user_to_remove);
+            console.log(room.users, user_to_remove._id);
+            room.users = room.users.filter((user) => {
+              return user != String(user_to_remove._id);
+            });
+            console.log(room.users);
+            for (let i = 0; i < room.channels.length; i++) {
+              console.log(all_channels[i].users);
+              all_channels[i].users = all_channels[i].users.filter(
+                (user) => user != String(user_to_remove._id)
+              );
+              console.log(all_channels[i].users);
+              all_channels[i].save();
+            }
+            user_to_remove.rooms = user_to_remove.rooms.filter((temp_room) => {
+              room._id != temp_room;
+            });
+            user_to_remove.save();
+          }
+        }
+      }
+      room.save();
+    } else {
+      let room = await find_room_by_id(req.body.channel_room);
+      let channel = await find_channel_by_id(req.body.channel_id);
+
+      for (var i = 0; i < users_to_remove.length; i++) {
+        let user_to_remove = await find_user_by_email(users_to_remove[i]);
+        if (user_to_remove) {
+          let user_present =
+            room.users.includes(user_to_remove._id) &&
+            channel.users.includes(user_to_remove._id);
+          if (user_present) {
+            user_names.push(user_to_remove);
+            channel.users = channel.users.filter(
+              (user_id) => String(user_to_remove._id) != user_id
+            );
+          }
+        }
+      }
+      channel.save();
+    }
+
+    res.json(user_names);
+  })
+  .all((req, res) => {
+    res.send(`${req.method} method is not allowed!`);
+  });
 
 router
   .route("/channel/:channel")
@@ -121,9 +192,10 @@ router
 
     let user = await find_user_by_email(req.user.email);
     let room = await find_room_by_id_and_populate_channels(room_id);
+    console.log(room);
     user.rooms.remove({ _id: room_id });
     room.users.remove({ _id: user._id });
-    room.userCount -= 1;
+    room.userCount = room.userCount - 1;
     for (var i = 0; i < room.channels.length; i++) {
       if (room.channels[i].users.includes(user._id)) {
         let user_channels = await find_channel_by_id(room.channels[i]);
@@ -131,8 +203,9 @@ router
         user_channels.save();
       }
     }
-    user.save();
-    room.save();
+    console.log(room);
+    await user.save();
+    await room.save();
     res.json({ message: "Successfully deleted!" });
   })
   .all((req, res) => {
@@ -200,78 +273,87 @@ router
       let parent_channel = await find_channel_by_id(channelinfo.channel_id);
       parent_channel.meets.push(channel);
       channel.is_meet = true;
+      channel.meet_allow_students_stream = channelinfo.allow_students_stream;
       channel.meet_link = `/room/${room._id}/meetroom/${parent_channel._id}/meet/${channel._id}`;
       parent_channel.save();
     }
 
     channel.save();
+    console.log(channel);
     user.save();
     res.json(channel);
   })
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
-router.get("/get_popular_rooms/", async (req, res) => {
-  const rooms = await get_popular_rooms()
-  res.json(rooms)
-})
+router
+  .get("/get_popular_rooms/", async (req, res) => {
+    const rooms = await get_popular_rooms();
+    res.json(rooms);
+  })
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
 
-router.get("/get_oldest_rooms/", async (req, res) => {
-  const rooms = await get_oldest_rooms()
-  res.json(rooms)
-})
+router
+  .get("/get_oldest_rooms/", async (req, res) => {
+    const rooms = await get_oldest_rooms();
+    res.json(rooms);
+  })
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
 
-router.get("/get_latest_rooms/", async (req, res) => {
-  const rooms = await get_latest_rooms()
-  res.json(rooms)
-})
+router
+  .get("/get_latest_rooms/", async (req, res) => {
+    const rooms = await get_latest_rooms();
+    res.json(rooms);
+  })
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
-router.get("/get_most_liked_rooms/", async (req, res) => {
-  const rooms = await get_most_liked_rooms()
-  res.json(rooms)
-})
+router
+  .get("/get_most_liked_rooms/", async (req, res) => {
+    const rooms = await get_most_liked_rooms();
+    res.json(rooms);
+  })
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
-router.post("/room/:room_id/toggle_like", async (req, res) => {
-  let room = await find_room_by_id(req.params.room_id)
-  if (room.likes.includes(req.user._id)) {
-    room.likeCount -= 1;
-    room.likes.remove({ _id: req.user._id })
-  }
-  else {
-    room.likeCount += 1;
-    room.likes.push(req.user._id)
-  }
-  room.save()
-})
+router
+  .post("/room/:room_id/toggle_like", async (req, res) => {
+    let room = await find_room_by_id(req.params.room_id);
+    if (room.likes.includes(req.user._id)) {
+      room.likeCount -= 1;
+      room.likes.remove({ _id: req.user._id });
+    } else {
+      room.likeCount += 1;
+      room.likes.push(req.user._id);
+    }
+    room.save();
+  })
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
-router.post("/room/:room_id/join", async (req, res) => {
-  let room = await find_room_by_id(req.params.room_id)
-  let user = await find_user_by_email(req.user.email)
-  if (!room.users.includes(user._id))
-  {
-    room.userCount += 1;
-    room.users.push(req.user._id)
-    user.rooms.push(room._id)
-    room.save()
-    user.save()
-  }
-  else {
-    res.send('Already in the room')
-  }
-  
-})
+router
+  .post("/room/:room_id/join", async (req, res) => {
+    console.log(req.user);
+    let room = await find_room_by_id(req.params.room_id);
+    let user = await find_user_by_email(req.user.email);
+    if (!room.users.includes(user._id)) {
+      room.userCount += 1;
+      room.users.push(req.user._id);
+      user.rooms.push(room._id);
+      let channel = await find_channel_by_id(room.channels[0]);
+      channel.users.push(user._id);
+      channel.save();
+      room.save();
+      user.save();
+    } else {
+      console.log("here");
+      res.send("Already in the room");
+    }
+  })
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
@@ -297,6 +379,7 @@ router
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
   });
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router.route("/set_user_profile").post(async (req, res) => {
 
@@ -315,10 +398,10 @@ router.route("/set_user_profile").post(async (req, res) => {
   }
   user.profilepicUrl = req.body.profilepicUrl;
   user.about = req.body.about;
-  console.log(req.body.idUrl)
   user.idUrl = req.body.idUrl
   await user.save();
 
+  return res.send('successfully data received');
 })
 router.route('/user/logged').get(async (req, res) => { 
   try {
@@ -338,4 +421,22 @@ router.route("/user/:email").get(async (req, res) => {
 	}
  
 });
+router.post("/course_request", async (req, res) => {
+  let data = req.body;
+  let request = new CourseRequest();
+  request.name = data.name;
+  request.requirements = data.requirements;
+  request.tags = data.tags;
+  await request.save();
+  res.json("Success!");
+});
+router.get("/all_requests", async (req, res) => {
+  let all_requests = await CourseRequest.find();
+  return res.json(all_requests);
+});
+router.get("/get_req_data/:id", async (req, res) => {
+  let req_data=await CourseRequest.findById(req.params.id);
+  console.log(req_data);
+  res.json(req_data);
+})
 exports.router = router;

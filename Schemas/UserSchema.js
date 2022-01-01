@@ -10,7 +10,7 @@ const UserSchema = mongoose.Schema({
 	tags: [{ type: String }],
 	about: String,
 	idUrl: String,
-  profilepicUrl: String,
+	profilepicUrl: { type: String, default: "images/user.jpg" }
   
 });
 

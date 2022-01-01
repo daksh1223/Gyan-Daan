@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verification Pending</title>
+    <title>True-meet | Donate</title>
 
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
         integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
@@ -45,13 +44,8 @@
                                     <%= user_name %>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                     <li>
-                                        <a class="dropdown-item" href='/profile'>
-                                             Profile
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a class="dropdown-item" href='/logout'>
+                                    <li><a class="dropdown-item"
+                                            href='/logout/'>
                                             <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
                                         </a>
                                     </li>
@@ -62,12 +56,46 @@
                 </form>
             </div>
         </nav>
-        <div class="container" style="text-align:center;margin-top:15%;font-weight: 900;font-size:2rem;">   <p>you are not verified by the administrator yet. If you have not uploaded your government id yet please upload it in the profile section </p>
-   
+        <div class="container" style="text-align:center;margin-top:2%;font-weight: 500;font-size:2rem;">
+            <div style="display:flex;flex-direction:column;">
+                <img id="QR_Code"
+                    src="https://www.upiqrcode.com/upiqrtestapi?apikey=olymhx&seckey=MaNgOaPp&vpa=dakshsharma8777@oksbi&payee=Daksh%20Sharma&front=FFFFFF&back=000000"
+                    style="border:3.5px solid white" />
+
+            </div>
+            <div class="form-group row form_attr">
+                <label for="Payee" class="col-3">Payee Name:</label>
+                <div class="col-4">
+                    <input type="text" class="form-control" id="Payee" value="Daksh Sharma" readonly />
+                </div>
+            </div>
+            <div class="form-group row form_attr">
+                <label for="Payee_UPI" class="col-3">UPI ID:</label>
+                <div class="col-4">
+                    <input type="text" id="Payee_UPI" class="form-control" value="dakshsharma8777@oksbi" readonly />
+                </div>
+            </div>
+            <div class="form-group row form_attr">
+                <label for="Amount" class="col-3">Amount(in Rs):</label>
+                <div class="col-4">
+                    <input type="number" id="Amount" class="form-control" value="500.00" onkeyup="render_QR_Code()"
+                        onclick="render_QR_Code()" />
+                </div>
+            </div>
+            <div>Scan the above QR code to donate.
+            </div>
         </div>
     </div>
-
     </div>
+    <script>
+        function render_QR_Code() {
+            let image = document.getElementById("QR_Code");
+            let amount = document.getElementById("Amount").value || 0;
+            let url = "https://www.upiqrcode.com/upiqrtestapi?apikey=olymhx&seckey=MaNgOaPp&vpa=dakshsharma8777@oksbi&payee=Daksh%20Sharma&front=FFFFFF&back=000000"
+                + `&amount=${amount}`;
+            image.src = url;
+        }   
+    </script>
 </body>
 
 </html>

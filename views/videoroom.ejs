@@ -21,6 +21,8 @@
         var user__email = "<%= user_email %>";
         var screenuid = "<%= screenuid %>";
         var agoraAppId = "<%= agoraAppId %>";
+        var isEducator = "<%=isEducator %>";
+        var allow_students_stream = "<%=allow_students_stream %>";
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
         type="text/css" />
@@ -53,8 +55,7 @@
     <script src="/js/AgoraRTCSDK-3.6.0.js"></script>
     <script src="/js/video_resize.js"></script>
     <script src="/js/video_functionalities.js"></script>
-    <script src="/js/user_functionalities.js"></script>
-
+    <script src="/js/user_functionalities.js" defer></script>
 
 </head>
 
@@ -67,7 +68,7 @@
                 </div>
             </div>
             <div class="left_window_controls">
-                <div class="left_window_controls_block">
+                <div class="left_window_controls_block" id="features_container">
                     <div id="timer"
                         style="color:white;margin-left:2%;margin-right:1%;font-size:2.5vmin;align-self: center;">00:00
                     </div>
@@ -88,31 +89,6 @@
                         onclick="onChatClick()">
                         <i class="fas fa-comment-alt" style="font-size:3vmin;"></i>
                     </button>
-                    <button id="mic-btn" type="button" class="btn btn-dark btn-lg pointer" title="User Audio"
-                        style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;">
-                        <i id="mic-icon" class="fas fa-microphone" style="font-size:3vmin;"></i>
-                    </button>
-                    <button id="video-btn" type="button" class="btn btn-dark btn-lg pointer" title="User Video"
-                        style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;">
-                        <i id="video-icon" class="fas fa-video" style="font-size:3vmin;"></i>
-                    </button>
-                    <button id="screen-share-btn" type="button" class="btn btn-dark btn-lg pointer"
-                        style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;"
-                        title="Screen Share">
-                        <i id="screen-share-icon" class="fas fa-desktop" style="font-size:3vmin;"></i>
-                    </button>
-                    <button id="record-btn" type="button" class="btn btn-dark btn-lg pointer"
-                        style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;" title="Record"
-                        onclick="toggle_play_stop_video()">
-                        <i id="record-icon" class="fas fa-play-circle" style="font-size:3vmin;"></i>
-
-                    </button>
-                    <button id="exit-btn" type="button" class="btn btn-danger btn-lg pointer" title="End Call"
-                        style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;"
-                        onclick="end_call()">
-                        <i id="exit-icon" class="fas fa-phone-slash" style="font-size:3vmin;"></i>
-                    </button>
-
                 </div>
             </div>
         </div>
@@ -129,8 +105,17 @@
                 </div>
 
             </div>
-            <div style="display: flex;flex-direction:row;" id="chat_sender">
-                <div id="editor" style="float:right; margin:1%;"></div>
+            <div style="display: flex;align-items: flex-end;margin-bottom: 1%;" id="chat_sender">
+                <label style="cursor:pointer;margin-bottom: 10px;"><i title="upload File" class="fas fa-paperclip fa-lg"
+                        style="color: white;"></i>
+                    <input type="file" class="admin__input" id="myFile" name="upload" onChange="handleChatFileUpload()" /></label>
+                <div id="editor_container" style="display: flex;">
+                    <textarea id="editor" oninput="auto_grow(this)" placeholder="Type here..." rows=1></textarea>
+                    <i id="editor_clear" onclick="clear_editor()" title="clean" class="fas fa-window-close fa-lg"></i>
+                </div>
+                <i id="submit_button" title="Send Message" onclick="send_chat_message()" class="fa fa-send fa-lg"
+                    style="color:white;cursor:pointer;margin-bottom: 15px ;">
+                </i>
 
             </div>
         </div>

@@ -9,19 +9,20 @@ const MongoStore = require("connect-mongo");
 const mongoose_morgan = require("mongoose-morgan");
 const multer = require("multer");
 const favicon = require("serve-favicon");
-const passport = require('passport')
-const GoogleStrategy = require('passport-google-oauth2').Strategy;
-const MicrosoftStrategy = require('passport-microsoft').Strategy;
+const passport = require("passport");
+const GoogleStrategy = require("passport-google-oauth2").Strategy;
+const MicrosoftStrategy = require("passport-microsoft").Strategy;
 
 const adminbro = require("./adminbro");
+const User = require("./Schemas/UserSchema.js");
 const { find_channel_by_id } = require("./Repository/channel_repository");
 const { create_new_chat } = require("./Repository/chat_repository");
+const { find_user_by_email } = require("./Repository/user_repository");
 const home_page_router = require("./routers/home_router");
 const room_page_router = require("./routers/room_router");
 const api_router = require("./routers/api_router");
 const File = require("./Schemas/FileScema");
-const { find_user_by_email } = require('./Repository/user_repository')
-const User = require('./Schemas/UserSchema')
+
 require("dotenv").config();
 const dburl = process.env.DB_URL;
 const PORT = process.env.PORT || 3000;
@@ -47,97 +48,114 @@ app.use(
     }),
   })
 );
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 /////////////////////////////// Authentication Start ///////////////////////////////////////
-app.use(passport.initialize()) // init passport on every route call
-app.use(passport.session())    //allow passport to use "express-session"
+app.use(passport.initialize()); // init passport on every route call
+app.use(passport.session()); //allow passport to use "express-session"
 
-passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: process.env.GOOGLE_CALLBACK,
-  passReqToCallback: true
-}, async (req, accessToken, refreshToken, profile, done) => {
-  let user = await find_user_by_email(profile.email)
-  if (!user) {
-      user = await User.create({email:profile.email, name: profile.displayName})
-  }
-  return done(null, user);
-}));
-
-passport.use(new MicrosoftStrategy({  
-callbackURL: process.env.MICROSOFT_CALLBACK,  
-clientID: process.env.MICROSOFT_CLIENT_ID,  
-clientSecret: process.env.MICROSOFT_CLIENT_SECRET,  
-scope: ['openid', 'profile', 'email']  
-}, async (request, accessToken, refreshToken, profile, done) => {
-    let user = await find_user_by_email(profile.emails[0].value)
-    if (!user) {
-      user = await User.create({ email: profile.emails[0].value, name: profile.displayName })
-  }
-    return done(null, user)
-}))
-
-passport.serializeUser((user, done) => {
-  done(null, user)
-})
-passport.deserializeUser((user, done) => {
-  done(null, user)
-})
-app.post('/auth/google', (req, res, next) => {
-  req.session.isEducator = (req.body.isEducator==='true')
-  passport.authenticate('google', {
-    scope:
-      ['email', 'profile']
-  }
-  )(req,res,next)
-}
-);
-app.get('/auth/google/callback', (req, res, next) => {
-  passport.authenticate('google', {
-    successRedirect: '/home',
-    failureRedirect: '/'
-  })(req,res,next)
-});
-app.post('/auth/microsoft',
-  passport.authenticate('microsoft', {
-    scope:
-      ['openid', 'profile', 'email'] 
-  }
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: process.env.GOOGLE_CALLBACK,
+      passReqToCallback: true,
+    },
+    async (req, accessToken, refreshToken, profile, done) => {
+      let user = await find_user_by_email(profile.email);
+      if (!user) {
+        user = await User.create({
+          email: profile.email,
+          name: profile.displayName,
+        });
+      }
+      return done(null, user);
+    }
   )
 );
-app.get('/auth/microsoft/callback',
-  passport.authenticate('microsoft', {
-    successRedirect: '/home',
-    failureRedirect: '/'
-  }));
+
+passport.use(
+  new MicrosoftStrategy(
+    {
+      callbackURL: process.env.MICROSOFT_CALLBACK,
+      clientID: process.env.MICROSOFT_CLIENT_ID,
+      clientSecret: process.env.MICROSOFT_CLIENT_SECRET,
+      scope: ["openid", "profile", "email"],
+    },
+    async (request, accessToken, refreshToken, profile, done) => {
+      let user = await find_user_by_email(profile.emails[0].value);
+      if (!user) {
+        user = await User.create({
+          email: profile.emails[0].value,
+          name: profile.displayName,
+        });
+      }
+      return done(null, user);
+    }
+  )
+);
+
+passport.serializeUser((user, done) => {
+  done(null, user);
+});
+passport.deserializeUser((user, done) => {
+  done(null, user);
+});
+app.post("/auth/google", (req, res, next) => {
+  req.session.isEducator = req.body.isEducator === "true";
+  passport.authenticate("google", {
+    scope: ["email", "profile"],
+  })(req, res, next);
+});
+app.get("/auth/google/callback", (req, res, next) => {
+  passport.authenticate("google", {
+    successRedirect: "/home",
+    failureRedirect: "/",
+  })(req, res, next);
+});
+app.post("/auth/microsoft", (req, res, next) => {
+  req.session.isEducator = req.body.isEducator === "true";
+  passport.authenticate("microsoft", {
+    scope: ["openid", "profile", "email"],
+  })(req, res, next);
+});
+app.get(
+  "/auth/microsoft/callback",
+  passport.authenticate("microsoft", {
+    successRedirect: "/home",
+    failureRedirect: "/",
+  })
+);
 app.get("/", (req, res) => {
   if (req.isAuthenticated()) {
-    res.redirect('/home')
-  }
-  else res.render("login.ejs")
-})
+    res.redirect("/home");
+  } else res.render("login.ejs");
+});
 
 app.use("/logout", (req, res) => {
-  req.logOut()
-  res.redirect("/")
+  req.logOut();
+  res.redirect("/");
 });
 checkAuthenticated = (req, res, next) => {
+
   if (req.isAuthenticated()) {
-    res.locals.user_name = req.user.name
-    res.locals.user_email = req.user.email
-    res.locals.isEducator = req.session.isEducator
-    res.locals.isAdmin = req.user.isAdmin
-    res.locals.userId = req.user._id
-    return next()
+    res.locals.user_name = req.user.name;
+    res.locals.user_email = req.user.email;
+    res.locals.isEducator = req.session.isEducator;
+    res.locals.isAdmin = req.user.isAdmin;
+    res.locals.userId = req.user._id;
+    res.locals.user_profilePic = req.user.profilepicUrl;
+    res.locals.user_isVerified = req.user.isVerified;
+    return next();
   }
-  req.session.redirect_url = req.url
-  res.redirect("/")
-}
-app.use(checkAuthenticated)
+
+
+  req.session.redirect_url = req.url;
+  res.redirect("/");
+};
+app.use(checkAuthenticated);
 /////////////////////////////// Authentication End ///////////////////////////////////////
 
 app.use("/home", home_page_router.router);
@@ -147,7 +165,6 @@ app.get("/profile/:email", async(req, res) => {
 
   res.render("profile", { email: req.params.email  });
 })
-app.get('/notverified', (req, res) => { res.render('notverifiedyet')})
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -161,25 +178,33 @@ const multerStorage = multer.diskStorage({
 const upload = multer({
   storage: multerStorage,
 });
+app.get("/donate", (req, res) => {
+  res.render("Donate");
+});
+app.get("/Requested-Courses", (req, res) => {
+  if (req.session.isEducator) res.render("Requested-Courses");
+  else res.render("permission_denied");
+});
+app.get("/Requested-Course/:id", (req, res) => {
+  let id = req.params.id;
+  if (req.session.isEducator) res.render("Requested-Course", { req_id: id });
+  else res.render("permission_denied");
+});
 app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
   // Stuff to be added later
   try {
     const newFile = await File.create({
       name: req.file.filename,
-      path: `uploads/${req.file.filename}`,
+      path: `/uploads/${req.file.filename}`,
+      displayName: req.file.originalname,
     });
-    res.status(200).json({
-      uploaded: 1,
-      fileName: req.file.fileName,
-      url: `uploads/${req.file.filename}`,
-    });
+    res.send(newFile);
   } catch (error) {
     res.json({
       error,
     });
   }
 });
-
 
 io.on("connection", (socket) => {
   socket.on("join-room", (roomID, user, email) => {
@@ -237,10 +262,10 @@ mongoose
   });
 
 mongoose_morgan.token("remote-user", function (req, res, params) {
-  return req.user ? req.user.email : undefined;
+  return req.session && req.user ? req.user.email : undefined;
 });
 mongoose_morgan.token("remote-addr", function (req, res, params) {
-  return req.user ? req.user.name : undefined;
+  return req.session && req.user ? req.user.name : undefined;
 });
 mongoose_morgan.token("status", function (req, res, params) {
   if (req.method == "GET" || req.method == "PUT") {

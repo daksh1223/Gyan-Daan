@@ -129,3 +129,33 @@ iframe {
 .home_link:hover {
   text-decoration: none;
 }
+
+#editor_container{
+  width: calc(100% - 60px);
+  margin: 0 1%;
+  border-radius: 2rem;
+  background-color: white;
+}
+
+#editor{
+  border: 0;
+  outline: none;
+  overflow: hidden;
+  margin: 1% 2%;
+  width: calc(95% - 40px);
+  height: 95%;
+  resize: none;
+}
+
+#editor_clear{
+  border: 0;
+  outline: none;
+  float: right; align-self: center;cursor: pointer
+}
+
+
+input[type="file"] { 
+  opacity: 0; /* make transparent */
+  z-index: -1; /* move under anything else */
+  position: absolute; /* don't let it take up space */
+}
