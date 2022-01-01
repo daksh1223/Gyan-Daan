@@ -143,7 +143,11 @@ app.use(checkAuthenticated)
 app.use("/home", home_page_router.router);
 app.use("/room", room_page_router.router);
 app.use("/api", api_router.router);
+app.get("/profile/:email", async(req, res) => {
 
+  res.render("profile", { email: req.params.email  });
+})
+app.get('/notverified', (req, res) => { res.render('notverifiedyet')})
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {

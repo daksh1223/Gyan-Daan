@@ -19,7 +19,7 @@ const {
   create_new_channel,
   find_channel_by_id_and_populate_all_data,
 } = require("../Repository/channel_repository.js");
-
+const { get_tag_by_name, create_new_tag } = require("../Repository/tag_repository.js");
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router
@@ -298,4 +298,44 @@ router
     res.send(`${req.method} method is not allowed!`);
   });
 
+router.route("/set_user_profile").post(async (req, res) => {
+
+  let user = await find_user_by_email(req.user.email);
+  let tags = req.body.tags;
+  user.tags = [];
+ 
+  for (let i = 0; i < tags.length; i++) { 
+    let tag = await get_tag_by_name(tags[i]);
+
+		if (!tag) {
+			tag = await create_new_tag(tags[i]);
+		}
+  
+	 user.tags.push(tag.name);
+  }
+  user.profilepicUrl = req.body.profilepicUrl;
+  user.about = req.body.about;
+  console.log(req.body.idUrl)
+  user.idUrl = req.body.idUrl
+  await user.save();
+
+})
+router.route('/user/logged').get(async (req, res) => { 
+  try {
+    let user = await find_user_by_email(req.user.email);
+     return res.json(user);
+  } catch(err) { 
+res.json(err)
+  }
+ 
+})
+router.route("/user/:email").get(async (req, res) => {
+  try {
+		let user = await find_user_by_email(req.params.email);
+		return res.json(user);
+	} catch (err) {
+		res.json(err);
+	}
+ 
+});
 exports.router = router;

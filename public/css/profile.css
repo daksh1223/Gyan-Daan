@@ -1,0 +1,21 @@
+body {
+	background-color: #292929;
+}
+.main-container {
+	display: flex;
+	justify-content: center;
+	height: 100%;
+    margin: auto;
+}
+.form-container {
+	width: 60%;
+	margin: auto;
+}
+.avatar {
+	border-radius: 50%;
+	width: 15vw;
+	height: 30vh;
+}
+.form-group{
+    color:white
+}

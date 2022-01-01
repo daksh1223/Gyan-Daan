@@ -1,0 +1,73 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification Pending</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/c939d0e917.js"></script>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css"
+        integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/home.css" />
+</head>
+
+<body>
+    <div class="body_container">
+
+        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: black;">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler"
+                aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <a class="navbar-brand mb-0 h1" href="/home"><i class="fas fa-users"></i> True-Meet</a>
+
+            <div class="collapse navbar-collapse" id="navbarToggler">
+                <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/home"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                </ul>
+                <form class="d-flex">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <div class="dropdown">
+                                <a class="dropdown-toggle nav-link active" id="user_data" href='#' role="button"
+                                    data-toggle="dropdown" aria-expanded="false">
+                                    <%= user_name %>
+                                </a>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                     <li>
+                                        <a class="dropdown-item" href='/profile'>
+                                             Profile
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href='/logout'>
+                                            <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </form>
+            </div>
+        </nav>
+        <div class="container" style="text-align:center;margin-top:15%;font-weight: 900;font-size:2rem;">   <p>you are not verified by the administrator yet. If you have not uploaded your government id yet please upload it in the profile section </p>
+   
+        </div>
+    </div>
+
+    </div>
+</body>
+
+</html>
