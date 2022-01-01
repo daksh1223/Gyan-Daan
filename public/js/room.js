@@ -292,9 +292,11 @@ const send_chat_message = async () => {
     if (response.data)
       message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`;
     else return;
-  } else {
-    message_in_html_form =
-      "<pre>" + document.getElementById("editor").value + "</pre>";
+    clear_editor();
+  }
+  else {
+    message_in_html_form = '<pre>' + document.getElementById('editor').value + '</pre>'
+    clear_editor();
   }
   // After sending the message set the editor's content as null.
   document.getElementById("editor").value = "";
@@ -645,6 +647,18 @@ function handleChatFileUpload() {
   const file = document.getElementById("myFile").files[0];
   document.getElementById("editor").value = file.name;
   document.getElementById("editor").readOnly = true;
-  document.getElementById("editor").style.backgroundColor = "#909090";
+  document.getElementById('editor_container').style.backgroundColor = '#898989';
+  document.getElementById('editor').style.backgroundColor = '#898989';
+  document.getElementById('editor').style.color = 'white';
+  document.getElementById('editor_clear').style.backgroundColor = 'white'
 }
 socket.on("send_channel_message", generate_message);
+
+function clear_editor() {
+  document.getElementById('editor').value = '';
+  document.getElementById('myFile').value = '';
+  document.getElementById('editor').readOnly = false;
+  document.getElementById('editor_container').style.backgroundColor = 'white';
+  document.getElementById('editor').style.backgroundColor = 'white';
+  document.getElementById('editor').style.color = 'black';
+}
