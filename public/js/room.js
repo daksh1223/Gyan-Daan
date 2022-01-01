@@ -290,11 +290,12 @@ const send_chat_message = async () => {
     const response = await axios.post('/api/uploadFile', form)
     if (response.data) message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`
     else return;
-    document.getElementById('editor').value = '';
-    document.getElementById('editor').readOnly = false;
-    document.getElementById('editor').style.backgroundColor = 'white';
+    clear_editor();
   }
-  else { message_in_html_form = '<pre>' + document.getElementById('editor').value + '</pre>' }
+  else {
+    message_in_html_form = '<pre>' + document.getElementById('editor').value + '</pre>'
+    clear_editor();
+  }
   // After sending the message set the editor's content as null.
   messages = document.getElementById("chat_messages");
   var message = message_in_html_form;
@@ -637,8 +638,19 @@ function auto_grow(element) {
 
 function handleChatFileUpload() {
   const file = document.getElementById('myFile').files[0];
-  document.getElementById('editor').value = file.name;
+    document.getElementById('editor').value = file.name;
   document.getElementById('editor').readOnly = true;
-  document.getElementById('editor').style.backgroundColor = '#909090';
+  document.getElementById('editor_container').style.backgroundColor = '#898989';
+  document.getElementById('editor').style.backgroundColor = '#898989';
+  document.getElementById('editor').style.color = 'white';
+  document.getElementById('editor_clear').style.backgroundColor = 'white'
+}
 
+function clear_editor() {
+  document.getElementById('editor').value = '';
+  document.getElementById('myFile').value = '';
+  document.getElementById('editor').readOnly = false;
+  document.getElementById('editor_container').style.backgroundColor = 'white';
+  document.getElementById('editor').style.backgroundColor = 'white';
+  document.getElementById('editor').style.color = 'black';
 }

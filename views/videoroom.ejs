@@ -105,8 +105,17 @@
                 </div>
 
             </div>
-            <div style="display: flex;flex-direction:row;" id="chat_sender">
-                <div id="editor" style="float:right; margin:1%;"></div>
+            <div style="display: flex;align-items: flex-end;margin-bottom: 1%;" id="chat_sender">
+                <label style="cursor:pointer;margin-bottom: 10px;"><i title="upload File" class="fas fa-paperclip fa-lg"
+                        style="color: white;"></i>
+                    <input type="file" class="admin__input" id="myFile" name="upload" onChange="handleChatFileUpload()" /></label>
+                <div id="editor_container" style="display: flex;">
+                    <textarea id="editor" oninput="auto_grow(this)" placeholder="Type here..." rows=1></textarea>
+                    <i id="editor_clear" onclick="clear_editor()" title="clean" class="fas fa-window-close fa-lg"></i>
+                </div>
+                <i id="submit_button" title="Send Message" onclick="send_chat_message()" class="fa fa-send fa-lg"
+                    style="color:white;cursor:pointer;margin-bottom: 15px ;">
+                </i>
 
             </div>
         </div>

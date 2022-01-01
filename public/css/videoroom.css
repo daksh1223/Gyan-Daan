@@ -145,3 +145,33 @@ video {
   background-color: grey;
   border-radius: 100px;
 }
+
+#editor_container{
+  width: calc(100% - 60px);
+  height: 100%;
+  margin: 0 1%;
+  border-radius: 2rem;
+  background-color: white;
+}
+
+#editor{
+  border: 0;
+  outline: none;
+  overflow: hidden;
+  margin: 2% 4%;
+  width: calc(100% - 60px);
+  justify-self: center;
+  resize: none;
+}
+
+#editor_clear{
+  border: 0;
+  outline: none;
+  float: right; align-self: center;cursor: pointer
+}
+
+input[type="file"] { 
+  opacity: 0; /* make transparent */
+  z-index: -1; /* move under anything else */
+  position: absolute; /* don't let it take up space */
+}
