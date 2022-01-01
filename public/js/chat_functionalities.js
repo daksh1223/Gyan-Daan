@@ -29,7 +29,7 @@ function onChatClick() {
 
 function setup() {
   // To setup the froala editor
-  socket.emit("join-room", ROOMID, user__name, user__email);
+  socket.emit("join-room", ROOMID, user__name, user__email,userID);
   socket.on("user-joined", (username, useremail, id) => {
     add_user(username, useremail, id); // When a user join add user's details in the participants list
   });

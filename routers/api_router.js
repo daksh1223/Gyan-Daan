@@ -1,10 +1,12 @@
 const router = require("express").Router();
 const Streams = require("../Schemas/StreamSchema");
 const CourseRequest = require("../Schemas/CourseRequestSchema");
+const Tracker = require("../Schemas/TrackerSchema");
 const {
   find_user_by_email,
   get_user_rooms,
   get_all_users,
+  get_user_by_id_and_populate_Rooms,
 } = require("../Repository/user_repository");
 const { set_new_stream } = require("../Repository/stream_repository.js");
 const {
@@ -22,7 +24,10 @@ const {
 } = require("../Repository/channel_repository.js");
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+router.get("/get_user_details", async (req, res) => {
+  let req_data = await get_user_by_id_and_populate_Rooms(req.user._id);
+  res.json(req_data);
+});
 router
   .route("/get_all_rooms") // Will fetch all the rooms where the current user is present.
   .get(async (req, res) => {
@@ -395,8 +400,20 @@ router.get("/all_requests", async (req, res) => {
   return res.json(all_requests);
 });
 router.get("/get_req_data/:id", async (req, res) => {
-  let req_data=await CourseRequest.findById(req.params.id);
+  let req_data = await CourseRequest.findById(req.params.id);
   console.log(req_data);
   res.json(req_data);
-})
+});
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+router.get("/get_tracker_data/", async (req, res) => {
+  let req_data = await Tracker.find({ user: req.user._id });
+  res.json(req_data);
+});
+router.get("/get_course_tracker_data/:id", async (req, res) => {
+  let req_data = await Tracker.find({ course: req.params.id });
+  let course = await find_room_by_id(req.params.id);
+  res.json({ req_data, course });
+});
+
 exports.router = router;

@@ -16,6 +16,7 @@
         const user_name = "<%=user_name %>";
         const email = "<%= user_email %>";
         const isEducator = "<%= isEducator %>";
+        const userID = "<%= userId %>";
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
         type="text/css" />
@@ -169,7 +170,8 @@
                             onChange="handleChatFileUpload()" /></label>
                     <div id="editor_container" style="display: flex;">
                         <textarea id="editor" oninput="auto_grow(this)" placeholder="Type here..." rows=1></textarea>
-                        <i id="editor_clear" onclick="clear_editor()" title="clean" class="fas fa-window-close fa-lg"></i>
+                        <i id="editor_clear" onclick="clear_editor()" title="clean"
+                            class="fas fa-window-close fa-lg"></i>
                     </div>
                     <i id="submit_button" title="Send Message" onclick="send_chat_message()" class="fa fa-send fa-lg"
                         style="color:white;cursor:pointer;margin-bottom: 15px ;">

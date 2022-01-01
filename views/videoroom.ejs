@@ -17,6 +17,7 @@
         var channelName = "<%= channelName %>";
         var uid = "<%= uid %>";
         var user__name = "<%=user %>";
+        var userID = "<%= userId %>";
         var ROOMID = "<%= ROOMID %>";
         var user__email = "<%= user_email %>";
         var screenuid = "<%= screenuid %>";
@@ -108,7 +109,8 @@
             <div style="display: flex;align-items: flex-end;margin-bottom: 1%;" id="chat_sender">
                 <label style="cursor:pointer;margin-bottom: 10px;"><i title="upload File" class="fas fa-paperclip fa-lg"
                         style="color: white;"></i>
-                    <input type="file" class="admin__input" id="myFile" name="upload" onChange="handleChatFileUpload()" /></label>
+                    <input type="file" class="admin__input" id="myFile" name="upload"
+                        onChange="handleChatFileUpload()" /></label>
                 <div id="editor_container" style="display: flex;">
                     <textarea id="editor" oninput="auto_grow(this)" placeholder="Type here..." rows=1></textarea>
                     <i id="editor_clear" onclick="clear_editor()" title="clean" class="fas fa-window-close fa-lg"></i>
