@@ -9,6 +9,7 @@ const ChannelSchema = mongoose.Schema({
   meet_link: String,
   meet_allow_students_stream:{ type:Boolean,default:false},
   meets: [{ type: Schema.Types.ObjectId, ref: "Channel" }], // All meet channels present in a normal channel
+  polls: [{ type: Schema.Types.ObjectId, ref: "Poll" }]
 });
 
 const Channel = mongoose.model("Channel", ChannelSchema);
