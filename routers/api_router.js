@@ -453,7 +453,7 @@ router.get("/get_tracker_data/", async (req, res) => {
   res.json(req_data);
 });
 router.get("/get_course_tracker_data/:id", async (req, res) => {
-  let req_data = await Tracker.find({ course: req.params.id });
+  let req_data = await Tracker.find({ course: req.params.id, user: req.user._id });
   let course = await find_room_by_id(req.params.id);
   res.json({ req_data, course });
 });

@@ -22,7 +22,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
-     <link href = "https://fonts.googleapis.com/icon?family=Material+Icons" rel = "stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script>
         const user_name = "<%=user_name %>";
         const email = "<%= user_email %>";
@@ -54,25 +54,26 @@
                 </form>
                 <ul class="navbar-nav" style="padding-right: 1%;">
                     <li class="nav-item">
-                       
+
                         <div class="dropdown">
-                            <a class="dropdown-toggle nav-link active" id="user_data" href='#' role="button" 
+                            <a class="dropdown-toggle nav-link active" id="user_data" href='#' role="button"
                                 data-toggle="dropdown" aria-expanded="false">
-                      
-                               <img src="<%=user_profilePic%>" class="avatar"><%= user_name %>
+
+                                <img src="<%=user_profilePic%>" class="avatar">
+                                <%= user_name %>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
                                 <li>
-                                    <a href="/profile/<%=user_email%>" style="display:flex;margin-right: auto;" class="dropdown-item" >
-                                        
-                                       <span class="material-icons" style="color:black;"> portrait</span><p style="color:black;"> profile</p></a>
+                                    <a href="/profile/<%=user_email%>" class="dropdown-item">
+
+                                        <i class="fas fa-address-card" style="color:black;"></i> Profile</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href='/donate' type="button"
-                                       >
+                                    <a class="dropdown-item" href='/donate' type="button">
                                         <div style="color:black">
-                                        <i class="fas fa-donate" ></i> Donate
-                                    </div></a>
+                                            <i class="fas fa-donate" style="color:black"></i> Donate
+                                        </div>
+                                    </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href='/logout'>
@@ -145,8 +146,8 @@
                                 <textarea row="3" class="form-control" id="Roomrequest_description"
                                     style="color: black;"> </textarea>
                                 <small class="form-text " style="color:white;font-weight:400;">
-                                    Tell us more about what you are expecting from this course. 
-                               </small>
+                                    Tell us more about what you are expecting from this course.
+                                </small>
                             </div>
                             <div class="form-group">
                                 <label>Add Course Tags:</label>
