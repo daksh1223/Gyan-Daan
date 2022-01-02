@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const TrackerSchema = mongoose.Schema({
   StartTime: {
     type: Date,
-    default: new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
   },
   EndTime: { type: Date },
   duration: { type: Number },

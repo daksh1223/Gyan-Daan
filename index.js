@@ -221,6 +221,9 @@ io.on("connection", (socket) => {
     let new_track_record = new Tracker();
     new_track_record.user = userID;
     new_track_record.course = roomID;
+    new_track_record.StartTime=new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    });
     socket.on("connect_to_new_user", (username, id) => {
       socket.to(id).emit("user-joined", user, email, id);
     });
