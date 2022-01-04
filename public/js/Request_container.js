@@ -13,7 +13,7 @@ const get_all_requests = async () => {
             ${req.name}
             </div>
             <div class="request_elem">
-            ${date.getDate() + 1}/${date.getMonth() + 1}/${date.getFullYear()}
+            ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}
             </div>
             <div class="request_elem">${req.requirements}</div>
             <a href="/Requested-Course/${req._id}" style="margin-left:auto;">Get more info...</a>

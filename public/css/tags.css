@@ -10,6 +10,7 @@
   width: 100%;
   line-height: 22px;
   cursor: text;
+  overflow: hidden;
 }
 .bootstrap-tagsinput input {
   border: none;
@@ -21,6 +22,7 @@
   width: auto;
   color: black;
   max-width: inherit;
+  overflow: scroll;
 }
 .bootstrap-tagsinput.form-control input::-moz-placeholder {
   color: #292929;

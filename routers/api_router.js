@@ -1,10 +1,12 @@
 const router = require("express").Router();
 const Streams = require("../Schemas/StreamSchema");
 const CourseRequest = require("../Schemas/CourseRequestSchema");
+const Tracker = require("../Schemas/TrackerSchema");
 const {
   find_user_by_email,
   get_user_rooms,
   get_all_users,
+  get_user_by_id_and_populate_Rooms,
 } = require("../Repository/user_repository");
 const { set_new_stream } = require("../Repository/stream_repository.js");
 const {
@@ -20,13 +22,15 @@ const {
   create_new_channel,
   find_channel_by_id_and_populate_all_data,
 } = require("../Repository/channel_repository.js");
-const {
-	get_tag_by_name,
-	create_new_tag,
-	get_all_tags,
-} = require("../Repository/tag_repository.js");
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+const { get_tag_by_name, create_new_tag ,get_all_tags} = require("../Repository/tag_repository.js");
+const {create_new_option, update_vote, create_new_poll, find_poll_by_id} = require('../Repository/poll_repository')
 
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+router.get("/get_user_details", async (req, res) => {
+  let req_data = await get_user_by_id_and_populate_Rooms(req.user._id);
+  res.json(req_data);
+});
 router
   .route("/get_all_rooms") // Will fetch all the rooms where the current user is present.
   .get(async (req, res) => {
@@ -488,7 +492,22 @@ router.get("/get_req_data/:id", async (req, res) => {
   let req_data=await CourseRequest.findById(req.params.id);
   //console.log(req_data);
   res.json(req_data);
-})
+});
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+router.get("/get_tracker_data/", async (req, res) => {
+  let req_data = await Tracker.find({ user: req.user._id });
+  res.json(req_data);
+});
+router.get("/get_course_tracker_data/:id", async (req, res) => {
+  let req_data = await Tracker.find({ course: req.params.id, user: req.user._id });
+  let course = await find_room_by_id(req.params.id);
+  res.json({ req_data, course });
+});
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 router.route('/search').post(async (req, res) => {
   let allTags = await get_all_tags();
   let findTags = req.body.findTags;
@@ -541,4 +560,30 @@ router.route('/search').post(async (req, res) => {
 		rooms: [...rooms.values()],
 	});
 })
+
+router.post("/create_poll", async (req, res) => {
+	let data = req.body;
+	let option_ids = [];
+	for (let i = 0; i < data.options.length; i++) {
+		let option = await create_new_option(data.options[i]);
+		option_ids.push(option._id);
+	}
+	const poll = await create_new_poll(
+		data.name,
+		option_ids,
+		data.type,
+		data.channel_id
+	);
+	res.json(poll);
+});
+router.post('/update_vote', async (req, res) => {
+  const poll = await update_vote(req.body.id, req.body.options, req.user);
+  res.json(poll)
+})
+
+router.get('/get_poll/:poll', async (req, res) => {
+  const poll = await find_poll_by_id(req.params.poll)
+  res.json(poll)
+})
+
 exports.router = router;

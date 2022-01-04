@@ -9,7 +9,7 @@ const get_request = async ()=>{
         Course Requested: ${data.name}
         </div>
         <div class="req_elem">
-        Request Date: ${date.getDate() + 1}/${date.getMonth() + 1}/${date.getFullYear()}
+        Request Date: ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}
         </div>
         <div class="req_elem">
         Course Requirements: ${data.requirements}

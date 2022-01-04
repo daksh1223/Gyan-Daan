@@ -16,6 +16,7 @@
         const user_name = "<%=user_name %>";
         const email = "<%= user_email %>";
         const isEducator = "<%= isEducator %>";
+        const userID = "<%= userId %>";
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
         type="text/css" />
@@ -148,6 +149,9 @@
                         style="float:left;margin-left:2.5%;font-weight:bolder;">
                     </a>
                 </b>
+                <a id="create_poll" class="custom_link" href="#" data-toggle="modal" data-target="#pollcreationmodal"
+                    style="float:right;margin-right:3%;">
+                </a>
                 <a id="create_meet" class="custom_link" href="#" data-toggle="modal" data-target="#meetcreationmodal"
                     style="float:right;margin-right:3%;">
                 </a>
@@ -169,13 +173,55 @@
                             onChange="handleChatFileUpload()" /></label>
                     <div id="editor_container" style="display: flex;">
                         <textarea id="editor" oninput="auto_grow(this)" placeholder="Type here..." rows=1></textarea>
-                        <i id="editor_clear" onclick="clear_editor()" title="clean" class="fas fa-window-close fa-lg"></i>
+                        <i id="editor_clear" onclick="clear_editor()" title="clean"
+                            class="fas fa-window-close fa-lg"></i>
                     </div>
                     <i id="submit_button" title="Send Message" onclick="send_chat_message()" class="fa fa-send fa-lg"
                         style="color:white;cursor:pointer;margin-bottom: 15px ;">
                     </i>
                 </div>
 
+            </div>
+            <div class="modal fade" id="pollcreationmodal" tabindex="-1" role="dialog"
+                aria-labelledby="pollcreationmodalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document" style="color:white;z-index: 9999;">
+                    <div class="modal-content" style="background: #292929;box-shadow: 0px 0px 15px black;">
+                        <div class="modal-header" style="border-color: #292929;">
+                            <h5 class="modal-title" id="pollcreationmodalLongTitle">Create Poll</h5>
+                        </div>
+                        <form>
+            
+                            <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                                <div class="form-group">
+                                    <label for="poll_name">Poll Name</label>
+                                    <input type="text" class="form-control" id="poll_name" style="color: black;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Add Options:</label>
+                                    <input type="text" class="form-control" id="poll_tags" data-role="tagsinput" required/>
+                                    <small class="form-text " style="color:white;font-weight:400;">
+                                        Add options that will be shown in the poll<br>
+                                        Press enter after typing an option to add an option.
+                                    </small>
+                                </div>
+                                <div class="form-group">
+                                    <label>Poll Type</label><br>
+                                    <input type="radio" id="MCP" name="poll_type" value="MCP">
+                                    <label for="MCP">Multiple Correct</label><br>
+                                    <input type="radio" id="SCP" name="poll_type" value="SCP" checked="true">
+                                    <label for="SCP">Single Correct</label><br>
+                                </div>
+                                <button type="button" class="btn btn-primary" style="float: right; margin-left:1%;margin-bottom:1%"
+                                    onclick="poll_modal_submission()">Create
+                                    Poll</button>
+                                <button type="button" id="modal_close" class="btn btn-secondary" data-dismiss="modal"
+                                    style="float: right;margin-bottom:1%">Close</button>
+            
+                            </div>
+                        </form>
+            
+                    </div>
+                </div>
             </div>
             <div class="modal fade" id="channel_creation_modal" tabindex="-1" role="dialog"
                 aria-labelledby="channel_creation_modalCenterTitle" aria-hidden="true">

@@ -5,7 +5,7 @@ const create_new_user = () => {
 };
 
 const find_user_by_email = async (email) => {
-  return await Users.findOne({ email: email });  
+  return await Users.findOne({ email: email });
 };
 const get_all_users = async () => {
   return await Users.find();
@@ -15,7 +15,12 @@ const get_user_rooms = async (email) => {
     .populate("rooms")
     .select("rooms");
 };
+const get_user_by_id_and_populate_Rooms = async (id) => {
+  let data= await Users.findById(id).populate("rooms");
+  return data;
+};
 exports.create_new_user = create_new_user;
 exports.find_user_by_email = find_user_by_email;
 exports.get_all_users = get_all_users;
 exports.get_user_rooms = get_user_rooms;
+exports.get_user_by_id_and_populate_Rooms = get_user_by_id_and_populate_Rooms;

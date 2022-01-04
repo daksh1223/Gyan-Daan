@@ -22,7 +22,7 @@ const home_page_router = require("./routers/home_router");
 const room_page_router = require("./routers/room_router");
 const api_router = require("./routers/api_router");
 const File = require("./Schemas/FileScema");
-
+const Tracker = require("./Schemas/TrackerSchema");
 require("dotenv").config();
 const dburl = process.env.DB_URL;
 const PORT = process.env.PORT || 3000;
@@ -190,6 +190,14 @@ app.get("/Requested-Course/:id", (req, res) => {
   if (req.session.isEducator) res.render("Requested-Course", { req_id: id });
   else res.render("permission_denied");
 });
+app.get("/tracker", (req, res) => {
+  if (!req.session.isEducator) res.render("tracker");
+  else res.render("permission_denied");
+});
+app.get("/course-tracker/:id", (req, res) => {
+  if (!req.session.isEducator) res.render("course_tracker", { id : req.params.id });
+  else res.render("permission_denied");
+});
 app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
   // Stuff to be added later
   try {
@@ -207,9 +215,15 @@ app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("join-room", (roomID, user, email) => {
+  socket.on("join-room", (roomID, user, email, userID) => {
     socket.join(roomID);
-
+    console.log(userID);
+    let new_track_record = new Tracker();
+    new_track_record.user = userID;
+    new_track_record.course = roomID;
+    new_track_record.StartTime=new Date().toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    });
     socket.on("connect_to_new_user", (username, id) => {
       socket.to(id).emit("user-joined", user, email, id);
     });
@@ -234,6 +248,14 @@ io.on("connection", (socket) => {
       }
     );
     socket.on("disconnect", () => {
+      new_track_record.EndTime = new Date().toLocaleString("en-US", {
+        timeZone: "Asia/Kolkata",
+      });
+      new_track_record.duration =
+        (new_track_record.EndTime.getTime() -
+          new_track_record.StartTime.getTime()) /
+        1000;
+      new_track_record.save();
       socket.to(roomID).broadcast.emit("user-disconnected", email);
     });
   });

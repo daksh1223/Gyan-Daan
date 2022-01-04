@@ -114,27 +114,26 @@ async function toggle_play_stop_video() {
     <b>Meet Recording Detail:<hr style="border: 1px solid black;background-color: black;height:1px;">
     Recorded by: ${user__name}<br> 
     </b>
-    Download Link: <a href="/${response.data.url}" download>Link</a>
+    Download Link: <a href="${response.data.path}" download>Link</a>
     <br>
     Download Size: ${size}
     </div>
     `;
-    if (!!response.data.uploaded) {
-      await socket.emit(
-        "receive_channel_message",
-        "True-Meet Bot",
-        message,
-        "",
-        channelName
-      );
-      generate_message(
-        "True-Meet Bot",
-        message,
-        new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
-        channelName,
-        true
-      );
-    }
+    console.log(message);
+    await socket.emit(
+      "receive_channel_message",
+      "True-Meet Bot",
+      message,
+      "",
+      channelName
+    );
+    generate_message(
+      "True-Meet Bot",
+      message,
+      new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
+      channelName,
+      true
+    );
     console.log(response, recording);
   }
 }

@@ -1,5 +1,6 @@
 const url = `/api/room/${ROOM_ID}`;
 var socket = io("/"); // For connecting the socket.
+let channel_id
 
 var channel_data_copy; // Will contain all te data present in the current channel
 var channel_data_messages; // Will contain all the messages present in the current channel.
@@ -8,8 +9,10 @@ var general_channel; // ID of the General channel
 var current_channel_message_id; // ID of the current channel message
 var current_channel_meet_link = null;
 let create_meet_container = document.getElementById("create_meet");
+let create_poll_container = document.getElementById("create_poll");
 if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
+  create_poll_container.innerHTML = `<i class="fas fa-poll-h"></i> Create Poll `;
   document.getElementById(
     "channel_features"
   ).innerHTML += ` <a href="#" class="btn btn-link" style="float:right;transition: all ease-in-out 0.2s;
@@ -18,7 +21,6 @@ if (isEducator != "false") {
 }
 const room_data = async (url) => {
   promise = await axios.get(url); // Fetch all the data present in this room
-
   var room = document.getElementById("room_name");
   var room_container = document.createElement("div");
   icon = document.createElement("div");
@@ -130,7 +132,6 @@ const room_data = async (url) => {
       </div>
       `;
       }
-
       channel_container.appendChild(temp_channel_container);
     }
   }
@@ -139,6 +140,7 @@ const room_data = async (url) => {
   return promise.data;
 };
 const channel_data = async (cid) => {
+  channel_id = cid;
   if (current_channel) {
     document.getElementById(current_channel).style.color = "white"; // Set the previously selected channel color as white
   }
@@ -186,6 +188,20 @@ const channel_data = async (cid) => {
     meets_container.appendChild(temp_meet);
   }
   show_chat(""); // Show the chat of current channel
+  for (let i = 0; i < channel_data_copy.polls.length; i++)
+  {
+    let poll = await axios.get(`/api/get_poll/${channel_data_copy.polls[i]}`);
+    poll = poll.data;
+    for (let j = 0; j < poll.options.length; j++)
+    {
+      document.getElementById(`label_${poll.options[j]._id}`).innerHTML=`${poll.options[j].name} ${poll.options[j].likeCount}`
+      if (poll.options[j].likes.includes(userID))
+      {
+        document.getElementById(`option_${poll.options[j]._id}`).checked = true
+      }  
+    }
+  }
+  
 };
 
 const show_chat = (prefix) => {
@@ -231,7 +247,7 @@ const room = room_data(url);
 
 function setup() {
   // For setting up the froala editor (Rich Text editor)
-  socket.emit("join-room", ROOM_ID);
+  socket.emit("join-room", ROOM_ID, null, null, userID);
 }
 
 const get_data = (username, message, timestring, channel_id) => {
@@ -282,9 +298,12 @@ const generate_message = (
     messages.scrollTop = messages.scrollHeight;
   }
 };
-const send_chat_message = async () => {
+const send_chat_message = async (msg) => {
   var message_in_html_form = "";
-  if (document.getElementById("myFile").files.length) {
+  if (msg) {
+    message_in_html_form = msg
+  }
+  else if (document.getElementById("myFile").files.length) {
     const file = document.getElementById("myFile").files[0];
     let form = new FormData();
     form.append("upload", file);
@@ -293,16 +312,11 @@ const send_chat_message = async () => {
       message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`;
     else return;
     clear_editor();
-  }
-  else {
-    message_in_html_form = '<pre>' + document.getElementById('editor').value + '</pre>'
+  } else {
+    message_in_html_form =
+      "<pre>" + document.getElementById("editor").value + "</pre>";
     clear_editor();
   }
-  // After sending the message set the editor's content as null.
-  document.getElementById("editor").value = "";
-  document.getElementById("editor").readOnly = false;
-  document.getElementById("editor").style.backgroundColor = "white";
-  messages = document.getElementById("chat_messages");
   var message = message_in_html_form;
 
   await socket.emit(
@@ -647,18 +661,64 @@ function handleChatFileUpload() {
   const file = document.getElementById("myFile").files[0];
   document.getElementById("editor").value = file.name;
   document.getElementById("editor").readOnly = true;
-  document.getElementById('editor_container').style.backgroundColor = '#898989';
-  document.getElementById('editor').style.backgroundColor = '#898989';
-  document.getElementById('editor').style.color = 'white';
-  document.getElementById('editor_clear').style.backgroundColor = 'white'
+  document.getElementById("editor_container").style.backgroundColor = "#898989";
+  document.getElementById("editor").style.backgroundColor = "#898989";
+  document.getElementById("editor").style.color = "white";
+  document.getElementById("editor_clear").style.backgroundColor = "white";
 }
 socket.on("send_channel_message", generate_message);
 
 function clear_editor() {
-  document.getElementById('editor').value = '';
-  document.getElementById('myFile').value = '';
-  document.getElementById('editor').readOnly = false;
-  document.getElementById('editor_container').style.backgroundColor = 'white';
-  document.getElementById('editor').style.backgroundColor = 'white';
-  document.getElementById('editor').style.color = 'black';
+  document.getElementById("editor").value = "";
+  document.getElementById("myFile").value = "";
+  document.getElementById("editor").readOnly = false;
+  document.getElementById("editor_container").style.backgroundColor = "white";
+  document.getElementById("editor").style.backgroundColor = "white";
+  document.getElementById("editor").style.color = "black";
+}
+
+async function poll_modal_submission() {
+  const poll_name = document.getElementById('poll_name').value;
+  const options = document.getElementById('poll_tags').value.split(',');
+  const type = document.getElementById('SCP').checked ? 'SCP' : 'MCP'
+  const response = await axios.post('/api/create_poll', {
+    name: poll_name,
+    options,
+    type,
+    channel_id
+  });
+  console.log(response.data)
+  const input_type = type==='SCP' ? 'radio' : 'checkbox'
+  let msg = `<h6>${poll_name}</h6>`
+  for (let i = 0; i < options.length; i++){
+    msg += `
+    <div class="form-check">
+      <input class="form-check-input" type=${input_type} value="" id="option_${response.data.options[i]._id}" name="poll_${response.data._id}" onchange="toggle_option('${response.data._id}')">
+      <label class="form-check-label" for="poll_${response.data.options[i]._id}" id="label_${response.data.options[i]._id}">
+        ${options[i]} ${response.data.options[i].likeCount}
+      </label>
+    </div>
+    `
+  }
+  send_chat_message(msg)
+  document.getElementById("modal_close").click();
+}
+
+async function toggle_option(id) {
+  const options = document.getElementsByName('poll_'+id)
+  const is_checked = []
+  for (let i = 0; i < options.length; i++)
+  {
+    is_checked.push(options[i].checked)
+  }
+  let poll = await axios.post('/api/update_vote', {
+    id,
+    options: is_checked
+  })
+  poll = poll.data
+  console.log(poll)
+  for (let i = 0; i < poll.options.length; i++)
+  {
+    document.getElementById(`label_${poll.options[i]._id}`).innerHTML = `${poll.options[i].name} ${poll.options[i].likeCount}`
+  }
 }
