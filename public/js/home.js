@@ -17,6 +17,9 @@ let colors = [
 ];
 let stats = ["oldest", "popular", "latest", "liked"];
 let rooms_container = document.getElementById("rooms_container"); // Container that contains all rooms in which the user is present
+let rooms_container_title = document.getElementById("rooms_container_title");
+let educators_container = document.getElementById("educators_container");
+let educators_container_title=document.getElementById("educators_container_title")
 let user_container = document.getElementById("all_users_container"); // Container that contains all the users
 let stat_rooms_container = document.getElementById("stat_rooms_container");
 let like_icons = {},
@@ -32,7 +35,7 @@ function modal_submission() {
   // For creating a new room
   let name = document.getElementById("room_name").value;
   let description = document.getElementById("room_description").value;
-  console.log(name, description);
+  //console.log(name, description);
   let room_tags = document.getElementById("room_tags").value;
   room_tags = room_tags.split(",");
   if (name.length) {
@@ -49,7 +52,7 @@ function modal_submission() {
       })
       .then((response) => {
         response = response.data;
-        console.log(response);
+        //console.log(response);
         if (response != "Permission Denied!") {
           rooms_copy.push(response); // After successful creation of a room add that in the rooms_copy and also add it in the front end
 
@@ -86,9 +89,9 @@ async function get_rooms(stat) {
   } else {
     room_request.innerHTML = `<i class="fas fa-user-plus"></i> Request for a new Course</a>`;
   }
-  show_rooms("");
+  showSearchResults("");
   if (!(isEducator === "true")) {
-    console.log(stat);
+    //console.log(stat);
     switch (stat) {
       case "popular":
         {
@@ -116,23 +119,60 @@ async function get_rooms(stat) {
   }
 }
 
-function show_rooms(prefix) {
-  // Will be used to show the rooms
-  prefix = prefix.toLowerCase();
-  let rooms = rooms_copy.map((room) => {
-    // Now the room will contain all the rooms that contains particular string that is typed in the search bar
-    let name = room.name.toLowerCase();
-    if (name.includes(prefix)) {
-      return room;
-    }
-  });
+async function showSearchResults(searchString) {
+  if (searchString.length) {
+    searchString = searchString.toLowerCase();
+    //console.log("searching.... ", searchString);
+    let findTags = searchString.split(" ");
+    //console.log(findTags);
+    let data = await axios.post("/api/search", { findTags });
+    //console.log(data);
+    // Will be used to show the rooms
+    let rooms = data.data.rooms;
+    let users = data.data.users;
+    //console.log('----', rooms, users)
 
-  while (rooms_container.firstChild) {
-    rooms_container.removeChild(rooms_container.firstChild); // First remove all the previous present rooms in the container
-  }
-  for (let i = 0; i < rooms.length; i++) {
-    if (!rooms[i]) continue;
-    add_room(rooms[i], rooms_container); // Then add the rooms that fullfill all the conditions
+    while (rooms_container.firstChild) {
+      rooms_container.removeChild(rooms_container.firstChild); // First remove all the previous present rooms in the container
+    }
+    while (educators_container.firstChild) {
+      educators_container.removeChild(educators_container.firstChild); // First remove all the previous present rooms in the container
+    }
+    rooms_container_title.style.display = 'block';
+    educators_container_title.style.display = "block";
+    if (rooms.length) {
+      rooms_container_title.innerHTML = 'Courses-';
+      for (let i = 0; i < rooms.length; i++) {
+        // if (!rooms[i]) continue;
+        add_room(rooms[i].room, rooms_container); // Then add the rooms that fullfill all the conditions
+      }
+    } else {
+      rooms_container_title.innerHTML = "No courses for this search";
+    }
+  
+    if (users.length) {
+      educators_container_title.innerHTML = 'Educators-'
+      for (let i = 0; i < users.length; i++) {
+        // if (!rooms[i]) continue;
+        add_user(users[i].user, educators_container);
+      }
+    } else {
+      educators_container_title.innerHTML = 'No educators for this search'
+    }// Then add the rooms that fullfill all the conditions
+  } else {
+    educators_container_title.style.display = "none";
+    while (rooms_container.firstChild) {
+			rooms_container.removeChild(rooms_container.firstChild); // First remove all the previous present rooms in the container
+    }
+    while (educators_container.firstChild) {
+				educators_container.removeChild(educators_container.firstChild); // First remove all the previous present rooms in the container
+    }
+    rooms_container_title.style.display = "block";
+    rooms_container_title.innerHTML = "Enrolled courses -";
+			for (let i = 0; i < rooms_copy.length; i++) {
+				// if (!rooms[i]) continue;
+				add_room(rooms_copy[i], rooms_container); // Then add the rooms that fullfill all the conditions
+			}
   }
 }
 
@@ -189,6 +229,28 @@ function add_room(cur_room, rooms_container) {
   room.setAttribute("class", "room_card");
   rooms_container.appendChild(room);
 }
+ function add_user(user, rooms_container) {
+		let user_name = user.name,
+			user_email = user.email,
+			user_profilepicUrl = user.profilepicUrl;
+		let userDiv = document.createElement("a");
+		
+	
+		
+		userDiv.innerHTML = `
+     <div class="icon">
+        <img src="${user_profilepicUrl}" style="border-radius:4px;height:40%;width:40%;"></img>
+     </div>
+     <div class="room">
+        ${user_name} 
+     </div>
+
+    `;
+   userDiv.setAttribute("class", "room_card");
+   userDiv.setAttribute("href", `/profile/${user_email}`);
+	 rooms_container.appendChild(userDiv);
+ }
+ 
 
 function show_stat_rooms(rooms) {
   while (stat_rooms_container.firstChild) {
@@ -198,6 +260,7 @@ function show_stat_rooms(rooms) {
     if (!rooms[i]) continue;
     add_room(rooms[i], stat_rooms_container); // Then add the rooms that fullfill all the conditions
   }
+
 }
 
 function activate_stat_link(stat) {
@@ -259,4 +322,12 @@ const checkIfVerified = () => {
     alert("You are not verified by the administrator yet. If you have not uploaded your government id yet please upload it in the profile section ");
   }
 }
+// const searchHandler = async(searchString) => { 
+//   console.log('searching.... ',searchString);
+//   let findTags = searchString.split(" ");
+//   console.log(findTags);
+//   let data = await axios.post('/api/search', { findTags });
+//   console.log(data);
+
+// }
 get_rooms("popular");

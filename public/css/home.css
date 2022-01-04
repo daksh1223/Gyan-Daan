@@ -5,6 +5,11 @@ html {
   height: 100vh;
   background-color: #292929;
 }
+body{
+    background-color: #292929;
+  overflow: auto;
+  height: 100vh;
+}
 .body_container {
   background-color: #292929;
   overflow: hidden;

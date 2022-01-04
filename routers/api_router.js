@@ -20,7 +20,11 @@ const {
   create_new_channel,
   find_channel_by_id_and_populate_all_data,
 } = require("../Repository/channel_repository.js");
-const { get_tag_by_name, create_new_tag } = require("../Repository/tag_repository.js");
+const {
+	get_tag_by_name,
+	create_new_tag,
+	get_all_tags,
+} = require("../Repository/tag_repository.js");
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router
@@ -122,17 +126,17 @@ router
           if (user_present) {
             // Check whether the user is present in the room. If present then remove from all the channel.
             user_names.push(user_to_remove);
-            console.log(room.users, user_to_remove._id);
+            //console.log(room.users, user_to_remove._id);
             room.users = room.users.filter((user) => {
               return user != String(user_to_remove._id);
             });
-            console.log(room.users);
+            //console.log(room.users);
             for (let i = 0; i < room.channels.length; i++) {
-              console.log(all_channels[i].users);
+              //console.log(all_channels[i].users);
               all_channels[i].users = all_channels[i].users.filter(
                 (user) => user != String(user_to_remove._id)
               );
-              console.log(all_channels[i].users);
+              //console.log(all_channels[i].users);
               all_channels[i].save();
             }
             user_to_remove.rooms = user_to_remove.rooms.filter((temp_room) => {
@@ -192,7 +196,7 @@ router
 
     let user = await find_user_by_email(req.user.email);
     let room = await find_room_by_id_and_populate_channels(room_id);
-    console.log(room);
+    //console.log(room);
     user.rooms.remove({ _id: room_id });
     room.users.remove({ _id: user._id });
     room.userCount = room.userCount - 1;
@@ -203,7 +207,7 @@ router
         user_channels.save();
       }
     }
-    console.log(room);
+    //console.log(room);
     await user.save();
     await room.save();
     res.json({ message: "Successfully deleted!" });
@@ -279,7 +283,7 @@ router
     }
 
     channel.save();
-    console.log(channel);
+    //console.log(channel);
     user.save();
     res.json(channel);
   })
@@ -337,7 +341,7 @@ router
   });
 router
   .post("/room/:room_id/join", async (req, res) => {
-    console.log(req.user);
+    //console.log(req.user);
     let room = await find_room_by_id(req.params.room_id);
     let user = await find_user_by_email(req.user.email);
     if (!room.users.includes(user._id)) {
@@ -350,7 +354,7 @@ router
       room.save();
       user.save();
     } else {
-      console.log("here");
+      //console.log("here");
       res.send("Already in the room");
     }
   })
@@ -381,25 +385,71 @@ router
   });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+const removeAddUserFromTags = async(user, tag) => { 
+  let userIndex = tag.users.indexOf(user.email);
+  let tagIndex = user.tags.indexOf(tag.name);
+  if (userIndex != -1) {
+    tag.users.splice(userIndex, 1);
+  } else { 
+    tag.users.push(user.email);
+  }
+   if (tagIndex != -1) {
+			user.tags.splice(tagIndex, 1);
+		} else {
+			user.tags.push(tag.name);
+  }
+
+  await tag.save();
+  
+  return "successful";
+  
+}
+// const removeAddRoomsFromTags = async(room, tag) => {
+// 	let roomIndex = tag.rooms.indexOf(room._id);
+//   let tagIndex = room.tags.indexOf(tag.name);
+// 	if (roomIndex != -1) {
+// 		tag.rooms.splice(roomIndex, 1);
+// 	} else {
+// 		tag.rooms.push(room._id);
+// 	}
+
+//    if (tagIndex != -1) {
+// 			room.tags.splice(tagIndex, 1);
+// 		} else {
+// 			room.tags.push(tag.name);
+//   }
+
+//   await tag.save();
+  
+//   return "successful";
+// };
 router.route("/set_user_profile").post(async (req, res) => {
 
   let user = await find_user_by_email(req.user.email);
   let tags = req.body.tags;
-  user.tags = [];
- 
-  for (let i = 0; i < tags.length; i++) { 
-    let tag = await get_tag_by_name(tags[i]);
-
-		if (!tag) {
-			tag = await create_new_tag(tags[i]);
-		}
+  let removeTags = user.tags.filter((tag) => { return !tags.includes(tag) })
+  let addTags = tags.filter((tag) => { return !user.tags.includes(tag) });
+  // console.log('remove - ', removeTags);
+  // console.log('add - ', addTags);
+  for (let i = 0; i < removeTags.length; i++) {
+    let removeTag = await get_tag_by_name(removeTags[i]);
+    await removeAddUserFromTags(user, removeTag);
+  }
   
-	 user.tags.push(tag.name);
+ 
+  for (let i = 0; i < addTags.length; i++) { 
+    let addTag = await get_tag_by_name(addTags[i]);
+
+		if (!addTag) {
+			addTag = await create_new_tag(addTags[i]);
+		}
+      await removeAddUserFromTags(user, addTag);
   }
   user.profilepicUrl = req.body.profilepicUrl;
   user.about = req.body.about;
   user.idUrl = req.body.idUrl
   await user.save();
+  // console.log(user)
 
   return res.send('successfully data received');
 })
@@ -436,7 +486,59 @@ router.get("/all_requests", async (req, res) => {
 });
 router.get("/get_req_data/:id", async (req, res) => {
   let req_data=await CourseRequest.findById(req.params.id);
-  console.log(req_data);
+  //console.log(req_data);
   res.json(req_data);
+})
+router.route('/search').post(async (req, res) => {
+  let allTags = await get_all_tags();
+  let findTags = req.body.findTags;
+  let users = new Map();
+  let rooms = new Map();
+  let foundTags = [];
+  for (let j = 0; j < allTags.length; j++) {
+    for (let i = 0; i < findTags.length; i++) {
+      
+      if (allTags[j].name.includes(findTags[i])) {
+        foundTags.push(allTags[j]);
+        break;
+      }
+    }
+  }
+  for (let i = 0; i < foundTags.length; i++) { 
+    let tag = foundTags[i];
+    //console.log("yahoo! found tag " + tag.name);
+    for (let i = 0; i < tag.users.length; i++) {
+      let email = String(tag.users[i]);
+      let user = users.get(email);
+      let userData = await find_user_by_email(email);
+      // console.log(user,id)
+      if (!user) {
+        users.set(email, {user:userData, count: 1 });
+      } else { 
+        users.set(email, { user:userData,count: user.count + 1 });
+      }
+    }
+    //console.log(tag.rooms)
+     for (let i = 0; i < tag.rooms.length; i++) {
+			 let id = String(tag.rooms[i]);
+       let room = rooms.get(id);
+       let roomData = await find_room_by_id(id);
+      // console.log('roomdata', roomData);
+				if (!room) {
+          rooms.set(id, { room: roomData,count: 1 });
+				} else {
+					rooms.set(id, { room: roomData, count: room.count + 1 });
+				}
+			}
+
+       
+  }
+  // console.log(users);
+  // console.log(rooms);
+
+  return res.json({
+		users: [...users.values()],
+		rooms: [...rooms.values()],
+	});
 })
 exports.router = router;
