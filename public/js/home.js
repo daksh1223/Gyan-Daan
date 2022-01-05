@@ -134,7 +134,7 @@ async function showSearchResults(searchString) {
     let findTags = searchString.split(" ");
     //console.log(findTags);
     let data = await axios.post("/api/search", { findTags });
-    //console.log(data);
+    //console.log(data.data);
     // Will be used to show the rooms
     let rooms = data.data.rooms;
     let users = data.data.users;

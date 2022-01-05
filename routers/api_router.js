@@ -552,12 +552,21 @@ router.route('/search').post(async (req, res) => {
 
        
   }
-  // console.log(users);
+  let usersArr = [...users.values()];
+  let roomsArr=[...rooms.values()]
+  // console.log(x);
   // console.log(rooms);
-
+  usersArr.sort((a, b) => {
+		return b.count - a.count;
+  });
+  roomsArr.sort((a, b) => {
+    return b.count - a.count;
+  })
+  // console.log(x);
+  
   return res.json({
-		users: [...users.values()],
-		rooms: [...rooms.values()],
+		users: usersArr,
+		rooms: roomsArr,
 	});
 })
 
