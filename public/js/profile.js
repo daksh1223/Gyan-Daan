@@ -60,7 +60,7 @@ function previewProfileImage() {
 
 const addTagsandProfile = () => { 
 	let profielurl = profilepicUrl;
-	$("#profile_pic").attr("src",profielurl);
+	$("#profile_pic").attr("src",`/${profielurl}`);
 	let tagsString = '';
 	for (let i = 0; i < tags.length; i++) {
 		tagsString=tagsString+tags[i]+','
