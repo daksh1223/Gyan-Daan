@@ -1,30 +1,27 @@
 const url = `/api/room/${ROOM_ID}`;
 var socket = io("/"); // For connecting the socket.
 let channel_id
-
+var current_room_data;
 var channel_data_copy; // Will contain all te data present in the current channel
 var channel_data_messages; // Will contain all the messages present in the current channel.
 var current_channel; // ID of the current channel
 var general_channel; // ID of the General channel
 var current_channel_message_id; // ID of the current channel message
 var current_channel_meet_link = null;
+var current_meet;
 let create_meet_container = document.getElementById("create_meet");
 let create_poll_container = document.getElementById("create_poll");
 if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
   create_poll_container.innerHTML = `<i class="fas fa-poll-h"></i> Create Poll `;
-  document.getElementById(
-    "channel_features"
-  ).innerHTML += ` <a href="#" class="btn btn-link" style="float:right;transition: all ease-in-out 0.2s;
-  cursor: pointer; " title="Add Channel" data-toggle="modal"
-  data-target="#channel_creation_modal"><i class="fas fa-plus"></i></a>`;
 }
 const room_data = async (url) => {
   promise = await axios.get(url); // Fetch all the data present in this room
   var room = document.getElementById("room_name");
+  var room_desc = document.getElementById("room_desc");
   var room_container = document.createElement("div");
   icon = document.createElement("div");
-
+  current_room_data = promise.data.room_detail;
   let icon_value = promise.data.room_detail.name[0].toUpperCase();
   if (promise.data.room_detail.name.length > 1) {
     icon_value += promise.data.room_detail.name[1].toUpperCase();
@@ -32,15 +29,14 @@ const room_data = async (url) => {
   // Will set the properties of the room in the frontend
 
   let temp = ` 
-    <a href="/home" class="home_link" style="float:left;margin-left:3%;margin-top:1%;">
-      <i class="fas fa-angle-left"></i> Home</a>
-    <div class="icon">
-      <img src="https://place-hold.it/80/${promise.data.room_detail.room_color}/fff&text=${icon_value}&fontsize=20" style="border-radius:4px;height:40%;width:40%;"></img>
+    <a href="/home" class="home_link" style="float:left;margin-left:5%">
+      <i class="fas fa-home mx-1" ></i> Home</a>
+    <div style="padding:5%; width:20vw; height:20vw;" >
+      <img src="https://place-hold.it/80/${promise.data.room_detail.room_color}/fff&text=${icon_value}&fontsize=20" style="border-radius:50%;height:100%;width:100%;"></img>
     </div>
-    <div class="room" style="width:100%;">
-      <div>
-        ${promise.data.room_detail.name}
-        <a class="dropdown-toggle" id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="float:right;color:white;margin-right:2%"></a>
+    <div style="width:100%;display:flex;flex-direction:row;padding:0 10%;" class="shadow-sm">
+        <h2 style="color:black; align-self:center" id="room_data_name">${promise.data.room_detail.name}</h2>
+        <a id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="color:black;margin:auto"><i class="fas fa-bars"></i></a>
         <ul class="dropdown-menu" >`;
   if (isEducator != "false") {
     temp += `  <li>
@@ -54,6 +50,16 @@ const room_data = async (url) => {
               <i class="fas fa-user-minus"></i> Remove users
             </a>
             
+          </li>
+          <li>
+          <a href="#" class="dropdown-item" title="Add Channel" data-toggle="modal"
+           data-target="#channel_creation_modal"><i class="fas fa-plus"></i> Add Channel</a>
+          </li>
+          <li>
+            <a class="dropdown-item" href="#" title="Edit Room Details" data-toggle="modal"
+           data-target="#RoomcreationModal" onclick="fillRoomEditModal()">
+              <i class="fas fa-edit"></i> Edit Room
+            </a>
           </li>`;
   }
   temp += `
@@ -63,8 +69,8 @@ const room_data = async (url) => {
             </a>
           </li>
         </ul>
-      </div>
     </div>
+    <div id="room_desc" class="shadow-sm">${promise.data.room_detail.description}</div>
   `;
   room_container.innerHTML = temp;
   room_container.style.display = "flex";
@@ -83,16 +89,22 @@ const room_data = async (url) => {
         "id",
         promise.data.room_detail.channels[id]._id + "container"
       );
+      temp_channel_container.setAttribute(
+        "onclick",
+        `channel_data('${promise.data.room_detail.channels[id]._id}')`
+      );
       temp_channel_container.setAttribute("class", "container_element");
+      temp_channel_container.style.cursor = "pointer";
 
       temp_channel_setting_container = document.createElement("div");
       if (id) {
         let temp = `
-      <a class="container_element"  style="float:left;" href="#" id=${promise.data.room_detail.channels[id]._id} onclick="channel_data('${promise.data.room_detail.channels[id]._id}')">
+      <a style="float:left;" href="#" id=${promise.data.room_detail.channels[id]._id} onclick="channel_data('${promise.data.room_detail.channels[id]._id}')">
       ${promise.data.room_detail.channels[id].name}
       </a>
        <div class="container_element_settings dropdown">
-          <a class="dropdown-toggle" id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="float:right;color:white;">
+          <a id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="float:right;margin-right:1%;">
+            <i class="fas fa-ellipsis-h"></i>
           </a>
   
           <ul class="dropdown-menu">`;
@@ -124,7 +136,7 @@ const room_data = async (url) => {
         temp_channel_container.innerHTML = temp;
       } else {
         temp_channel_container.innerHTML = `
-      <a class="container_element"  style="float:left;" href="#" id=${promise.data.room_detail.channels[id]._id} onclick="channel_data('${promise.data.room_detail.channels[id]._id}')">
+      <a  style="float:left;" href="#" id=${promise.data.room_detail.channels[id]._id} onclick="channel_data('${promise.data.room_detail.channels[id]._id}')">
       ${promise.data.room_detail.channels[id].name}
       </a>
       <div class="container_element_settings dropdown">
@@ -142,10 +154,12 @@ const room_data = async (url) => {
 const channel_data = async (cid) => {
   channel_id = cid;
   if (current_channel) {
-    document.getElementById(current_channel).style.color = "white"; // Set the previously selected channel color as white
+    document.getElementById(current_channel + 'container').style.backgroundColor = ""; // Set the previously selected channel color as white
+    document.getElementById(current_channel).style.color = "black";
   }
-
-  document.getElementById(cid).style.color = "#007bff";
+  current_meet = null;
+  document.getElementById(cid).style.color = "#4f46e5";
+  document.getElementById(cid+ 'container').style.backgroundColor = "#e5ddd5";
   current_channel_meet_link = null;
 
   channel = await axios.get(`/api/channel/${cid}`); // Get the current channel's data
@@ -156,35 +170,39 @@ const channel_data = async (cid) => {
   document.getElementById("channel_name_display").innerHTML = channel.data.name;
   channel_data_messages = channel.data.messages;
   messages = document.getElementById("chat_messages");
-  user_container = document.getElementById("users_container");
   meets_container = document.getElementById("meets_container");
-
-  while (user_container.firstChild) {
+  user_container = document.getElementById("users_container");
+    while (user_container.firstChild) {
     user_container.removeChild(user_container.firstChild); // Remove all the users present in the channel users container
   }
+
   while (meets_container.firstChild) {
     meets_container.removeChild(meets_container.firstChild); // Remove all the meets present in the channel meet container
   }
   for (var i = 0; i < channel.data.users.length; i++) {
     // Add current channel's users
     temp_user = document.createElement("div");
-    temp_user.style.color = "white";
     temp_user.setAttribute("id", channel.data.users[i].email);
     temp_user.setAttribute("title", "Email Id: " + channel.data.users[i].email);
     temp_user.setAttribute("class", "container_element users pointer");
-    temp_user.innerHTML = channel.data.users[i].name;
+    temp_user.innerHTML =  channel.data.users[i].name ;
     user_container.appendChild(temp_user);
   }
   for (var i = 0; i < channel.data.meets.length; i++) {
     // Add current channel's meet
     temp_meet = document.createElement("div");
-    temp_meet.style.color = "white";
     temp_meet.innerHTML = `
-    <a class="container_element" href="#" onclick="meet_message('${channel.data.meets[i]._id}')">
+    <a  href="#" onclick="meet_message('${channel.data.meets[i]._id}')" >
       ${channel.data.meets[i].name}
     </a>
     `;
     temp_meet.setAttribute("class", "container_element");
+    temp_meet.setAttribute("id",`${channel.data.meets[i]._id}meet` );
+    temp_meet.setAttribute(
+        "onclick",
+        `meet_message( '${channel.data.meets[i]._id}')`
+    );
+    temp_meet.style.cursor = "pointer"
     meets_container.appendChild(temp_meet);
   }
   show_chat(""); // Show the chat of current channel
@@ -192,14 +210,25 @@ const channel_data = async (cid) => {
   {
     let poll = await axios.get(`/api/get_poll/${channel_data_copy.polls[i]}`);
     poll = poll.data;
+    let total_votes = 0;
     for (let j = 0; j < poll.options.length; j++)
     {
-      document.getElementById(`label_${poll.options[j]._id}`).innerHTML=`${poll.options[j].name} ${poll.options[j].likeCount}`
+      document.getElementById(`label_${poll.options[j]._id}`).innerHTML = `<div style="display:flex;flex-direction:column;width:100%">
+      <div style="display:flex;flex-direction:row; width:100%">
+      <div>${poll.options[j].name}</div> <div style="margin-left:auto">${poll.options[j].likeCount}</div></div></div>`
       if (poll.options[j].likes.includes(userID))
       {
         document.getElementById(`option_${poll.options[j]._id}`).checked = true
       }  
+      total_votes += poll.options[j].likeCount;
     }
+    for (let j = 0; j < poll.options.length; j++)
+    {
+      let width = total_votes ?  Math.floor((poll.options[j].likeCount * 100) / total_votes) :  0;
+      document.getElementById(`progressbar_${poll.options[j]._id}`).setAttribute('aria-valuenow', width);
+      document.getElementById(`progressbar_${poll.options[j]._id}`).style.width = `${width}%`;
+    }
+    
   }
   
 };
@@ -275,24 +304,28 @@ const generate_message = (
     messages = document.getElementById("chat_messages");
 
     message_card = document.createElement("div");
-    message_card.style.marginBottom = "0.5%";
-    message_card.style.paddingLeft = "0.5%";
-    message_card.className = "card";
+    message_card.style.marginBottom = "1%";
+    message_card.style.width = "fit-content";
+    message_card.style.marginLeft = "2.5%";
+    message_card.style.maxWidth = "60%";
+    message_card.style.padding = "1%";
+    message_card.className = "card shadow";
     message_card.innerHTML = `
-    <b>
-      <div class="card-title" style="margin-top:0.5%;font-size:1rem;">
+      <strong style="margin-top:0.5%;">
         ${user_name}
-      </div>
-      <div class="card-subtitle" style="font-size:1rem;">
-        ${timestring}
-      </div>
-    </b>
-    <div class="card-body" style="margin-top:0.5%;font-size:1rem;">
+      </strong>
+    <div style="margin-top:0.5%;word-wrap: break-word;overflow:hidden">
       ${message}
     </div>
+    <small  style="margin-left:auto;">
+        ${timestring}
+      </small>
     `;
     if (is_user_post) {
-      message_card.style.borderLeft = "4px solid #0354ab";
+      message_card.style.marginLeft = "auto";
+      message_card.style.marginRight = "2.5%";
+      message_card.style.backgroundColor = "rgb(79, 70, 229)";
+      message_card.style.color = "white"
     }
     messages.append(message_card);
     messages.scrollTop = messages.scrollHeight;
@@ -348,11 +381,19 @@ const send_chat_message = async (msg) => {
 function start_meet() {
   location = current_channel_meet_link; // Will change the current url to the meet's url
 }
-async function meet_message(cid) {
+async function meet_message( cid) {
   current_channel_message_id = cid;
   channel = await axios.get(`/api/channel/${cid}`); //Get the meet channel's data
   channel_data_messages = channel.data.messages;
   document.getElementById("channel_name_display").innerHTML = channel.data.name;
+  if (current_meet) {
+    document.getElementById(`${current_meet}meet`).style.backgroundColor = '';
+    document.getElementById(`${current_meet}meet`).children[0].style.color = '';
+  }
+  document.getElementById(`${cid}meet`).style.backgroundColor = '#e5ddd5';
+  document.getElementById(`${cid}meet`).children[0].style.color = '#4f46e5';
+  
+  current_meet = cid;
 
   // Set the properties of the join meet button
   document.getElementById("join_meet_btn").innerHTML = `Join Meet`;
@@ -388,16 +429,16 @@ function channel_modal_submission() {
         response = response.data;
         var channel_container = document.getElementById("channels_container");
         var temp_channel_container = document.createElement("div");
-
-        var temp_channel = document.createElement("a");
-
+        temp_channel_container.setAttribute('onclick', `channel_data('${response._id}')`);
+        temp_channel_container.setAttribute('class', 'container_element');
+        temp_channel_container.setAttribute('style', 'cursor: pointer; background-color: rgb(237, 237, 237);');
         let temp = `
-          <a href="#" id=${response._id} class="container_element" style="float:left;" onclick="channel_data('${response._id}')" >
+          <a href="#" id=${response._id} style="float:left;" onclick="channel_data('${response._id}')" >
             ${response.name}
           </a>
           <div class="container_element_settings dropdown">
-            <a class="dropdown-toggle" style="float:right;color:white;" id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
-
+            <a style="float:right;margin:1%;" id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+              <i class="fas fa-ellipsis-h"></i>
             </a>
             <ul class="dropdown-menu">
             `;
@@ -427,7 +468,6 @@ function channel_modal_submission() {
         `;
         temp_channel_container.innerHTML = temp;
         temp_channel_container.setAttribute("id", response._id + "container");
-        temp_channel_container.setAttribute("class", "container_element");
         channel_container.appendChild(temp_channel_container);
         document.getElementById("modal_close").click();
       });
@@ -462,7 +502,7 @@ async function meet_modal_submission() {
         Meet start date: ${date}<br>
         Meet start time: ${time}<br>
         </b>
-        <hr style="border: 1px solid black;background-color: black;height:1px;">
+        <hr style="border: 1px solid black;height:1px;">
         To get more info about this 
         <button class="btn btn-dark">
         <a href='#' onclick=meet_message('${response._id}') class="custom_link_black" type="button"  style="color:white;"
@@ -488,10 +528,9 @@ async function meet_modal_submission() {
 
     meets_container = document.getElementById("meets_container");
     temp_meet = document.createElement("div");
-    temp_meet.style.color = "white";
     temp_meet_name = document.createElement("a");
     temp_meet.setAttribute("class", "container_element");
-    temp_meet_name.setAttribute("class", "container_element");
+    temp_meet.setAttribute("id", `${response._id}meet`);
     temp_meet_name.innerHTML = name;
     temp_meet_name.href = "#";
     temp_meet_name.setAttribute("onclick", `meet_message('${response._id}')`);
@@ -559,11 +598,10 @@ async function add_users_modal_submission() {
 
       for (var i = 0; i < response.data.length; i++) {
         temp_user = document.createElement("div");
-        temp_user.style.color = "white";
         temp_user.setAttribute("title", "Email Id: " + response.data[i].email);
         temp_user.setAttribute("id", response.data[i].email);
         temp_user.setAttribute("class", "container_element pointer");
-        temp_user.innerHTML = response.data[i].name;
+        temp_user.innerHTML = '<div style="border-radius:50%; width:40px; height:40px;background-color: grey;"> </div>' + response.data[i].name;
         user_container.appendChild(temp_user);
       }
     }
@@ -581,11 +619,11 @@ async function add_users_modal_submission() {
 
       for (var i = 0; i < response.data.length; i++) {
         temp_user = document.createElement("div");
-        temp_user.style.color = "white";
+
         temp_user.setAttribute("class", "container_element");
         temp_user.setAttribute("title", "Email Id: " + response.data[i].email);
         temp_user.setAttribute("id", response.data[i].email);
-        temp_user.innerHTML = response.data[i].name;
+        temp_user.innerHTML = '<div style="border-radius:50%; width:40px; height:40px; background-color: grey;"></div>' + response.data[i].name;
         user_container.appendChild(temp_user);
       }
     }
@@ -661,7 +699,6 @@ function handleChatFileUpload() {
   const file = document.getElementById("myFile").files[0];
   document.getElementById("editor").value = file.name;
   document.getElementById("editor").readOnly = true;
-  document.getElementById("editor_container").style.backgroundColor = "#898989";
   document.getElementById("editor").style.backgroundColor = "#898989";
   document.getElementById("editor").style.color = "white";
   document.getElementById("editor_clear").style.backgroundColor = "white";
@@ -672,9 +709,9 @@ function clear_editor() {
   document.getElementById("editor").value = "";
   document.getElementById("myFile").value = "";
   document.getElementById("editor").readOnly = false;
-  document.getElementById("editor_container").style.backgroundColor = "white";
   document.getElementById("editor").style.backgroundColor = "white";
   document.getElementById("editor").style.color = "black";
+  document.getElementById("editor").style.height = "100%";
 }
 
 async function poll_modal_submission() {
@@ -692,11 +729,16 @@ async function poll_modal_submission() {
   let msg = `<h6>${poll_name}</h6>`
   for (let i = 0; i < options.length; i++){
     msg += `
-    <div class="form-check">
-      <input class="form-check-input" type=${input_type} value="" id="option_${response.data.options[i]._id}" name="poll_${response.data._id}" onchange="toggle_option('${response.data._id}')">
+    <div class="form-check poll_option" >
+      <input class="form-check-input"  type=${input_type} value="" id="option_${response.data.options[i]._id}" name="poll_${response.data._id}" onchange="toggle_option('${response.data._id}')">
       <label class="form-check-label" for="poll_${response.data.options[i]._id}" id="label_${response.data.options[i]._id}">
-        ${options[i]} ${response.data.options[i].likeCount}
+      <div style="display:flex;flex-direction:column;width:100%;">
+      <div style="display:flex;flex-direction:row;width:100%">
+      <div>${options[i]}</div> <div style="margin-left:auto">${response.data.options[i].likeCount}</div></div></div>
       </label>
+      <div class="progress" style="height:5px">
+  <div class="progress-bar progress-bar-striped" id="progressbar_${response.data.options[i]._id}" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
     </div>
     `
   }
@@ -716,9 +758,60 @@ async function toggle_option(id) {
     options: is_checked
   })
   poll = poll.data
-  console.log(poll)
+  let total_votes = 0;
   for (let i = 0; i < poll.options.length; i++)
-  {
-    document.getElementById(`label_${poll.options[i]._id}`).innerHTML = `${poll.options[i].name} ${poll.options[i].likeCount}`
+    {
+      document.getElementById(`label_${poll.options[i]._id}`).innerHTML = `<div style="display:flex;flex-direction:column;width:100%">
+      <div style="display:flex;flex-direction:row; width:100%">
+      <div>${poll.options[i].name}</div> <div style="margin-left:auto">${poll.options[i].likeCount}</div></div></div>`
+      total_votes += poll.options[i].likeCount;
+    }
+    for (let j = 0; j < poll.options.length; j++)
+    {
+      let width =total_votes ? Math.floor((poll.options[j].likeCount * 100) / total_votes) : 0;
+      document.getElementById(`progressbar_${poll.options[j]._id}`).setAttribute('aria-valuenow', width);
+      document.getElementById(`progressbar_${poll.options[j]._id}`).style.width = `${width}%`;
+    }
+}
+
+function fillRoomEditModal() {
+  document.getElementById("edit_room_name").value = current_room_data.name;
+  document.getElementById("edit_room_description").value = current_room_data.description;
+  current_room_data.tags.forEach(tag => {
+    $('#edit_room_tags').tagsinput('add', tag);
+  })
+}
+
+async function room_edit_modal_submission() {
+  let name = document.getElementById("edit_room_name").value;
+  let description = document.getElementById("edit_room_description").value;
+  let room_tags = document.getElementById("edit_room_tags").value;
+  room_tags = room_tags.split(",");
+  if (name.length) {
+    roominfo = {
+      id: current_room_data._id,
+      name,
+      tags: room_tags,
+      description
+    };
+
+    axios
+      .put("/home/add_room", {
+        data: { roominfo },
+      })
+      .then((response) => {
+        response = response.data;
+        if (response != "Permission Denied!") {
+          document.getElementById('room_desc').innerHTML = response.description;
+          document.getElementById('room_data_name').innerHTML = response.name;
+          current_room_data = response;
+        }
+      });
+    document.getElementById("room_edit_modal_close").click();
   }
+}
+
+function toggleChannelIcon(event, id) {
+  let open = event.getAttribute('aria-expanded');
+  document.getElementById(id).setAttribute('class', open==="true" ? 'fas fa-caret-square-right mx-2' : 'fas fa-caret-square-down mx-2')
 }

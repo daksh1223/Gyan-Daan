@@ -6,6 +6,9 @@
   "scripts": {
     "start": "nodemon server.js"
   },
+  "nodemonConfig": {
+    "ignore": ["public/*"]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

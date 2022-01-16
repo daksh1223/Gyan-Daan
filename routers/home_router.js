@@ -28,11 +28,18 @@ router
   .route("/add_room")
   .post(async (req, res) => {
     // Create the room using the create room function and then return that room in JSON format.
-    console.log(req.user)
     if (req.user.isEducator) {
       const room = await home_controller.create_room(
         req.body.data.roominfo,
         req.user
+      );
+      res.json(room);
+    } else res.json("Permission Denied!");
+  })
+  .put(async (req, res) => {
+    if (req.user.isEducator) {
+      const room = await home_controller.update_room(
+        req.body.data.roominfo,
       );
       res.json(room);
     } else res.json("Permission Denied!");
