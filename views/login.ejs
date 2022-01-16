@@ -13,18 +13,18 @@
   <title>True Meet | Login</title>
 </head>
 
-<body class="bg-dark bg-gradient" style="min-height:100vh; width: 98vw;">
-  <h3 class="text-white mx-3 mt-3">Gyan Daan</h3>
+<body style="min-height:100vh; width: 98vw;">
+  <h3 class="mx-3 mt-3" style="color: rgb(79, 70, 229);">Gyan Daan</h3>
   <main class="col mb-1">
     <div class="px-4 py-5 my-5 text-center text-white">
-      <h1 class="display-5 fw-bold">Login To Your Account</h1>
+      <h1 class="display-5 fw-bold" style="color:rgb(79, 70, 229)">Login To Your Account</h1>
       <div class="col-lg-6 mx-auto">
-        <p class="lead mb-4" style="color: rgb(172, 172, 172);">We are a group of volunteers spreading knowledge through
+        <p class="lead mb-4" style="color: black">We are a group of volunteers spreading knowledge through
           technology.<br /> You can <strong>Sign Up</strong>
           or <strong>Sign In</strong> using one of the following methods</p>
       </div>
     </div>
-    <div class="row" style="margin-left:20%; color:rgb(172, 172, 172)">
+    <div class="row" style="margin-left:20%;">
       <div class="col" style="max-width:35%;">
         <div class="option" onclick="onStudentClick()">
           <input type="radio" name="card" id="silver" value="silver">
@@ -51,11 +51,11 @@
       <div class="col">
         <form action="/auth/google" method="POST"  >
           <input type="hidden" name="isEducator" id="googleIsEducator" />
-          <button type="submit" class="mb-1 text-white" style="width:320px; height:60px"><i class="fab fa-google me-2"></i> Sign in with Google</button>
+          <button type="submit" class="mb-1" style="width:320px; height:60px"><i class="fab fa-google me-2"></i> Sign in with Google</button>
         </form>
         <form action="/auth/microsoft" method="POST" >
           <input type="hidden" name="isEducator" id="microsoftIsEducator" />
-          <button type="submit" class="text-white" style="width:320px; height:60px"><i class="fab fa-microsoft me-2"></i>Sign in with Microsoft</button>
+          <button type="submit" style="width:320px; height:60px"><i class="fab fa-microsoft me-2"></i>Sign in with Microsoft</button>
         </form>
       </div>
     </div>
