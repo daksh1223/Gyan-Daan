@@ -80,8 +80,10 @@ const profileEJS = async() => {
 	idUrl = reqUser.idUrl;
 	tags = reqUser.tags;
 	let htmlString;
-
+    
 	if (reqUser.email == loggedUser.email) {
+		let tagsInputHtml = "";
+		let idHtml = "";
 		let about = "";
 		let verification='Pending';
 		if (loggedUser.isVerified) {
@@ -90,10 +92,20 @@ const profileEJS = async() => {
 		if (loggedUser.about) { 
 			about = loggedUser.about;
 		}
-			let idHtml = "";
+		if (loggedUser.isEducator) {
+			tagsInputHtml = `<div class="form-group">
+					<label>Add topics</label>
+					<input type="text" data-role="tagsinput"  id="user_tags" />
+					<small class="form-text" style="font-weight: 400">
+						Add tags/topics by typing.<br />
+						Press enter after typing to add a new tag/topic.
+					</small>
+				</div>`;
+		
+			
 
-		if (!loggedUser.idUrl) {
-			idHtml = `<div class='form-group' id='filePar'>
+			if (!loggedUser.idUrl) {
+				idHtml = `<div class='form-group' id='filePar'>
 				<label for='file' class='control-label'>
 					Government Id
 				</label>
@@ -106,9 +118,9 @@ const profileEJS = async() => {
 			</div>
 			`;
 
-		} else { 
+			} else {
            
-			idHtml = `<div class='form-group'>
+				idHtml = `<div class='form-group'>
 			<label class='control-label'>government Id - submitted</label>
 			</div>
 			<div class='form-group'>
@@ -116,6 +128,8 @@ const profileEJS = async() => {
 			</div>
 			
 			`;
+			}
+			
 		}
 
 		htmlString = `<form class="form-container">
@@ -165,14 +179,7 @@ edit
                    
 			
 				</div>
-				<div class="form-group">
-					<label>Add topics</label>
-					<input type="text" data-role="tagsinput"  id="user_tags" />
-					<small class="form-text" style="font-weight: 400">
-						Add tags/topics by typing.<br />
-						Press enter after typing to add a new tag/topic.
-					</small>
-				</div>
+			    ${tagsInputHtml}
 				${idHtml}
 				<button type="button" onclick="onSubmit()" class="btn btn-primary">
 					Edit
