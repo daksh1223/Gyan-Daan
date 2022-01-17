@@ -16,13 +16,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="/css/home.css" />
+    <link rel="stylesheet" type="text/css" href="/css/utility.css" />
 </head>
 
 <body>
     <div class="body_container">
 
-        <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: black;">
+        <nav class="navbar navbar-expand-lg navbar-light" style="box-shadow: 5px 0px 10px #888888;">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler"
                 aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -44,9 +44,9 @@
                                     <%= user_name %>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item"
-                                            href='/logout/'>
-                                            <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
+                                    <li>
+                                        <a class="dropdown-item" href='/logout'>
+                                            <i class="fas fa-sign-out-alt" style="color:black;"></i>Sign out
                                         </a>
                                     </li>
                                 </ul>
@@ -59,8 +59,8 @@
         <div class="container" style="text-align:center;margin-top:2%;font-weight: 500;font-size:2rem;">
             <div style="display:flex;flex-direction:column;">
                 <img id="QR_Code"
-                    src="https://www.upiqrcode.com/upiqrtestapi?apikey=olymhx&seckey=MaNgOaPp&vpa=dakshsharma8777@oksbi&payee=Daksh%20Sharma&front=FFFFFF&back=000000"
-                    style="border:3.5px solid white" />
+                    src="https://www.upiqrcode.com/upiqrtestapi?apikey=olymhx&seckey=MaNgOaPp&vpa=dakshsharma8777@oksbi&payee=Daksh%20Sharma"
+                    style="border:4px solid black" />
 
             </div>
             <div class="form-group row form_attr">
@@ -91,7 +91,7 @@
         function render_QR_Code() {
             let image = document.getElementById("QR_Code");
             let amount = document.getElementById("Amount").value || 0;
-            let url = "https://www.upiqrcode.com/upiqrtestapi?apikey=olymhx&seckey=MaNgOaPp&vpa=dakshsharma8777@oksbi&payee=Daksh%20Sharma&front=FFFFFF&back=000000"
+            let url = "https://www.upiqrcode.com/upiqrtestapi?apikey=olymhx&seckey=MaNgOaPp&vpa=dakshsharma8777@oksbi&payee=Daksh%20Sharma"
                 + `&amount=${amount}`;
             image.src = url;
         }   

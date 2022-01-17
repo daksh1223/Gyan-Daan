@@ -25,6 +25,8 @@ function resize() {
   let video_grid = document.getElementById("video-grid");
   let Width = video_grid.offsetWidth - Margin * 2;
   let Height = video_grid.offsetHeight - Margin * 2;
+  
+  if(!pinned_user){
   let media_container = document.getElementsByClassName(
     "remote-stream-container"
   );
@@ -39,7 +41,12 @@ function resize() {
     i++;
   }
   max = max - Margin * 2;
-  setWidth(max, Margin);
+  setWidth(max, Margin);}
+  else{
+    let stream_container=document.getElementById(pinned_user+"_container");
+    stream_container.style.width= document.getElementById("left").style.width;
+    stream_container.style.height=Height+ Margin*2 + "px" ;
+   }
 }
 
 // Set Width and Margin

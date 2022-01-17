@@ -1,0 +1,73 @@
+* {
+  color: black;
+  letter-spacing: 0.075rem;
+  word-spacing: 0.1rem;
+  line-height: 150%;
+  font-family: "Red Hat Display";
+}
+html {
+  height: 100vh;
+  background-color: white;
+}
+body {
+  background-color: white;
+  overflow: auto;
+  height: 100vh;
+}
+.body_container {
+  background-color: white;
+  overflow: hidden;
+  height: 100%;
+}
+*::-webkit-scrollbar {
+  width: 8px;
+  background-color: grey;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: black;
+  border-radius: 100px;
+}
+.custom_link {
+  text-decoration: none;
+  font-size: 100%;
+  margin-right: 1%;
+  color: black;
+  align-self: flex-start;
+}
+.custom_link:hover {
+  text-decoration: none;
+  color: black;
+}
+#requests_container {
+  display: flex;
+  margin-top: 2%;
+  flex-wrap: wrap;
+  margin-right: 1%;
+}
+.request {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 2%;
+  margin-top: 1%;
+  margin-right: 1%;
+  margin-left:1%; 
+  flex-basis: 30%;  
+  box-shadow: 5px 5px 10px #888888;
+}
+.request_elem {
+  overflow: hidden;
+  margin-bottom: 1%;
+  text-overflow: ellipsis;
+}
+
+.request_container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.request_container_elem{
+  width: 100%;
+  word-wrap: break-word;
+}

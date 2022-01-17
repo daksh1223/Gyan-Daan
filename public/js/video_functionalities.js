@@ -2,7 +2,7 @@ var camera_video_profile = "480p_4"; // 640 × 480 @ 30fps  & 750kbs
 var client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }); // Create a Agora client instance for camera and screen share
 var screenClient;
 var remote_streams = {}; // Will keep a track of active stream  and will store it in the form of [id:stream]
-
+var pinned_user;
 var local_streams = {
   //Will store the streams and ids of camera as well as the screen
   camera: {
@@ -64,6 +64,8 @@ client.on("peer-leave", function (evt) {
   if (remote_streams[streamId] != undefined) {
     // If the relation exists in the remote_streams
     remote_streams[streamId].stop(); // Stop playing the stream's feed
+    console.log(pinned_user,streamId)
+    if(pinned_user==streamId) {remove_pinned_user(streamId);}
     delete remote_streams[streamId]; // Then remove the relationship from the remote_streams
     var remote_stream_container_ID = "#" + streamId + "_container";
     $(remote_stream_container_ID).empty().remove(); // Empty and then remove the remote stream from the container
@@ -110,12 +112,6 @@ async function add_camera_stream(uid) {
   localStream.setVideoProfile(camera_video_profile); // Set the video profile of this stream
   localStream.init(
     async function () {
-      document
-        .getElementById("mic-icon")
-        .setAttribute("class", "fas fa-microphone-slash"); // Initially the stream will be muted, so set the mute/unmute icon of the user as muted
-      document
-        .getElementById("mic-btn")
-        .setAttribute("class", "btn btn-danger btn-lg point");
       await axios.post("/api/get_set_stream_id", {
         // Store the username and useremail corresponding to this stream in the database.
         data: {
@@ -248,7 +244,6 @@ function stopScreenShare() {
   local_streams.screen.stream.stop(); // Stop playing the screen stream
 
   $("#video-btn").prop("disabled", false);
-
   screenClient.leave(
     function () {
       screen_share_checker = false; // Set it to false as no active screen share is present
@@ -264,7 +259,7 @@ function stopScreenShare() {
     }
   );
 }
-
+let all_streams={};
 async function add_stream_to_container(remoteStream) {
   // Adding the stream in the container
   var streamId = remoteStream.getId();
@@ -274,9 +269,9 @@ async function add_stream_to_container(remoteStream) {
       userid: remoteStream.params.streamID,
     },
   });
+  let video_grid_container = document.getElementById("video-grid"); // Videos container
 
-  let video_grid = document.getElementById("video-grid"); // Videos container
-
+  all_streams[streamId]= remoteStream;
   let remote_stream_container = document.createElement("div");
   remote_stream_container.setAttribute("id", streamId + "_container");
   remote_stream_container.setAttribute("class", "remote-stream-container");
@@ -284,7 +279,7 @@ async function add_stream_to_container(remoteStream) {
   let usernameaudio = document.createElement("div"); // To store the name and audio state of the user
   usernameaudio.setAttribute("display", "flex");
   usernameaudio.setAttribute("flex-direction", "column");
-
+  usernameaudio.setAttribute("z-index","inherit");
   let fas_icon = document.createElement("i");
   fas_icon.setAttribute("id", streamId + "_mute");
   fas_icon.setAttribute("class", "fas fa-microphone-slash mute");
@@ -296,15 +291,49 @@ async function add_stream_to_container(remoteStream) {
   usernameaudio.appendChild(username);
 
   remote_stream_container.appendChild(usernameaudio);
-
   let userstream_container = document.createElement("div");
   userstream_container.setAttribute("id", streamId + "_container" + "_video");
   userstream_container.setAttribute("class", "video__container");
-
+  let pinicon = document.createElement("i");
+  pinicon.setAttribute("class", "fas fa-thumbtack pin_icon");
+  pinicon.setAttribute("title", "Pin/Unpin user");
+  pinicon.setAttribute("onclick", `pin_unpin_stream("${streamId}")`);
+  userstream_container.appendChild(pinicon);
   remote_stream_container.appendChild(userstream_container);
-  video_grid.appendChild(remote_stream_container); // Add this div element in the container
+  video_grid_container.appendChild(remote_stream_container); // Add this div element in the container
 
   remoteStream.play(streamId + "_container" + "_video"); // Add video inside userstream_container
   document.getElementById("video" + streamId).style.objectFit = "contain";
   resize();
+}
+const pin_unpin_stream = (streamid) =>{
+  let video_grid_container = document.getElementById("video-grid"); // Videos container
+  let stream_container=document.getElementById(streamid+"_container");
+     
+  if(pinned_user==streamid){
+    remove_pinned_user(streamid);    
+  }
+  else{
+    // video_grid_container.style.visibility="hidden";
+    pinned_user=streamid;
+    video_grid_container.style.visibility="hidden";
+    stream_container.style.visibility="visible";
+    // stream_container.style.width=document.getElementById("left").style.width;
+    stream_container.style.position="absolute";
+    // stream_container.style.height="90%";
+    stream_container.style.alignSelf="center";
+    resize();
+     }
+}
+
+const remove_pinned_user=(streamId)=>{
+  let video_grid_container = document.getElementById("video-grid"); // Videos container
+  let stream_container=document.getElementById(streamId+"_container");
+  video_grid_container.style.visibility="visible";
+  stream_container.style.position="";
+  stream_container.style.visibility="";
+  stream_container.style.alignSelf="";
+  stream_container.style.height="";
+  pinned_user=null;
+  resize();    
 }

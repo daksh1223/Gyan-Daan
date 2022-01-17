@@ -26,7 +26,7 @@
         const user_name = "<%=user_name %>";
         const email = "<%= user_email %>";
     </script>
-    <link rel="stylesheet" type="text/css" href="/css/home.css" />
+    <link rel="stylesheet" type="text/css" href="/css/requested-course.css" />
     <link rel="stylesheet" type="text/css" href="/css/tags.css" />
     <script src="/js/tags.js"></script>
     <script src="/js/Request_container.js" defer></script>
@@ -34,7 +34,7 @@
 
 <body>
     <div class="body_container">
-        <nav class="navbar navbar-expand-md navbar-dark justify-content-start" style="background-color: black;">
+        <nav class="navbar navbar-expand-md navbar-light justify-content-start" style="box-shadow: 5px 0px 10px #888888;">
 
             <a class="navbar-brand mb-0 h1" href="/home"><i class="fas fa-users"></i> True-Meet</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar6">
@@ -43,14 +43,14 @@
 
             <div class="navbar-collapse collapse" id="navbar6">
                 <form class="mx-5 my-auto d-inline w-100">
-                    <input class="form-control mr-sm-2" placeholder="&#xf002; Search a room"
-                        onkeyup="show_rooms(this.value)"
-                        style="background-color: #1f1f1f; color:white;border-color: grey;border-width: 2px; font-family: 'Font Awesome 5 Free'; font-weight: 600;">
+                    <input class="form-control mr-sm-2" placeholder="&#xf002; Search for a requested course"
+                        onkeyup="search_courses(this.value)"
+                        style="border-color: black;border-width: 2px; font-family: 'Font Awesome 5 Free'; font-weight: 600;">
                 </form>
                 <ul class="navbar-nav">
                     <li class="nav-item">
                         <div class="dropdown">
-                            <a class="dropdown-toggle nav-link active" id="user_data" href='#' role="button"
+                            <a class="dropdown-toggle nav-link active custom_link" id="user_data" href='#' role="button"
                                 data-toggle="dropdown" aria-expanded="false">
                                 <%= user_name %>
                             </a>
@@ -78,6 +78,30 @@
         <br>
         <div id="requests_container">
 
+        </div>
+    </div>
+    <a class="custom_link" href="#" data-toggle="modal" id="Requested_Course" data-target="#Requested_Course_Modal"
+        style="display:none;">
+    </a>
+
+    <div class="modal fade" id="Requested_Course_Modal" tabindex="-1" role="dialog"
+        aria-labelledby="Requested_CourseCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content" style="box-shadow: 0px 0px 15px black;">
+                <div class="modal-header" style="border-color: #292929;">
+                    <h5 class="modal-title" id="Requested_Course_Title" style="color:rgb(59, 53, 175);"></h5>
+                </div>
+
+                <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                    <div id="Requested_Course_container">
+                    </div>
+                </div>
+                <div class="modal-footer" style="border-color: #292929;">
+                    <button type="button" id="Requested_Course_close" class="btn btn-secondary"
+                        data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
         </div>
     </div>
 </body>

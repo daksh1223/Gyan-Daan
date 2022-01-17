@@ -10,6 +10,7 @@
   width: 100%;
   line-height: 22px;
   cursor: text;
+  overflow: hidden;
 }
 .bootstrap-tagsinput input {
   border: none;
@@ -21,6 +22,7 @@
   width: auto;
   color: black;
   max-width: inherit;
+  overflow: scroll;
 }
 .bootstrap-tagsinput.form-control input::-moz-placeholder {
   color: #292929;
@@ -39,6 +41,7 @@
 .bootstrap-tagsinput .tag {
   margin-right: 2px;
   color: white;
+  padding:2px;
   background-color:#292929;
 
 }
@@ -48,6 +51,7 @@
   }
 .bootstrap-tagsinput .tag [data-role="remove"]:after {
   content: "x";
+  color:white;
   padding: 0px 2px;
 }
 .bootstrap-tagsinput .tag [data-role="remove"]:hover {

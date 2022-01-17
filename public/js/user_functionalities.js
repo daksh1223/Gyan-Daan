@@ -23,17 +23,17 @@ function enableUiControls(localStream) {
   });
 
   $("#exit-btn").click(function () {
-    leaveChannel(); // For leaving the channel
+    end_call(); // For leaving the channel
   });
 
   $(document).keydown(function (e) {
     // Keyboard shortcuts
     if (e.ctrlKey) {
       switch (e.key) {
-        case "m":
+        case "e":
           toggle_user_mic(localStream); // Will mute/unmute the stream
           break;
-        case "v":
+        case "d":
           toggle_user_video(localStream); // Will hide/show the stream
           break;
         default:
@@ -48,7 +48,10 @@ function toggle_button_background(btn) {
 
 function toggle_screen_share_button_icon_color() {
   $("#screen-share-btn").toggleClass("btn-danger");
-  $("#screen-share-icon").toggleClass("fa-times-circle");
+  let screen_share=document.getElementById("screen-share-icon");
+  if(screen_share.innerHTML=="stop_screen_share")
+  screen_share.innerHTML = "screen_share";
+  else screen_share.innerHTML = "stop_screen_share";
 }
 
 function toggleVisibility(remoteStream, stream_mute_unmute_id, muted) {
@@ -65,10 +68,10 @@ function toggleVisibility(remoteStream, stream_mute_unmute_id, muted) {
 }
 async function toggle_play_stop_video() {
   toggle_button_background($("#record-btn"));
-  $("#record-icon")
-    .toggleClass("fas fa-play-circle")
-    .toggleClass("fas fa-stop-circle");
-  if ($("#record-icon").hasClass("fas fa-stop-circle")) {
+  let record_icon=document.getElementById("record-icon");
+  if(record_icon.innerHTML=="play_circle") {record_icon.innerHTML="pause";}
+  else record_icon.innerHTML="play_circle"
+  if (record_icon.innerHTML=="pause") {
     let record_stream = await navigator.mediaDevices.getDisplayMedia({
       video: true,
       audio: true,
@@ -138,28 +141,29 @@ async function toggle_play_stop_video() {
   }
 }
 function toggle_user_mic(localStream) {
-  if (localStream.audioName != "default") {
+  // console.log(localStream.audioName)
+  let micicon=document.getElementById("mic-icon")
     toggle_button_background($("#mic-btn")); // To toggle user's mute/unmute button color
-    $("#mic-icon")
-      .toggleClass("fa-microphone")
-      .toggleClass("fa-microphone-slash"); // To toggle the mic icon
-
-    if ($("#mic-icon").hasClass("fa-microphone")) {
+    if (micicon.innerHTML == "mic_off") {
+      micicon.innerHTML="mic";
       localStream.unmuteAudio(); // To unmute the stream
       toggleVisibility(localStream, uid + "_mute", false);
-    } else {
-      localStream.muteAudio(); // To mute the stream
-      toggleVisibility(localStream, uid + "_mute", true);
-    }
+    }else {
+      micicon.innerHTML="mic_off";
+    localStream.muteAudio(); // To mute the stream
+    toggleVisibility(localStream, uid + "_mute", true);
+    
   }
 }
 
 function toggle_user_video(localStream) {
   toggle_button_background($("#video-btn")); // To toggle user's hide/show video button color
-  $("#video-icon").toggleClass("fa-video").toggleClass("fa-video-slash"); // Toggle the video icon
-  if ($("#video-icon").hasClass("fa-video")) {
+  let video_icon=document.getElementById("video-icon");
+  if (video_icon.innerHTML=="videocam_off") {
+    video_icon.innerHTML="videocam";
     localStream.unmuteVideo(); // To hide the video
   } else {
+    video_icon.innerHTML="videocam_off";
     localStream.muteVideo(); // To show the video
   }
 }
@@ -210,42 +214,37 @@ function onParticipantsClick() {
   resize();
 }
 function controls_provide() {
-  let controls_container = document.getElementById("features_container"),
+  let controls_container = document.getElementById("main__controls"),
     val = controls_container.innerHTML;
 
   if (allow_students_stream != "false" || isEducator != "false") {
     controls_container.innerHTML =
       val +
-      ` <button id="mic-btn" type="button" class="btn btn-dark btn-lg pointer" title="User Audio"
-        style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;">
-            <i id="mic-icon" class="fas fa-microphone" style="font-size:3vmin;"></i>
+      ` <button id="mic-btn" type="button" class="btn main__controls__button btn-lg pointer btn-danger" title="User Audio">
+            <span id="mic-icon" class="material-icons">mic_off</span>
         </button>
-        <button id="video-btn" type="button" class="btn btn-dark btn-lg pointer" title="User Video"
-            style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;">
-            <i id="video-icon" class="fas fa-video" style="font-size:3vmin;"></i>
+        <button id="video-btn" type="button" class="btn btn-dark main__controls__button btn-lg pointer" title="User Video">
+            <span id="video-icon" class="material-icons">videocam</span>
         </button>
-        <button id="screen-share-btn" type="button" class="btn btn-dark btn-lg pointer"
-            style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;"
+        <button id="screen-share-btn" type="button" class="btn  btn-dark main__controls__button btn-lg pointer"
             title="Screen Share">
-            <i id="screen-share-icon" class="fas fa-desktop" style="font-size:3vmin;"></i>
-        </button>
-        <button id="record-btn" type="button" class="btn btn-dark btn-lg pointer"
-            style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;" title="Record"
+            <span class="material-icons" id="screen-share-icon"
+            >screen_share</span
+          >
+           </button>
+        <button id="record-btn" type="button" class="btn btn-dark main__controls__button  btn-lg pointer"
             onclick="toggle_play_stop_video()">
-            <i id="record-icon" class="fas fa-play-circle" style="font-size:3vmin;"></i>
-        </button>
-        <button id="exit-btn" type="button" class="btn btn-danger btn-lg pointer" title="End Call"
-            style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;"
-            onclick="end_call()">
-            <i id="exit-icon" class="fas fa-phone-slash" style="font-size:3vmin;"></i>
+            <span class="material-icons" id="record-icon"
+            >play_circle</span
+            </button>
+        <button id="exit-btn" type="button" class="btn btn-danger main__controls__button btn-lg pointer" title="End Call" style="background-color: #ea4335">
+            <span onclick="end_call()" class="material-icons">call_end</span>
         </button>`;
   } else
     controls_container.innerHTML =
       val +
-      `<button id="exit-btn" type="button" class="btn btn-danger btn-lg pointer" title="End Call"
-      style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;"
-      onclick="end_call()">
-      <i id="exit-icon" class="fas fa-phone-slash" style="font-size:3vmin;"></i>
+      `<button id="exit-btn" type="button" class="btn btn-danger main__controls__button btn-lg pointer" title="End Call" style="background-color: #ea4335">
+           <span onclick="end_call()" class="material-icons">call_end</span>
       </button>`;
 }
 controls_provide();

@@ -10,7 +10,7 @@ const RoomSchema = mongoose.Schema({
   tags: [{ type: String }],
   likeCount: { type: Number, default: 0 },
   likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
-  creator: { type: Schema.Types.ObjectId, ref: "User" }
+  creator: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
 const Room = mongoose.model("Room", RoomSchema);

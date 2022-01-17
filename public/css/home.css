@@ -5,16 +5,21 @@ html {
   height: 100vh;
   background-color: #292929;
 }
+body {
+  background-color: #292929;
+  overflow: auto;
+  height: 100vh;
+}
 .body_container {
   background-color: #292929;
   overflow: hidden;
 }
-.body_container::-webkit-scrollbar {
+*::-webkit-scrollbar {
   width: 8px;
   background-color: #292929;
 }
 
-.body_container::-webkit-scrollbar-thumb {
+*::-webkit-scrollbar-thumb {
   background-color: grey;
   border-radius: 100px;
 }
@@ -69,15 +74,13 @@ img {
   align-self: center;
   justify-content: center;
 }
-#requests_container,
-#all_time_display {
+#requests_container{
   display: grid;
   margin-top: 2%;
   grid-template-columns: 1fr 1fr 1fr 1fr;
   margin-right: 1%;
 }
-.request,
-.time_container {
+.request {
   display: flex;
   flex-direction: column;
   border: 2px solid white;
@@ -86,33 +89,9 @@ img {
   margin-bottom: 5%;
   padding: 5%;
 }
-.request_elem {
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-#request_container,
-#main_time_display {
-  display: flex;
-  margin-top: 2%;
-  flex-direction: column;
-  overflow: hidden;
-  border: 2px solid white;
-  padding: 5%;
-}
-#main_time_display {
-  text-align: center;
-  padding: 1%;
-  border: 0px solid white;
-  border-bottom: 2px solid white;
-  border-top: 2px solid white;
-}
-.req_elem {
-  word-wrap: break-word;
-}
-.avatar{
-border-radius: 50%;
-width:2.5vw; 
-height:5vh;
-
-float:left;
+.avatar {
+  border-radius: 50%;
+  width: 2.5vw;
+  height: 5vh;
+  float: left;
 }

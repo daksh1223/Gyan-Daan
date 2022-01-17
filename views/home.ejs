@@ -49,7 +49,7 @@
             <div class="navbar-collapse collapse" id="navbar6">
                 <form class="mx-5 my-auto d-inline w-100">
                     <input class="form-control mr-sm-2" placeholder="&#xf002; Search a room"
-                        onkeyup="show_rooms(this.value)"
+                        onkeyup="showSearchResults(this.value)"
                         style="background-color: #1f1f1f; color:white;border-color: grey;border-width: 2px; font-family: 'Font Awesome 5 Free'; font-weight: 600;">
                 </form>
                 <ul class="navbar-nav" style="padding-right: 1%;">
@@ -184,33 +184,16 @@
             </a>
 
         </div>
+   
+        </div>
+        
+        
+      <div id="rooms_container_title" style="display:none"></div>
         <div id="rooms_container" class="rooms_container">
         </div>
-
-        <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"
-            aria-labelledby="user_display_modalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content" style="background: #292929;box-shadow: 0px 0px 15px black;">
-                    <div class="modal-header" style="border-color: #292929;">
-                        <h5 class="modal-title" id="user_display_modalLongTitle">Members</h5>
-                    </div>
-                    <form>
-
-                        <div class="modal-body" style="border-color: #292929;overflow:auto;">
-                            <div class="form-group" id="all_users_container">
-
-                            </div>
-                            <div class="modal-footer" style="border-color: #292929;">
-                                <button type="button" id="modal_close" class="btn btn-secondary"
-                                    data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </form>
-
-                </div>
-            </div>
-        </div>
-        <% if(!isEducator){ %>
+        <div id="educators_container_title" style="display:none"></div>
+          <div id="educators_container" class="rooms_container"></div>
+          <% if(!isEducator){ %>
             <div class="container-fluid mt-5 border-top">
                 <nav class="navbar navbar-expand-lg navbar-dark bg-gradient">
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#stat_nav"
@@ -241,9 +224,35 @@
                 </nav>
                 <div id="stat_rooms_container" class="rooms_container mt-2">
                 </div>
+                   </div>
                 <% } %>
 
+        <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"
+            aria-labelledby="user_display_modalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content" style="background: #292929;box-shadow: 0px 0px 15px black;">
+                    <div class="modal-header" style="border-color: #292929;">
+                        <h5 class="modal-title" id="user_display_modalLongTitle">Members</h5>
+                    </div>
+                    <form>
+
+                        <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                            <div class="form-group" id="all_users_container">
+
+                            </div>
+                            <div class="modal-footer" style="border-color: #292929;">
+                                <button type="button" id="modal_close" class="btn btn-secondary"
+                                    data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </form>
+
+                </div>
             </div>
+        </div>
+    
+        
+         
 </body>
 
 </html>
