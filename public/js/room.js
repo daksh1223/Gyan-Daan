@@ -186,7 +186,21 @@ const channel_data = async (cid) => {
     temp_user.setAttribute("id", channel.data.users[i].email);
     temp_user.setAttribute("title", "Email Id: " + channel.data.users[i].email);
     temp_user.setAttribute("class", "container_element users pointer");
-    temp_user.innerHTML = channel.data.users[i].name;
+    let status="Educator";
+    if(channel.data.users[i].isEducator===false)status="Student";
+
+    console.log(channel.data.users[i])
+    temp_user.innerHTML = `
+    <div style="display:flex">
+      <image src="${channel.data.users[i].profilepicUrl}" class="pic"></>
+      <div class="participant_details"> 
+        <div>${channel.data.users[i].name}</div> 
+        <div>
+         <small> ${status} </small>
+        </div> 
+      </div>
+    </div>
+    `;
     user_container.appendChild(temp_user);
   }
   for (var i = 0; i < channel.data.meets.length; i++) {
@@ -197,7 +211,7 @@ const channel_data = async (cid) => {
       ${channel.data.meets[i].name}
     </a>
     `;
-    temp_meet.setAttribute("class", "container_element");
+    // temp_meet.setAttribute("class", "container_element");
     temp_meet.setAttribute("id", `${channel.data.meets[i]._id}meet`);
     temp_meet.setAttribute(
       "onclick",
