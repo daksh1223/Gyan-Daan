@@ -1,29 +1,62 @@
 * {
-  color: white;
+  color: black;
+  letter-spacing: 0.075rem;
+  word-spacing: 0.1rem;
+  line-height: 150%;
+  font-family: "Red Hat Display";
 }
 html {
   height: 100vh;
-  background-color: #292929;
+  background-color: white;
 }
 body {
-  background-color: #292929;
+  background-color: white;
   overflow: auto;
   height: 100vh;
 }
 .body_container {
-  background-color: #292929;
-  overflow: hidden;
+  background-color: white;
+  overflow-x: hidden;
+  height: 100%;
 }
 *::-webkit-scrollbar {
   width: 8px;
-  background-color: #292929;
+  background-color: grey;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: grey;
+  background-color: black;
   border-radius: 100px;
 }
+.custom_link {
+  text-decoration: none;
+  font-size: 100%;
+  margin-right: 1%;
+  color: black;
+  align-self: flex-start;
+}
+.custom_link:hover {
+  text-decoration: none;
+  color: black;
+}
 
+.form_attr {
+  align-self: center;
+  justify-content: center;
+}
+
+img {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+}
+
+.avatar {
+border-radius: 50%;
+width: 25vw;
+height: 25vw;
+float: left;
+}
 .rooms_container {
   margin-top: 6.5%;
   margin-left: 2.5%;
@@ -47,32 +80,12 @@ body {
   text-decoration: none;
   background-color: rgb(70, 69, 69);
 }
-img {
-  margin-bottom: 5%;
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-}
 .room {
   text-align: center;
   font-size: 1.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
   /* margin-bottom: 5%; */
-}
-.custom_link {
-  text-decoration: none;
-  color: white;
-  font-size: 100%;
-  margin-right: 1%;
-}
-.custom_link:hover {
-  text-decoration: none;
-  color: white;
-}
-.form_attr {
-  align-self: center;
-  justify-content: center;
 }
 #requests_container{
   display: grid;

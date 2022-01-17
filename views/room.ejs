@@ -29,6 +29,7 @@
 
     <script src="/p5/p5.min.js"></script>
     <script src="/p5/addons/p5.dom.min.js"></script>
+    <script src="/js/utility.js" defer></script>
     <script src="/p5/addons/p5.sound.min.js"></script>
     <link href="/p5/dark.min.css" rel="stylesheet" type="text/css" />
 
@@ -72,25 +73,24 @@
                             <%= user_name %>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-
                             <li>
-                                <a class="dropdown-item" href='#' type="button" onclick="show_users();"
-                                    data-toggle="modal" data-target="#user_display_modal">
-                                    <i class="fas fa-user-tag" style="color:black;"></i> True-Meet<br>Members</a>
+                                <a href="/profile/<%=user_email%>" class="dropdown-item">
+
+                                    <i class="fas fa-address-card" style="color:black;"></i> Profile</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href='#' type="button"
-                                    onclick="(()=>{location='/donate';})();">
-                                    <i class="fas fa-donate" style="color:black;"></i> Donate</a>
-                            </li>
-
-                            <li>
-
-                                <a class="dropdown-item" href='/logout/'>
-                                    <i class="fas fa-sign-out-alt"></i> Sign out
+                                <a class="dropdown-item" href='/donate' type="button">
+                                    <div style="color:black">
+                                        <i class="fas fa-donate" style="color:black"></i> Donate
+                                    </div>
                                 </a>
                             </li>
-                        </ul>
+                            <li>
+                                <a class="dropdown-item" href='/logout'>
+                                    <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
+                                </a>
+                            </li>
+                                               </ul>
                     </div>
                 </li>
             </ul>

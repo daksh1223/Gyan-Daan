@@ -27,11 +27,15 @@
         const user_name = "<%=user_name %>";
         const email = "<%= user_email %>";
         const courseID = "<%= id %>";
+        const isEducator = "<%= isEducator %>";
+       
     </script>
     <link rel="stylesheet" type="text/css" href="/css/tracker.css" />
     <link rel="stylesheet" type="text/css" href="/css/tags.css" />
     <script src="/js/course-time-tracker.js" defer></script>
     <script src="/js/tags.js"></script>
+    <script src="/js/utility.js" defer></script>
+   
 </head>
 
 <body style="overflow: hidden;">
@@ -55,9 +59,16 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
                             <li>
-                                <a class="dropdown-item" href='#' type="button"
-                                    onclick="(()=>{location='/donate';})();">
-                                    <i class="fas fa-donate" style="color:black;"></i> Donate</a>
+                                <a href="/profile/<%=user_email%>" class="dropdown-item">
+
+                                    <i class="fas fa-address-card" style="color:black;"></i> Profile</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href='/donate' type="button">
+                                    <div style="color:black">
+                                        <i class="fas fa-donate" style="color:black"></i> Donate
+                                    </div>
+                                </a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href='/logout'>

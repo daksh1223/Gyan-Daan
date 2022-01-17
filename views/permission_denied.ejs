@@ -17,6 +17,10 @@
     <link href='https://fonts.googleapis.com/css?family=Red Hat Display' rel='stylesheet'>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/utility.css" />
+    <script> 
+        const isEducator = "<%= isEducator %>";
+    </script>
+    <script src="/js/utility.js" defer></script>
    
 </head>
 
@@ -45,12 +49,24 @@
                                     <%= user_name %>
                                 </a>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                                    <li><a class="dropdown-item"
-                                            href='/logout'>
+                                    <li>
+                                        <a href="/profile/<%=user_email%>" class="dropdown-item">
+    
+                                            <i class="fas fa-address-card" style="color:black;"></i> Profile</a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href='/donate' type="button">
+                                            <div style="color:black">
+                                                <i class="fas fa-donate" style="color:black"></i> Donate
+                                            </div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" href='/logout'>
                                             <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
                                         </a>
                                     </li>
-                                </ul>
+                                 </ul>
                             </div>
                         </li>
                     </ul>

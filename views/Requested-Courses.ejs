@@ -26,6 +26,7 @@
     <script>
         const user_name = "<%=user_name %>";
         const email = "<%= user_email %>";
+        const isEducator = "<%= isEducator %>";
     </script>
     <link rel="stylesheet" type="text/css" href="/css/requested-course.css" />
     <link rel="stylesheet" type="text/css" href="/css/tags.css" />
@@ -57,9 +58,16 @@
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
                                 <li>
-                                    <a class="dropdown-item" href='#' type="button"
-                                        onclick="(()=>{location='/donate';})();">
-                                        <i class="fas fa-donate" style="color:black;"></i> Donate</a>
+                                    <a href="/profile/<%=user_email%>" class="dropdown-item">
+
+                                        <i class="fas fa-address-card" style="color:black;"></i> Profile</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href='/donate' type="button">
+                                        <div style="color:black">
+                                            <i class="fas fa-donate" style="color:black"></i> Donate
+                                        </div>
+                                    </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href='/logout'>

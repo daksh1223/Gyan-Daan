@@ -642,27 +642,6 @@ async function add_users_modal_submission() {
   }
   document.getElementById("add_users_modal_close").click();
 }
-async function show_users() {
-  response = await axios.get("/api/get_users");
-  // To show all the users present in the organization
-  console.log(response.data);
-  user_container = document.getElementById("all_users_container");
-  while (user_container.firstChild) {
-    user_container.removeChild(user_container.firstChild);
-  }
-  for (var i = 0; i < response.data.length; i++) {
-    temp_user = document.createElement("div");
-    temp_user.innerHTML = `
-    <div>
-        <div style="float:left;" >${response.data[i].name}</div>
-        <div style="float:right" >${response.data[i].email}</div>
-    </div>
-    <br>
-`;
-    user_container.appendChild(temp_user);
-  }
-}
-
 async function user_deletion_modal_submission() {
   // Modal for adding user in the room or channel
   var users = document.getElementById("user_deletion_tags").value;

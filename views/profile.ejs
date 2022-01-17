@@ -23,16 +23,18 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
 	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<script src="https://pagecdn.io/lib/bootstrap-tagsinput/0.8.0/bootstrap-tagsinput.js"
-	
 		crossorigin="anonymous"></script>
 	<link href='https://fonts.googleapis.com/css?family=Red Hat Display' rel='stylesheet'>
 	<script>
 
-		let email = '<%-email%>'
+		let email = '<%-email%>';
+		const isEducator = "<%= isEducator %>";
 	</script>
 	<link rel="stylesheet" type="text/css" href="/css/profile.css" />
 	<link rel="stylesheet" type="text/css" href="/css/utility.css" />
 	<link rel="stylesheet" type="text/css" href="/css/tags.css" />
+	<script src="/js/utility.js" defer></script>
+	<script src="/js/profile.js" defer></script>
 </head>
 
 <body>
@@ -58,13 +60,16 @@
 									data-toggle="dropdown" aria-expanded="false">
 									<%= user_name %>
 								</a>
-								<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+								<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
 									<li>
-										<a class="dropdown-item" href='#' type="button"
-											onclick="(()=>{location='/donate';})();">
-											<i class="fas fa-donate" style="color:black;"></i> Donate</a>
+										<a class="dropdown-item" href='/donate' type="button">
+											<div style="color:black">
+												<i class="fas fa-donate" style="color:black"></i> Donate
+											</div>
+										</a>
 									</li>
-									<li><a class="dropdown-item" href='/logout'>
+									<li>
+										<a class="dropdown-item" href='/logout'>
 											<i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
 										</a>
 									</li>
@@ -79,7 +84,7 @@
 
 		</div>
 	</div>
-	<script src="/js/profile.js"></script>
+
 </body>
 
 </html>
