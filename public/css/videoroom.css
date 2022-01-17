@@ -72,6 +72,8 @@ body {
   overflow: auto;
   margin-bottom: 1%;
 }
+
+
 .right_window_chat::-webkit-scrollbar {
   width: 8px;
   background-color: #292929;
@@ -135,6 +137,7 @@ video {
   display: none;
   overflow: hidden;
   flex-direction: column;
+  padding: 0.5%;
 }
 #participants_list::-webkit-scrollbar {
   width: 8px;
@@ -146,37 +149,6 @@ video {
   border-radius: 100px;
 }
 
-#editor_container {
-  width: calc(100% - 60px);
-  height: 100%;
-  margin: 0 1%;
-  border-radius: 2rem;
-  background-color: white;
-}
-
-#editor {
-  border: 0;
-  outline: none;
-  overflow: hidden;
-  margin: 2% 4%;
-  width: calc(100% - 60px);
-  justify-self: center;
-  resize: none;
-}
-
-#editor_clear {
-  border: 0;
-  outline: none;
-  float: right;
-  align-self: center;
-  cursor: pointer;
-}
-
-input[type="file"] {
-  opacity: 0; /* make transparent */
-  z-index: -1; /* move under anything else */
-  position: absolute; /* don't let it take up space */
-}
 
 .pin_icon {
   color: #e8eaed;
@@ -252,4 +224,43 @@ input[type="file"] {
   white-space:nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+#editor_container{
+  width: 100%;
+  min-height: 50px;
+  margin: 0 1%;
+}
+
+#editor{
+  border:0;
+  border-radius: 2rem;
+  outline: none;
+  overflow: hidden;
+  margin: 1% ;
+  width: calc(95% - 100px);
+  height: 100%;
+  resize: none;
+  padding: 1% 2%;
+  align-self: center;
+}
+
+#editor_clear{
+  border: 0;
+  outline: none;
+  float: right; align-self: center;cursor: pointer
+}
+
+
+input[type="file"] { 
+  opacity: 0; /* make transparent */
+  z-index: -1; /* move under anything else */
+  position: absolute; /* don't let it take up space */
+}
+
+pre{
+  font-size: 1em;
+  white-space:pre-wrap;
+  color: inherit;
+  font-family: inherit;
 }
