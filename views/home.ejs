@@ -33,14 +33,14 @@
     </script>
     <link rel="stylesheet" type="text/css" href="/css/home.css" />
     <link rel="stylesheet" type="text/css" href="/css/tags.css" />
+    <script src="/js/utility.js" defer></script>
     <script src="/js/home.js" defer></script>
     <script src="/js/tags.js"></script>
 </head>
 
 <body>
     <div class="body_container">
-        <nav class="navbar navbar-expand-md navbar-dark justify-content-start" style="background-color: black;">
-
+        <nav class="navbar navbar-expand-md navbar-light justify-content-start">
             <a class="navbar-brand mb-0 h1" href="/home"><i class="fas fa-users"></i> True-Meet</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar6">
                 <span class="navbar-toggler-icon"></span>
@@ -59,7 +59,6 @@
                             <a class="dropdown-toggle nav-link active" id="user_data" href='#' role="button"
                                 data-toggle="dropdown" aria-expanded="false">
 
-                                <img src="<%=user_profilePic%>" class="avatar">
                                 <%= user_name %>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
@@ -184,16 +183,15 @@
             </a>
 
         </div>
-   
-        </div>
-        
-        
-      <div id="rooms_container_title" style="display:none"></div>
+
+
+
+        <div id="rooms_container_title" style="display:none"></div>
         <div id="rooms_container" class="rooms_container">
         </div>
         <div id="educators_container_title" style="display:none"></div>
-          <div id="educators_container" class="rooms_container"></div>
-          <% if(!isEducator){ %>
+        <div id="educators_container" class="rooms_container"></div>
+        <% if(!isEducator){ %>
             <div class="container-fluid mt-5 border-top">
                 <nav class="navbar navbar-expand-lg navbar-dark bg-gradient">
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#stat_nav"
@@ -224,35 +222,36 @@
                 </nav>
                 <div id="stat_rooms_container" class="rooms_container mt-2">
                 </div>
-                   </div>
-                <% } %>
-
-        <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"
-            aria-labelledby="user_display_modalCenterTitle" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content" style="background: #292929;box-shadow: 0px 0px 15px black;">
-                    <div class="modal-header" style="border-color: #292929;">
-                        <h5 class="modal-title" id="user_display_modalLongTitle">Members</h5>
-                    </div>
-                    <form>
-
-                        <div class="modal-body" style="border-color: #292929;overflow:auto;">
-                            <div class="form-group" id="all_users_container">
-
-                            </div>
-                            <div class="modal-footer" style="border-color: #292929;">
-                                <button type="button" id="modal_close" class="btn btn-secondary"
-                                    data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </form>
-
-                </div>
             </div>
-        </div>
-    
-        
-         
+            <% } %>
+
+                <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"
+                    aria-labelledby="user_display_modalCenterTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content" style="background: #292929;box-shadow: 0px 0px 15px black;">
+                            <div class="modal-header" style="border-color: #292929;">
+                                <h5 class="modal-title" id="user_display_modalLongTitle">Members</h5>
+                            </div>
+                            <form>
+
+                                <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                                    <div class="form-group" id="all_users_container">
+
+                                    </div>
+                                    <div class="modal-footer" style="border-color: #292929;">
+                                        <button type="button" id="modal_close" class="btn btn-secondary"
+                                            data-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+    </div>
+
+
 </body>
 
 </html>

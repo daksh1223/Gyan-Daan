@@ -185,17 +185,13 @@ app.get("/Requested-Courses", (req, res) => {
   if (req.session.isEducator) res.render("Requested-Courses");
   else res.render("permission_denied");
 });
-app.get("/Requested-Course/:id", (req, res) => {
+app.get("/course-tracker/:id", (req, res) => {
   let id = req.params.id;
-  if (req.session.isEducator) res.render("Requested-Course", { req_id: id });
+  if (!req.session.isEducator) res.render("course_tracker", { id});
   else res.render("permission_denied");
 });
 app.get("/tracker", (req, res) => {
   if (!req.session.isEducator) res.render("tracker");
-  else res.render("permission_denied");
-});
-app.get("/course-tracker/:id", (req, res) => {
-  if (!req.session.isEducator) res.render("course_tracker", { id : req.params.id });
   else res.render("permission_denied");
 });
 app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
@@ -215,7 +211,7 @@ app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("join-room", (roomID, user, email, userID) => {
+  socket.on("join-room", (roomID, user, email, userID, profile_pic, educator_status, channelId) => {
     socket.join(roomID);
     console.log(userID);
     let new_track_record = new Tracker();
@@ -225,10 +221,10 @@ io.on("connection", (socket) => {
       timeZone: "Asia/Kolkata",
     });
     socket.on("connect_to_new_user", (username, id) => {
-      socket.to(id).emit("user-joined", user, email, id);
+      socket.to(id).emit("user-joined", user, email, id, profile_pic, educator_status, channelId);
     });
 
-    socket.broadcast.to(roomID).emit("user-joined", user, email, socket.id);
+    socket.broadcast.to(roomID).emit("user-joined", user, email, socket.id, profile_pic, educator_status, channelId);
     socket.on(
       "receive_channel_message",
       async (username, data, email, channel_id) => {
@@ -256,7 +252,7 @@ io.on("connection", (socket) => {
           new_track_record.StartTime.getTime()) /
         1000;
       new_track_record.save();
-      socket.to(roomID).broadcast.emit("user-disconnected", email);
+      socket.to(roomID).broadcast.emit("user-disconnected", email,channelId);
     });
   });
 });

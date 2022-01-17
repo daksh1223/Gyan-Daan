@@ -23,6 +23,7 @@
         var screenuid = "<%= screenuid %>";
         var agoraAppId = "<%= agoraAppId %>";
         var isEducator = "<%=isEducator %>";
+        var profile_pic= "<%=user_profilePic %>";
         var allow_students_stream = "<%=allow_students_stream %>";
     </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
@@ -51,7 +52,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
     <link rel="stylesheet" type="text/css" href="/css/videoroom.css" />
-
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <script src="/js/chat_functionalities.js" defer></script>
     <script src="/js/AgoraRTCSDK-3.6.0.js"></script>
     <script src="/js/video_resize.js"></script>
@@ -68,30 +69,21 @@
 
                 </div>
             </div>
-            <div class="left_window_controls">
-                <div class="left_window_controls_block" id="features_container">
-                    <div id="timer"
-                        style="color:white;margin-left:2%;margin-right:1%;font-size:2.5vmin;align-self: center;">00:00
+            <div class="main__controls" id="main__controls">
+                    <div id="timer" style="display:flex;color:white;margin-left:2%;margin-right:1%;align-items:center;">
+                        00:00
                     </div>
-                    <button id="copy-btn" type="button" class="btn btn-dark btn-lg pointer"
-                        style="display:flex;width:6%;margin-right:1%;height:100%;justify-content:center;"
-                        title="Copy URL Link" onclick="copy_link()">
-                        <i class="fas fa-copy" style="font-size:3vmin;"></i>
+                    <button id="paticipants-btn" type="button"
+                        class="btn btn-dark btn-lg pointer main__controls__button" title="Participants"
+                        onclick="onParticipantsClick()">
+                        <span class="material-icons">group</span>
                     </button>
 
-                    <button id="paticipants-btn" type="button" class="btn btn-dark btn-lg pointer"
-                        style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;"
-                        title="Participants" onclick="onParticipantsClick()">
-                        <i class="fas fa-user-friends" style="font-size:3vmin;"></i>
-                    </button>
-
-                    <button id="chat-btn" type="button" class="btn btn-dark btn-lg pointer" title="Chat"
-                        style="display:flex;width:6%;height:100%;margin-right:1%;justify-content:center;"
+                    <button id="chat-btn" type="button" class="btn btn-dark pointer main__controls__button" title="Chat"
                         onclick="onChatClick()">
-                        <i class="fas fa-comment-alt" style="font-size:3vmin;"></i>
+                        <span id="chat-btn" class="material-icons">chat_bubble</span>
                     </button>
-                </div>
-            </div>
+             </div>
         </div>
         <div class="right_window" id="right" style="display:flex;">
             <div class="right_window_header">
