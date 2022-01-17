@@ -3,6 +3,19 @@ html {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  letter-spacing: 0.05rem;
+  word-spacing: 0.1rem;
+  line-height: 150%;
+  font-family: "Red Hat Display";
+}
+a{
+  color: black;
+}
+a:hover{
+  text-decoration: none;
+}
+.form-check-label{
+  width: 100%;
 }
 
 .chat_container {
@@ -10,7 +23,6 @@ html {
   min-height: 100%;
   max-height: 100%;
   width: 100%;
-  background-color: #292929;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -27,11 +39,10 @@ html {
 }
 .data_container::-webkit-scrollbar {
   width: 8px;
-  background-color: #292929;
 }
 
 .data_container::-webkit-scrollbar-thumb {
-  background-color: grey;
+
   border-radius: 100px;
 }
 .chat-input {
@@ -40,33 +51,35 @@ html {
 }
 .message_container {
   height: 100%;
-  width: 95%;
+  width: 100%;
   display: flex;
-  margin-left: 2.5%;
   flex-direction: column;
   overflow: hidden;
 }
-h5 {
-  font-weight: bolder;
-}
-h6 {
-  font-weight: bold;
-}
+
 .container_element {
-  color: white;
+  color: black;
   text-decoration: none;
-  align-content: center;
+  padding: 1%;
+  margin-left: 2%;
+  word-wrap: break-word;
+  font-weight: 500;
 }
 .container_element:hover {
-  color: white;
+  color: #0056b3;
   text-decoration: none;
-  background-color: #1c1f22;
+  padding: 1%;
+  margin-left: 2%;
+  word-wrap: break-word;
+  font-weight: 500;
+  background-color: #ededed;
 }
 .container_element_settings {
-  color: white;
+  color: black;
 }
 .container_element .container_element_settings {
   visibility: hidden;
+  color: black;
 }
 .container_element:hover .container_element_settings {
   visibility: visible;
@@ -82,20 +95,20 @@ iframe {
   font-weight: 900;
   text-align: center;
   font-size: 10vmin;
-  color: white;
+  color: black;
 }
 .room {
   font-weight: 900;
   text-align: center;
   overflow: hidden;
-  color: white;
+  color: black;
   justify-content: center;
   text-overflow: ellipsis;
   /* margin-bottom: 5%; */
 }
 .custom_link {
   text-decoration: none;
-  color: white;
+  color: black;
   font-size: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -103,7 +116,7 @@ iframe {
 }
 .custom_link:hover {
   text-decoration: none;
-  color: white;
+  color: black;
 }
 
 .custom_link_black {
@@ -120,7 +133,7 @@ iframe {
 }
 .home_link {
   text-decoration: none;
-  color: white;
+  color: black;
   font-size: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -131,20 +144,21 @@ iframe {
 }
 
 #editor_container{
-  width: calc(100% - 60px);
+  width: 100%;
+  min-height: 62px;
   margin: 0 1%;
-  border-radius: 2rem;
-  background-color: white;
 }
 
 #editor{
-  border: 0;
+  border:0;
+  border-radius: 2rem;
   outline: none;
   overflow: hidden;
-  margin: 1% 2%;
-  width: calc(95% - 40px);
-  height: 95%;
+  margin: 1% ;
+  width: calc(95% - 100px);
+  height: 100%;
   resize: none;
+  padding: 1% 2%;
 }
 
 #editor_clear{
@@ -160,3 +174,26 @@ input[type="file"] {
   position: absolute; /* don't let it take up space */
 }
 
+pre{
+  font-size: 1em;
+  white-space:pre-wrap;
+  color: inherit;
+  font-family: inherit;
+}
+
+#room_desc{
+  padding: 5%;
+  color: grey;
+}
+
+.channel_headers{
+  text-decoration: none;
+  float:left;
+  color: rgb(79, 70, 229); 
+  display: flex;
+  flex-direction: row;
+}
+
+.poll_option{
+  min-height: 30px;
+}

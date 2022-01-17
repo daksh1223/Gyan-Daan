@@ -35,7 +35,7 @@ body {
   color: black;
   align-self: flex-start;
 }
-.custom_link:hover {
+.custom_link:hover{
   text-decoration: none;
   color: black;
 }

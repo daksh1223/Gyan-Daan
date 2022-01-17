@@ -1,5 +1,5 @@
 const { find_user_by_email } = require("../Repository/user_repository");
-const { create_new_room } = require("../Repository/room_repository");
+const { create_new_room, find_room_by_id } = require("../Repository/room_repository");
 const { create_new_channel } = require("../Repository/channel_repository");
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -17,7 +17,7 @@ async function create_room(roominfo, session_user) {
   room.creator = session_user._id;
   room.room_color = roominfo.color;
   channel.is_meet = false;
-
+  room.description = roominfo.description;
   roominfo.room_tags.forEach((tag) => {
     // Add the tags associated with this course
     room.tags.push(tag);
@@ -32,4 +32,16 @@ async function create_room(roominfo, session_user) {
   return room;
 }
 
-exports.create_room = create_room;
+async function update_room(roominfo) {
+  let room = await find_room_by_id(roominfo.id);
+  room.name = roominfo.name;
+  room.description = roominfo.description;
+  room.tags = roominfo.tags;
+  room.save();
+  return room;
+}
+
+module.exports = {
+  create_room,
+  update_room
+}
