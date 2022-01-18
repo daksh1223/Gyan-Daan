@@ -39,10 +39,10 @@
 
 <body>
     <div class="body_container">
-        <nav class="navbar navbar-expand-md navbar-dark justify-content-start" style="background-color: black;">
+        <nav class="navbar navbar-expand-md navbar-light  justify-content-start" style="color: black;">
 
             <a class="navbar-brand mb-0 h1" href="/home"><i class="fas fa-users"></i> True-Meet</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar6">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar6" style="margin-left:auto;">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -50,35 +50,37 @@
                 <form class="mx-5 my-auto d-inline w-100">
                     <input class="form-control mr-sm-2" placeholder="&#xf002; Search a room"
                         onkeyup="showSearchResults(this.value)"
-                        style="background-color: #1f1f1f; color:white;border-color: grey;border-width: 2px; font-family: 'Font Awesome 5 Free'; font-weight: 600;">
+                        style="
+    border-color: grey;
+    border-width: 2px;
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 600;">
                 </form>
                 <ul class="navbar-nav" style="padding-right: 1%;">
                     <li class="nav-item">
 
                         <div class="dropdown">
                             <a class="dropdown-toggle nav-link active" id="user_data" href='#' role="button"
-                                data-toggle="dropdown" aria-expanded="false">
-
-                                <img src="<%=user_profilePic%>" class="avatar">
-                                <%= user_name %>
-                            </a>
+                            data-toggle="dropdown" aria-expanded="false">
+                            <%= user_name %>
+                        </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
                                 <li>
                                     <a href="/profile/<%=user_email%>" class="dropdown-item">
 
-                                        <i class="fas fa-address-card" style="color:black;"></i> Profile</a>
+                                        <i class="fas fa-address-card"></i> Profile</a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href='/donate' type="button">
-                                        <div style="color:black">
-                                            <i class="fas fa-donate" style="color:black"></i> Donate
-                                        </div>
-                                    </a>
+                                     
+                                            <i class="fas fa-donate"></i> Donate</a>
+                                   
+                               
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href='/logout'>
-                                        <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
-                                    </a>
+                                        <i class="fas fa-sign-out-alt"></i> Sign out</a>
+                                    
                                 </li>
                             </ul>
                         </div>
@@ -89,36 +91,36 @@
         <div class="modal fade" id="RoomcreationModal" tabindex="-1" role="dialog"
             aria-labelledby="RoomcreationModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content" style="background: #292929;box-shadow: 0px 0px 15px black;">
-                    <div class="modal-header" style="border-color: #292929;">
+                <div class="modal-content" style="box-shadow: 0px 0px 15px black;">
+                    <div class="modal-header">
                         <h5 class="modal-title" id="RoomcreationModalLongTitle">Create new course</h5>
                     </div>
                     <form>
 
-                        <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                        <div class="modal-body" style="overflow:auto;">
                             <div class="form-group">
                                 <label for="room_name">Course Name</label>
-                                <input type="text" class="form-control" id="room_name" style="color: black;" required>
+                                <input type="text" class="form-control" id="room_name"  required>
                             </div>
                             <div class="form-group">
                                 <label for="room_description">Course Description</label>
                                 <textarea row="3" class="form-control" id="room_description"
-                                    style="color: black;"> </textarea>
+                                    > </textarea>
                             </div>
                             <div class="form-group">
                                 <label>Add Course Tags:</label>
                                 <input type="text" id="room_tags" data-role="tagsinput" />
-                                <small class="form-text " style="color:white;font-weight:400;">
+                                <small class="form-text " style="font-weight:600;">
                                     Add Tags associated with this course. <br>Eg. Trignometry, Maths, Class Xth
                                     etc...<br>
                                     Press enter after typing a tag name to add a new tag.
                                 </small>
                             </div>
                         </div>
-                        <div class="modal-footer" style="border-color: #292929;">
+                        <div class="modal-footer">
                             <button type="button" id="modal_close" class="btn btn-secondary"
                                 data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" onclick="modal_submission()">Create
+                            <button type="button"  style="background-color: rgb(79, 70, 229);" class="btn btn-primary" onclick="modal_submission()">Create
                                 Room</button>
                         </div>
                     </form>
@@ -129,40 +131,40 @@
         <div class="modal fade" id="RoomrequestModal" tabindex="-1" role="dialog"
             aria-labelledby="RoomrequestModalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content" style="background: #292929;box-shadow: 0px 0px 15px black;">
-                    <div class="modal-header" style="border-color: #292929;">
+                <div class="modal-content" style="box-shadow: 0px 0px 15px black;">
+                    <div class="modal-header">
                         <h5 class="modal-title" id="RoomrequestModalLongTitle">Request for a new course</h5>
                     </div>
                     <form>
 
-                        <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                        <div class="modal-body" style="overflow:auto;">
                             <div class="form-group">
                                 <label for="Roomrequest_name">Course Name</label>
-                                <input type="text" class="form-control" id="Roomrequest_name" style="color: black;"
+                                <input type="text" class="form-control" id="Roomrequest_name"
                                     required>
                             </div>
                             <div class="form-group">
                                 <label for="Roomrequest_description">Course Requirements</label>
                                 <textarea row="3" class="form-control" id="Roomrequest_description"
-                                    style="color: black;"> </textarea>
-                                <small class="form-text " style="color:white;font-weight:400;">
+                                   > </textarea>
+                                <small class="form-text " style="font-weight:600;">
                                     Tell us more about what you are expecting from this course.
                                 </small>
                             </div>
                             <div class="form-group">
                                 <label>Add Course Tags:</label>
                                 <input type="text" id="Roomrequest_tags" data-role="tagsinput" />
-                                <small class="form-text " style="color:white;font-weight:400;">
+                                <small class="form-text " style="font-weight:600;">
                                     Add Tags associated with this course. <br>Eg. Trignometry, Maths, Class Xth
                                     etc...<br>
                                     Press enter after typing a tag name to add a new tag.
                                 </small>
                             </div>
                         </div>
-                        <div class="modal-footer" style="border-color: #292929;">
+                        <div class="modal-footer" >
                             <button type="button" id="Requestmodal_close" class="btn btn-secondary"
                                 data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" onclick="Roomrequest_submission()">Send
+                            <button type="button" class="btn btn-primary"  style="background-color: rgb(79, 70, 229);"Roomrequest_submission()">Send
                                 Request</button>
                         </div>
                     </form>
@@ -171,76 +173,79 @@
             </div>
         </div>
 
-        <div style="margin-top:1%;">
-            <a href="/home" class="custom_link" style="float:left;margin-left: 2.5%;">
-                <i class="fas fa-home"></i> Home</a>
-
-
-            <a class="custom_link" href="#" data-toggle="modal" id="room_create" onclick="checkIfVerified()"
-                style="float:right;margin-right:2.5%;">
-            </a>
-            <a class="custom_link" href="#" data-toggle="modal" id="room_request" data-target="#RoomrequestModal"
-                style="float:right;margin-right:2.5%;">
-            </a>
-
-        </div>
+     
    
         </div>
         
+           <% if(!isEducator){ %>
+            
+                    
+           
+                 <nav class="navbar navbar-expand-lg navbar-light  justify-content-start" style="color: black;">
+
+            <h6 onclick="redirect=()=>{window.location = '/home'};redirect()" class="nav-link-par nav-link" style="cursor:pointer;">
+                              <i class="fas fa-home"></i> Home</h6>
+                            
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar7" style="margin-left:auto;">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="navbar-collapse collapse" id="navbar7">
+                  <div id="stat_nav">
+                   <div  class="nav-link-par" id='enrolled_stat_link'>
+                                <h6 class="nav-link cus-nav-link" style="cursor:pointer;" onclick="stat_link_click('enrolled')">
+                                    Enrolled Courses </h6>
+                                </div>
+                            <div  class="nav-link-par" id='popular_stat_link'>
+                                <h6 class="nav-link cus-nav-link" style="cursor:pointer;" onclick="stat_link_click('popular')">
+                                    Popular </h6>
+                            </div>
+                            <div class="nav-link-par" id='oldest_stat_link'>
+                                <h6 class="nav-link cus-nav-link" style="cursor:pointer;" onclick="stat_link_click('oldest')">Oldest
+                                </h6>
+                            </div>
+                            <div  class="nav-link-par" id='latest_stat_link'>
+                                <h6 class="nav-link cus-nav-link" style="cursor:pointer;" onclick="stat_link_click('latest')">Latest
+                                </h6>
+                            </div>
+                            <div  class="nav-link-par" id='liked_stat_link'>
+                                <h6 class=" nav-link cus-nav-link" style="cursor:pointer;" onclick="stat_link_click('liked')">Most
+                                    Liked</h6>
+                            </div>
+                            </div>
+                       
+                       <div class="nav-link-par" id="createRequestLink" style="margin-right: 0%;min-width:fit-content;">
         
+                             
+                            </div>
+            </div>
+        </nav>
+                
+                <% } %>
+              
+                <div class="rooms_container_parent">
       <div id="rooms_container_title" style="display:none"></div>
         <div id="rooms_container" class="rooms_container">
         </div>
         <div id="educators_container_title" style="display:none"></div>
           <div id="educators_container" class="rooms_container"></div>
-          <% if(!isEducator){ %>
-            <div class="container-fluid mt-5 border-top">
-                <nav class="navbar navbar-expand-lg navbar-dark bg-gradient">
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#stat_nav"
-                        aria-controls="stat_nav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <span class="navbar-brand">Explore More Courses</span>
-                    <div class="collapse navbar-collapse " id="stat_nav">
-                        <ul class="navbar-nav d-flex justify-content-around" style="width:100%" id="stat_nav_list">
-                            <li class="active" id='popular_stat_link'>
-                                <h6 class="nav-link" style="cursor:pointer;" onclick="stat_link_click('popular')">
-                                    Popular </h6>
-                            </li>
-                            <li id='oldest_stat_link'>
-                                <h6 class="nav-link" style="cursor:pointer;" onclick="stat_link_click('oldest')">Oldest
-                                </h6>
-                            </li>
-                            <li id='latest_stat_link'>
-                                <h6 class="nav-link" style="cursor:pointer;" onclick="stat_link_click('latest')">Latest
-                                </h6>
-                            </li>
-                            <li id='liked_stat_link'>
-                                <h6 class=" nav-link" style="cursor:pointer;" onclick="stat_link_click('liked')">Most
-                                    Liked</h6>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-                <div id="stat_rooms_container" class="rooms_container mt-2">
-                </div>
-                   </div>
-                <% } %>
+          </div>
+        
 
         <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"
             aria-labelledby="user_display_modalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content" style="background: #292929;box-shadow: 0px 0px 15px black;">
-                    <div class="modal-header" style="border-color: #292929;">
+                <div class="modal-content" style="box-shadow: 0px 0px 15px black;">
+                    <div class="modal-header" >
                         <h5 class="modal-title" id="user_display_modalLongTitle">Members</h5>
                     </div>
                     <form>
 
-                        <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                        <div class="modal-body" style="overflow:auto;">
                             <div class="form-group" id="all_users_container">
 
                             </div>
-                            <div class="modal-footer" style="border-color: #292929;">
+                            <div class="modal-footer">
                                 <button type="button" id="modal_close" class="btn btn-secondary"
                                     data-dismiss="modal">Close</button>
                             </div>
