@@ -429,6 +429,31 @@ const removeAddUserFromTags = async(user, tag) => {
 // };
 router.route("/set_user_profile").post(async (req, res) => {
 
+  await tag.save();
+  
+  return "successful";
+  
+});
+// const removeAddRoomsFromTags = async(room, tag) => {
+// 	let roomIndex = tag.rooms.indexOf(room._id);
+//   let tagIndex = room.tags.indexOf(tag.name);
+// 	if (roomIndex != -1) {
+// 		tag.rooms.splice(roomIndex, 1);
+// 	} else {
+// 		tag.rooms.push(room._id);
+// 	}
+
+//    if (tagIndex != -1) {
+// 			room.tags.splice(tagIndex, 1);
+// 		} else {
+// 			room.tags.push(tag.name);
+//   }
+
+//   await tag.save();
+  
+//   return "successful";
+// };
+router.route("/set_user_profile").post(async (req, res) => {
   let user = await find_user_by_email(req.user.email);
   let tags = req.body.tags;
   if (tags) {
@@ -459,25 +484,23 @@ router.route("/set_user_profile").post(async (req, res) => {
   await user.save();
   // console.log(user)
 
-  return res.send('successfully data received');
-})
-router.route('/user/logged').get(async (req, res) => { 
+  return res.send("successfully data received");
+});
+router.route("/user/logged").get(async (req, res) => {
   try {
     let user = await find_user_by_email(req.user.email);
-     return res.json(user);
-  } catch(err) { 
-res.json(err)
+    return res.json(user);
+  } catch (err) {
+    res.json(err);
   }
- 
-})
+});
 router.route("/user/:email").get(async (req, res) => {
   try {
-		let user = await find_user_by_email(req.params.email);
-		return res.json(user);
-	} catch (err) {
-		res.json(err);
-	}
- 
+    let user = await find_user_by_email(req.params.email);
+    return res.json(user);
+  } catch (err) {
+    res.json(err);
+  }
 });
 router.post("/course_request", async (req, res) => {
   let data = req.body;
@@ -490,7 +513,7 @@ router.post("/course_request", async (req, res) => {
 });
 router.get("/all_requests", async (req, res) => {
   let all_requests = await CourseRequest.find();
-  return res.json(all_requests);
+  return res.json({ all_requests, tags: req.user.tags });
 });
 router.get("/get_req_data/:id", async (req, res) => {
   let req_data=await CourseRequest.findById(req.params.id);
@@ -504,7 +527,10 @@ router.get("/get_tracker_data/", async (req, res) => {
   res.json(req_data);
 });
 router.get("/get_course_tracker_data/:id", async (req, res) => {
-  let req_data = await Tracker.find({ course: req.params.id, user: req.user._id });
+  let req_data = await Tracker.find({
+    course: req.params.id,
+    user: req.user._id,
+  });
   let course = await find_room_by_id(req.params.id);
   res.json({ req_data, course });
 });

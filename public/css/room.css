@@ -6,6 +6,7 @@ html {
   letter-spacing: 0.05rem;
   word-spacing: 0.1rem;
   line-height: 150%;
+  font-family: "Red Hat Display";
 }
 a{
   color: black;
@@ -36,6 +37,7 @@ a:hover{
   overflow: auto;
   margin-bottom: 1%;
 }
+
 .data_container::-webkit-scrollbar {
   width: 8px;
 }
@@ -107,7 +109,7 @@ iframe {
 }
 .custom_link {
   text-decoration: none;
-  color: black;
+  color: #4f46e5;
   font-size: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -132,7 +134,7 @@ iframe {
 }
 .home_link {
   text-decoration: none;
-  color: black;
+  color: #4f46e5;
   font-size: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -158,6 +160,7 @@ iframe {
   height: 100%;
   resize: none;
   padding: 1% 2%;
+  align-self: center;
 }
 
 #editor_clear{

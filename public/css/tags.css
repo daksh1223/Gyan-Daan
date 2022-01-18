@@ -41,6 +41,7 @@
 .bootstrap-tagsinput .tag {
   margin-right: 2px;
   color: white;
+  padding:2px;
   background-color:#292929;
 
 }
@@ -50,6 +51,7 @@
   }
 .bootstrap-tagsinput .tag [data-role="remove"]:after {
   content: "x";
+  color:white;
   padding: 0px 2px;
 }
 .bootstrap-tagsinput .tag [data-role="remove"]:hover {

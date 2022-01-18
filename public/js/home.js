@@ -26,21 +26,21 @@ let user_container = document.getElementById("all_users_container"); // Containe
 // let stat_rooms_container = document.getElementById("stat_rooms_container");
 let like_icons = {},
 	like_counts = {};
-let val = document.getElementById("navbar_menu").innerHTML;
+// let val = document.getElementById("navbar_menu").innerHTML;
 
-if (isEducator === "true") {
-	console.log(val);
-	document.getElementById("navbar_menu").innerHTML =
-		`<li>
-  <a class="dropdown-item" href='/Requested-Courses' type="button">
-      <i class="fas fa-user-plus" style="color:black;"></i> Requested<br>Courses</a>
-</li>` + val;
-} else
-	document.getElementById("navbar_menu").innerHTML =
-		`<li>
-<a class="dropdown-item" href='/tracker' type="button">
-    <i class="fas fa-list-ul" style="color:black;"></i> Analysis</a>
-</li>` + val;
+// if (isEducator === "true") {
+// 	console.log(val);
+// 	document.getElementById("navbar_menu").innerHTML =
+// 		`<li>
+//   <a class="dropdown-item" href='/Requested-Courses' type="button">
+//       <i class="fas fa-user-plus" style="color:black;"></i> Requested<br>Courses</a>
+// </li>` + val;
+// } else
+// 	document.getElementById("navbar_menu").innerHTML =
+// 		`<li>
+// <a class="dropdown-item" href='/tracker' type="button">
+//     <i class="fas fa-list-ul" style="color:black;"></i> Analysis</a>
+// </li>` + val;
 function modal_submission() {
 	// For creating a new room
 	let name = document.getElementById("room_name").value;
@@ -212,7 +212,7 @@ async function show_users() {
 	while (user_container.firstChild) {
 		user_container.removeChild(user_container.firstChild);
 	}
-	for (var i = 0; i < response.data.length; i++) {
+	for (let i = 0; i < response.data.length; i++) {
 		temp_user = document.createElement("div");
 		temp_user.innerHTML = `
       <div>

@@ -1,6 +1,6 @@
 var socket = io("/");
 socket.on("connect", () => {
-  add_user(user__name, user__email, -1);
+  add_user(user__name, user__email, -1,profile_pic,isEducator);
 });
 
 var current_channel_message_id;
@@ -29,9 +29,11 @@ function onChatClick() {
 
 function setup() {
   // To setup the froala editor
-  socket.emit("join-room", ROOMID, user__name, user__email,userID);
-  socket.on("user-joined", (username, useremail, id) => {
-    add_user(username, useremail, id); // When a user join add user's details in the participants list
+  socket.emit("join-room", ROOMID, user__name, user__email,userID, profile_pic, isEducator,channelName);
+  socket.on("user-joined", (username, useremail, id, pic, educator_status, channelId) => {
+    console.log(username, useremail, id, pic, educator_status); 
+    if(channelId==channelName)
+    add_user(username, useremail, id, pic, educator_status); // When a user join add user's details in the participants list
   });
   socket.on("user-disconnected", remove_user);
   socket.on("send_channel_message", generate_message);
@@ -49,24 +51,23 @@ const generate_message = (
     messages = document.getElementById("chat_messages");
     container = document.getElementsByClassName("right_window_chat")[0];
     message_card = document.createElement("div");
-    message_card.style.marginBottom = "0.5%";
-    message_card.style.paddingLeft = "0.5%";
-    message_card.className = "card";
+    message_card.className = "card message_container";
     message_card.innerHTML = `
-    <b>
-      <div class="card-title" style="margin-top:0.5%;font-size:1rem;">
+      <strong style="margin-top:0.5%;">
         ${user_name}
-      </div>
-      <div class="card-subtitle" style="font-size:1rem;">
-        ${timestring}
-      </div>
-    </b>
-    <div class="card-body" style="margin-top:0.5%;font-size:1rem;">
+      </strong>
+    <div style="margin-top:0.5%;word-wrap: break-word;overflow:hidden">
       ${message}
     </div>
+    <small  style="margin-left:auto;">
+        ${timestring}
+      </small>
     `;
     if (is_user_post) {
-      message_card.style.borderLeft = "4px solid #0354ab";
+      message_card.style.marginLeft = "auto";
+      message_card.style.marginRight = "2.5%";
+      message_card.style.backgroundColor = "rgb(79, 70, 229)";
+      message_card.style.color = "white";
     }
     messages.append(message_card);
     container.scrollTop = container.scrollHeight;
@@ -128,17 +129,25 @@ const send_chat_message = async () => {
     true
   );
 };
-function add_user(username, email, id) {
+function add_user(username, email, id, pic, educator_status) {
   // Will add the new user in the participant list
   let participant = document.createElement("div");
-  participant_name = document.createElement("div");
-
-  participant_name.innerHTML = username;
+  let status="Educator";
+  if(educator_status==="false")status="Student";
+  if(pic==null){pic=`/images/user.jpg`;}
+  let participant_details=`
+    <image src="${pic}" style="height:3rem;width:3rem;border-radius:50%;"/>
+    <div class="participant_details"> 
+        <div>${username}</div> 
+        <div>
+         <small> ${status} </small>
+        </div> 
+      </div> 
+    </div>
+  `;
   participant.setAttribute("id", email);
-  participant.style.display = "flex";
-  participant.style.color = "white";
-  participant.appendChild(participant_name);
-  participant.setAttribute("class", "pointer");
+  participant.innerHTML = participant_details;
+  participant.setAttribute("class", "participant_block pointer");
   participant.title = "Email: " + email;
   document.getElementById("participants_list").appendChild(participant);
 
@@ -146,8 +155,9 @@ function add_user(username, email, id) {
     socket.emit("connect_to_new_user", username, id);
   }
 }
-function remove_user(useremail) {
+function remove_user(useremail,channelId) {
   // When the user leaves, then it will remove his/her details from the list
+  if(channelId==channelName)
   document
     .getElementById("participants_list")
     .removeChild(document.getElementById(useremail));
@@ -172,7 +182,8 @@ function clear_editor() {
   document.getElementById('editor').value = '';
   document.getElementById('myFile').value = '';
   document.getElementById('editor').readOnly = false;
-  document.getElementById('editor_container').style.backgroundColor = 'white';
+  document.getElementById('editor_container').style.backgroundColor = '#ededed';
   document.getElementById('editor').style.backgroundColor = 'white';
   document.getElementById('editor').style.color = 'black';
+  document.getElementById("editor").style.height = "100%";
 }
