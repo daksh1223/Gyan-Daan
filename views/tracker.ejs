@@ -24,7 +24,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.11.1/typeahead.bundle.min.js"></script>
     <script>
-        const user_name = "<%=user_name %>";
         const email = "<%= user_email %>";
         const isEducator = "<%= isEducator %>";
        
@@ -53,6 +52,8 @@
                         <div class="dropdown">
                             <a class="dropdown-toggle nav-link active custom_link" id="user_data" href='#' role="button"
                                 data-toggle="dropdown" aria-expanded="false">
+                                <img src="<%- user_profilePic %>" style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;"/>
+                           
                                 <%= user_name %>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
