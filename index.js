@@ -10,6 +10,7 @@ const mongoose_morgan = require("mongoose-morgan");
 const multer = require("multer");
 const favicon = require("serve-favicon");
 const passport = require("passport");
+const multerAzure = require('multer-azure')
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const MicrosoftStrategy = require("passport-microsoft").Strategy;
 
@@ -166,18 +167,21 @@ app.get("/profile/:email", async(req, res) => {
   res.render("profile", { email: req.params.email  });
 })
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const multerStorage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/uploads");
-  },
-  filename: (req, file, cb) => {
-    const ext = file.mimetype.split("/")[1];
-    cb(null, `${file.fieldname}-${Date.now()}.${ext}`);
-  },
-});
+
 const upload = multer({
-  storage: multerStorage,
+  storage: multerAzure({
+    connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING , //Connection String for azure storage account, this one is prefered if you specified, fallback to account and key if not.
+    account: process.env.AZURE_STORAGE_ACCOUNT, //The name of the Azure storage account
+    key: process.env.AZURE_STORAGE_ACCESS_KEY, //A key listed under Access keys in the storage account pane
+    container: process.env.AZURE_STORAGE_CONTAINER,  //Any container name, it will be created if it doesn't exist
+    blobPathResolver: function (req, file, callback) {
+      const ext = file.mimetype.split("/")[1];
+      var blobPath = `${file.fieldname}-${Date.now()}.${ext}`; //Calculate blobPath in your own way.
+      callback(null, blobPath);
+    }
+  })
 });
+
 app.get("/donate", (req, res) => {
   res.render("Donate");
 });
@@ -194,12 +198,12 @@ app.get("/tracker", (req, res) => {
   if (!req.session.isEducator) res.render("tracker");
   else res.render("permission_denied");
 });
-app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
+app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
   // Stuff to be added later
   try {
     const newFile = await File.create({
-      name: req.file.filename,
-      path: `/uploads/${req.file.filename}`,
+      name: req.file.blobPath,
+      path: req.file.url,
       displayName: req.file.originalname,
     });
     res.send(newFile);

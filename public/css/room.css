@@ -199,3 +199,26 @@ pre{
 .poll_option{
   min-height: 30px;
 }
+
+.participant_details{
+  display:flex;
+  flex-direction:column;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  justify-content: center;
+}
+.pic{
+  height:3rem;
+  width:3rem;
+  border-radius:50%;
+  margin-right: 2%;
+  align-self: center;
+}
+.participant_details div
+{
+  width: 100%;
+  font-size: 1 rem;
+  white-space:nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

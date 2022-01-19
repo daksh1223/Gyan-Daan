@@ -215,6 +215,7 @@ video {
   display:flex;
   flex-direction:column;
   overflow: hidden;
+  text-overflow: ellipsis;
   justify-content: center;
 }
 .participant_details div

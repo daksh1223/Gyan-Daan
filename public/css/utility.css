@@ -21,11 +21,11 @@
   }
   *::-webkit-scrollbar {
     width: 8px;
-    background-color: grey;
+    background-color: lightgrey;
   }
   
   *::-webkit-scrollbar-thumb {
-    background-color: black;
+    background-color: rgb(79, 70, 229);
     border-radius: 100px;
   }
   .custom_link {

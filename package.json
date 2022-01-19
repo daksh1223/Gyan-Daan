@@ -7,7 +7,9 @@
     "start": "nodemon server.js"
   },
   "nodemonConfig": {
-    "ignore": ["public/*"]
+    "ignore": [
+      "public/*"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -30,6 +32,7 @@
     "mongoose-morgan": "^1.0.17",
     "morgan": "^1.10.0",
     "multer": "^1.4.4",
+    "multer-azure": "^2.0.1",
     "passport": "^0.5.2",
     "passport-google-oauth2": "^0.2.0",
     "passport-microsoft": "^0.1.0",

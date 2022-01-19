@@ -44,7 +44,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.0/socket.io.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.2.1/typeahead.bundle.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/uuid/8.1.0/uuidv4.min.js"></script>
-
+    <link href='https://fonts.googleapis.com/css?family=Red Hat Display' rel='stylesheet'>
     <link rel="stylesheet" type="text/css" href="/css/room.css" />
     <link rel="stylesheet" type="text/css" href="/css/tags.css" />
     <script src="/js/room.js" defer></script>
@@ -70,9 +70,11 @@
                     <div class="dropdown">
                         <a class="dropdown-toggle nav-link active" id="user_data" href='#' role="button"
                             data-toggle="dropdown" aria-expanded="false">
+                            <img src="<%- user_profilePic %>" style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;"/>
+                          
                             <%= user_name %>
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
                             <li>
                                 <a href="/profile/<%=user_email%>" class="dropdown-item">
 
