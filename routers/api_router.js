@@ -427,32 +427,14 @@ const removeAddUserFromTags = async(user, tag) => {
   
 //   return "successful";
 // };
-router.route("/set_user_profile").post(async (req, res) => {
-
-  await tag.save();
-  
-  return "successful";
-  
-});
-// const removeAddRoomsFromTags = async(room, tag) => {
-// 	let roomIndex = tag.rooms.indexOf(room._id);
-//   let tagIndex = room.tags.indexOf(tag.name);
-// 	if (roomIndex != -1) {
-// 		tag.rooms.splice(roomIndex, 1);
-// 	} else {
-// 		tag.rooms.push(room._id);
-// 	}
-
-//    if (tagIndex != -1) {
-// 			room.tags.splice(tagIndex, 1);
-// 		} else {
-// 			room.tags.push(tag.name);
-//   }
+// router.route("/set_user_profile").post(async (req, res) => {
 
 //   await tag.save();
   
 //   return "successful";
-// };
+  
+// });
+
 router.route("/set_user_profile").post(async (req, res) => {
   let user = await find_user_by_email(req.user.email);
   let tags = req.body.tags;
@@ -540,7 +522,9 @@ router.get("/get_course_tracker_data/:id", async (req, res) => {
 
 router.route('/search').post(async (req, res) => {
   let allTags = await get_all_tags();
+  //console.log(allTags)
   let findTags = req.body.findTags;
+ // console.log(findTags);
   let users = new Map();
   let rooms = new Map();
   let foundTags = [];

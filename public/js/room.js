@@ -779,8 +779,10 @@ function fillRoomEditModal() {
 async function room_edit_modal_submission() {
   let name = document.getElementById("edit_room_name").value;
   let description = document.getElementById("edit_room_description").value;
-  let room_tags = document.getElementById("edit_room_tags").value;
-  room_tags = room_tags.split(",");
+  let room_tags = [];
+  if (document.getElementById("edit_room_tags").value) {
+    room_tags = document.getElementById("edit_room_tags").value.split(",");
+  }
   if (name.length) {
     roominfo = {
       id: current_room_data._id,

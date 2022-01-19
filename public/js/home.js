@@ -87,22 +87,21 @@ async function Roomrequest_submission() {
 async function get_rooms(stat) {
 	response = await axios.get("/api/get_all_rooms"); // Will fetch all the rooms where the user is present
 	rooms_copy = response.data.rooms;
-
+	//console.log('rooms copy ---', rooms_copy, isEducator, stat);
 	if (isEducator === "true") {
 		rooms_copy = rooms_copy.filter((room) => {
 			return room.creator === user_id;
 		});
 	}
-	let room_create = document.getElementById("room_create");
-	let room_request = document.getElementById("room_request");
+
 	if (isEducator != "false") {
 		document.getElementById(
 			"createRequestLink"
 		).innerHTML = `<h6 class="cus-nav-link nav-link" style="cursor:pointer;"  onclick="checkIfVerified()"><i class="fas fa-user-plus"></i> Create a new Course</h6>`;
 	} else {
-			document.getElementById(
-				"createRequestLink"
-			).innerHTML = `<h6 class="cus-nav-link nav-link" style="cursor:pointer;" data-toggle="modal"  data-target="#RoomrequestModal"><i class="fas fa-user-plus"></i> Request for a new Course</h6>`;
+		document.getElementById(
+			"createRequestLink"
+		).innerHTML = `<h6 class="cus-nav-link nav-link" style="cursor:pointer;" data-toggle="modal"  data-target="#RoomrequestModal"><i class="fas fa-user-plus"></i> Request for a new Course</h6>`;
 	}
 	// showSearchResults("");
 	// show_stat_rooms(rooms_copy);
@@ -131,14 +130,16 @@ async function get_rooms(stat) {
 				break;
 			case "enrolled":
 				{
-          showSearchResults("");
-          return;
+					showSearchResults("");
+					return;
 				}
 			
 		}
 		stat_rooms_copy = response.data;
 
 		show_stat_rooms(stat_rooms_copy);
+	} else { 
+			showSearchResults("");
 	}
 }
 
@@ -298,19 +299,24 @@ function show_stat_rooms(rooms) {
 }
 
 function activate_stat_link(stat) {
-  document
-		.getElementById(`${stat}_stat_link`)
-		.setAttribute("class", "nav-link-par active");
+	if (document.getElementById(`${stat}_stat_link`)) {
+		document
+			.getElementById(`${stat}_stat_link`)
+			.setAttribute("class", "nav-link-par active");
+	}
      educators_container_title.style.display = "none";
 			rooms_container_title.style.display = "none";
 }
 
 function deactivate_stat_links() {
 	stats.forEach((element) => {
-	document
-		.getElementById(`${element}_stat_link`)
-		.setAttribute("class", "nav-link-par");
-	});
+		if (document
+		.getElementById(`${element}_stat_link`)) {
+			document
+				.getElementById(`${element}_stat_link`)
+			.setAttribute("class", "nav-link-par");
+		};
+})
 }
 
 function stat_link_click(stat) {
