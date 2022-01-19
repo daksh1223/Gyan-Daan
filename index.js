@@ -110,12 +110,12 @@ app.post("/auth/google", (req, res, next) => {
     scope: ["email", "profile"],
   })(req, res, next);
 });
-app.get("/auth/google/callback", (req, res, next) => {
+app.get("/auth/google/callback", 
   passport.authenticate("google", {
     successRedirect: "/home",
     failureRedirect: "/",
-  })(req, res, next);
-});
+  }));
+  
 app.post("/auth/microsoft", (req, res, next) => {
   req.session.isEducator = req.body.isEducator === "true";
   passport.authenticate("microsoft", {
