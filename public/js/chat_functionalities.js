@@ -53,22 +53,21 @@ const generate_message = (
     message_card = document.createElement("div");
     message_card.className = "card message_container";
     message_card.innerHTML = `
-    <b>
-      <div class="card-title" style="margin-top:0.5%;font-size:1rem;">
+      <strong style="margin-top:0.5%;">
         ${user_name}
-      </div>
-      <div class="card-subtitle" style="font-size:0.7rem;">
-        ${timestring}
-      </div>
-    </b>
-    <div class="card-body" style="margin-top:0.5%;font-size:0.95rem;">
+      </strong>
+    <div style="margin-top:0.5%;word-wrap: break-word;overflow:hidden">
       ${message}
     </div>
+    <small  style="margin-left:auto;">
+        ${timestring}
+      </small>
     `;
     if (is_user_post) {
-      message_card.style.marginLeft="auto";
-      message_card.style.backgroundColor="#2671ff";
-      message_card.style.color="white";
+      message_card.style.marginLeft = "auto";
+      message_card.style.marginRight = "2.5%";
+      message_card.style.backgroundColor = "rgb(79, 70, 229)";
+      message_card.style.color = "white";
     }
     messages.append(message_card);
     container.scrollTop = container.scrollHeight;
@@ -183,7 +182,8 @@ function clear_editor() {
   document.getElementById('editor').value = '';
   document.getElementById('myFile').value = '';
   document.getElementById('editor').readOnly = false;
-  document.getElementById('editor_container').style.backgroundColor = 'white';
+  document.getElementById('editor_container').style.backgroundColor = '#ededed';
   document.getElementById('editor').style.backgroundColor = 'white';
   document.getElementById('editor').style.color = 'black';
+  document.getElementById("editor").style.height = "100%";
 }

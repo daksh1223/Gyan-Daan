@@ -15,6 +15,7 @@ if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
   create_poll_container.innerHTML = `<i class="fas fa-poll-h"></i> Create Poll `;
 }
+
 const room_data = async (url) => {
   promise = await axios.get(url); // Fetch all the data present in this room
   var room = document.getElementById("room_name");
@@ -29,13 +30,13 @@ const room_data = async (url) => {
   // Will set the properties of the room in the frontend
 
   let temp = ` 
-    <a href="/home" class="home_link" style="float:left;margin-left:5%">
+    <a href="/home" class="home_link" style="float:left;margin-left:5%;">
       <i class="fas fa-home mx-1" ></i> Home</a>
-    <div style="padding:5%; width:20vw; height:20vw;" >
+    <div style="padding:5%; width:15vw; height:15vw;align-self:center;" >
       <img src="https://place-hold.it/80/${promise.data.room_detail.room_color}/fff&text=${icon_value}&fontsize=20" style="border-radius:50%;height:100%;width:100%;"></img>
     </div>
     <div style="width:100%;display:flex;flex-direction:row;padding:0 10%;" class="shadow-sm">
-        <h2 style="color:black; align-self:center" id="room_data_name">${promise.data.room_detail.name}</h2>
+        <h2 style="color:black;text-align:center; width:80%;word-break:break-word;" id="room_data_name">${promise.data.room_detail.name}</h2>
         <a id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="color:black;margin:auto"><i class="fas fa-bars"></i></a>
         <ul class="dropdown-menu" >`;
   if (isEducator != "false") {
@@ -412,14 +413,10 @@ async function meet_message(cid) {
   current_meet = cid;
 
   // Set the properties of the join meet button
-  document.getElementById("join_meet_btn").innerHTML = `Join Meet`;
   document
-    .getElementById("join_meet_btn")
-    .setAttribute("class", "btn btn-primary");
-  document.getElementById("join_meet_btn").style.color = "white";
-  document
-    .getElementById("join_meet_btn")
-    .setAttribute("onclick", "start_meet()");
+    .getElementById("join_meet").innerHTML = '<i class="fas fa-sign-in-alt mx-1"></i>Join Meet'
+   document
+    .getElementById("join_meet").setAttribute("onclick", "start_meet()");
 
   current_channel_meet_link = channel.data.meet_link;
   // After joining the meet channel display it's content in the frontend

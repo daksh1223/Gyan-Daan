@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>True-meet | Video Call</title>
+    <title>GyanDaan | Video Call</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
@@ -86,31 +86,31 @@
              </div>
         </div>
         <div class="right_window" id="right" style="display:flex;">
-            <div class="right_window_header">
-                <p style="font-size:3.5vmin;float:left;margin-left:1%;">Chat</p>
+            <div class="right_window_header mx-1">
+                <h3 style="float:left;">Chat</h3>
                 <button type="button" class="close" aria-label="Close" onclick="onChatClick()">
                     <span aria-hidden="true" style="float:right;color:white;margin-right:2%;">&times;</span>
                 </button>
             </div>
-            <div class="right_window_chat">
+            <div class="right_window_chat mx-1">
                 <div id="chat_messages" style="color:black;">
 
                 </div>
 
             </div>
-            <div style="display: flex;align-items: flex-end;margin-bottom: 1%;" id="chat_sender">
-                <label style="cursor:pointer;margin-bottom: 10px;"><i title="upload File" class="fas fa-paperclip fa-lg"
-                        style="color: white;"></i>
-                    <input type="file" class="admin__input" id="myFile" name="upload"
-                        onChange="handleChatFileUpload()" /></label>
+            <div id="chat_sender" style="display: flex;align-items: flex-end;background-color: #ededed;">
                 <div id="editor_container" style="display: flex;">
+                    <label style="cursor:pointer;align-self: center;margin:2%;"><i title="upload File"
+                            class="fas fa-paperclip fa-lg" style="color:black;"></i>
+                        <input type="file" class="admin__input" id="myFile" name="upload"
+                            onChange="handleChatFileUpload()" /></label>
                     <textarea id="editor" oninput="auto_grow(this)" placeholder="Type here..." rows=1></textarea>
-                    <i id="editor_clear" onclick="clear_editor()" title="clean" class="fas fa-window-close fa-lg"></i>
+                    <i id="editor_clear" onclick="clear_editor()" title="clean" class="fas fa-window-close fa-lg"
+                        style="margin:2%;"></i>
+                    <i id="submit_button" title="Send Message" onclick="send_chat_message()" class="fa fa-send fa-lg"
+                        style="color:black;cursor:pointer;align-self: center;margin: 2%;">
+                    </i>
                 </div>
-                <i id="submit_button" title="Send Message" onclick="send_chat_message()" class="fa fa-send fa-lg"
-                    style="color:white;cursor:pointer;margin-bottom: 15px ;">
-                </i>
-
             </div>
         </div>
         <div class="participants_window" id="participants_window" style="display:none;">
@@ -120,8 +120,7 @@
                     <span aria-hidden="true" style="float: right;color:white;margin-right:1%;">&times;</span>
                 </button>
             </div>
-            <div style="font-size:2.5vmin;background-color: rgb(63, 62, 62);border-radius: 5px;margin-left:
-                    1%;margin-right:4px;margin-bottom:5px;padding-left: 1px;color:white;">
+            <div style="font-size:2.5vmin;background-color: rgb(63, 62, 62);border-radius: 5px;margin-bottom:5px;padding: 2%;color:white;">
                 The list shows the users that are currently present in the call.
             </div>
             <div id="participants_list" style="overflow:auto;margin-left:1%;">

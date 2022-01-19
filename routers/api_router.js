@@ -456,27 +456,31 @@ router.route("/set_user_profile").post(async (req, res) => {
 router.route("/set_user_profile").post(async (req, res) => {
   let user = await find_user_by_email(req.user.email);
   let tags = req.body.tags;
-  let removeTags = user.tags.filter((tag) => { return !tags.includes(tag) })
-  let addTags = tags.filter((tag) => { return !user.tags.includes(tag) });
-  // console.log('remove - ', removeTags);
-  // console.log('add - ', addTags);
-  for (let i = 0; i < removeTags.length; i++) {
-    let removeTag = await get_tag_by_name(removeTags[i]);
-    await removeAddUserFromTags(user, removeTag);
-  }
+  if (tags) {
+    let removeTags = user.tags.filter((tag) => { return !tags.includes(tag) })
+    let addTags = tags.filter((tag) => { return !user.tags.includes(tag) });
+    // console.log('remove - ', removeTags);
+    // console.log('add - ', addTags);
+    for (let i = 0; i < removeTags.length; i++) {
+      let removeTag = await get_tag_by_name(removeTags[i]);
+      await removeAddUserFromTags(user, removeTag);
+    }
   
  
-  for (let i = 0; i < addTags.length; i++) { 
-    let addTag = await get_tag_by_name(addTags[i]);
+    for (let i = 0; i < addTags.length; i++) {
+      let addTag = await get_tag_by_name(addTags[i]);
 
-		if (!addTag) {
-			addTag = await create_new_tag(addTags[i]);
-		}
+      if (!addTag) {
+        addTag = await create_new_tag(addTags[i]);
+      }
       await removeAddUserFromTags(user, addTag);
+    }
   }
   user.profilepicUrl = req.body.profilepicUrl;
   user.about = req.body.about;
-  user.idUrl = req.body.idUrl;
+  if (req.body.idUrl) {
+    user.idUrl = req.body.idUrl
+  }
   await user.save();
   // console.log(user)
 
