@@ -214,6 +214,7 @@ const channel_data = async (cid) => {
     `;
     // temp_meet.setAttribute("class", "container_element");
     temp_meet.setAttribute("id", `${channel.data.meets[i]._id}meet`);
+    temp_meet.setAttribute("class", 'container_element');
     temp_meet.setAttribute(
       "onclick",
       `meet_message( '${channel.data.meets[i]._id}')`
