@@ -122,7 +122,7 @@
                             <button type="button" id="modal_close" class="btn btn-secondary"
                                 data-dismiss="modal">Close</button>
                             <button type="button"  style="background-color: rgb(79, 70, 229);" class="btn btn-primary" onclick="modal_submission()">Create
-                                Room</button>
+                                Course</button>
                         </div>
                     </form>
 
@@ -215,15 +215,17 @@
                             </div>
                             </div>
                        
-                       <div class="nav-link-par" id="createRequestLink" style="margin-right: 0%;min-width:fit-content;">
-        
-                             
-                            </div>
+                       
             </div>
         </nav>
                 
                 <% } %>
-              
+                <% if(isEducator){ %>
+            <div class="nav-link-par" id="createRequestLink" style="margin-right: 0%;min-width:fit-content;float: right;">
+            
+            
+            </div>
+            <% } %>
                 <div class="rooms_container_parent">
       <div id="rooms_container_title" style="display:none"></div>
         <div id="rooms_container" class="rooms_container">
