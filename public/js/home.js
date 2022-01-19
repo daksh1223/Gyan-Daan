@@ -98,11 +98,11 @@ async function get_rooms(stat) {
 	if (isEducator != "false") {
 		document.getElementById(
 			"createRequestLink"
-		).innerHTML = `<h6 class="nav-link" style="cursor:pointer;"  onclick="checkIfVerified()"><i class="fas fa-user-plus"></i> Create a new Course</h6>`;
+		).innerHTML = `<h6 class="cus-nav-link nav-link" style="cursor:pointer;"  onclick="checkIfVerified()"><i class="fas fa-user-plus"></i> Create a new Course</h6>`;
 	} else {
 			document.getElementById(
 				"createRequestLink"
-			).innerHTML = `<h6 class="nav-link" style="cursor:pointer;" data-toggle="modal"  data-target="#RoomrequestModal"><i class="fas fa-user-plus"></i> Request for a new Course</h6>`;
+			).innerHTML = `<h6 class="cus-nav-link nav-link" style="cursor:pointer;" data-toggle="modal"  data-target="#RoomrequestModal"><i class="fas fa-user-plus"></i> Request for a new Course</h6>`;
 	}
 	// showSearchResults("");
 	// show_stat_rooms(rooms_copy);
