@@ -65,7 +65,7 @@ const room_data = async (url) => {
   temp += `
           <li>
             <a href="#" class="dropdown-item" onclick="leave_room('${promise.data.room_detail._id}','${promise.data.room_detail.channels[0]._id}')">
-              <i class="fas fa-sign-out-alt")></i> Leave Room 
+              <i class="fas fa-sign-out-alt")></i> Leave Course 
             </a>
           </li>
         </ul>
@@ -529,17 +529,17 @@ async function meet_modal_submission() {
         >click here</a></button>
         </div>
         `;
-    // Will send a new message to other users by the name of True-Meet Bot
+    // Will send a new message to other users by the name of GyanDaan Bot
     await socket.emit(
       "receive_channel_message",
-      "True-Meet Bot",
+      "GyanDaan Bot",
       meet,
       "",
       current_channel_message_id
     );
 
     generate_message(
-      "True-Meet Bot",
+      "GyanDaan Bot",
       meet,
       new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
       current_channel_message_id,

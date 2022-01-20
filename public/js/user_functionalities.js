@@ -126,13 +126,13 @@ async function toggle_play_stop_video() {
     console.log(message);
     await socket.emit(
       "receive_channel_message",
-      "True-Meet Bot",
+      "GyanDaan Bot",
       message,
       "",
       channelName
     );
     generate_message(
-      "True-Meet Bot",
+      "GyanDaan Bot",
       message,
       new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
       channelName,
