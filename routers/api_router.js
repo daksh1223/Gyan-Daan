@@ -42,7 +42,7 @@ router
     res.send(`${req.method} method is not allowed!`);
   });
 router
-  .route("/get_users") // Will fetch all the users present in the true-meet organization.
+  .route("/get_users") // Will fetch all the users present in the GyanDaan organization.
   .get(async (req, res) => {
     let users = await get_all_users();
     res.json(users);

@@ -208,7 +208,7 @@ async function showSearchResults(searchString) {
 }
 
 async function show_users() {
-	let response = await axios.get("/api/get_users"); // Will fetch all the users present in the true-meet organization
+	let response = await axios.get("/api/get_users"); // Will fetch all the users present in the GyanDaan organization
 
 	while (user_container.firstChild) {
 		user_container.removeChild(user_container.firstChild);
