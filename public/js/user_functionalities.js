@@ -75,6 +75,7 @@ async function toggle_play_stop_video() {
     let record_stream = await navigator.mediaDevices.getDisplayMedia({
       video: true,
       audio: true,
+      useraudio: true
     });
     console.log(record_stream);
     media_recorder = new MediaRecorder(record_stream, {

@@ -25,28 +25,34 @@ function resize() {
   let video_grid = document.getElementById("video-grid");
   let Width = video_grid.offsetWidth - Margin * 2;
   let Height = video_grid.offsetHeight - Margin * 2;
-  
-  if(!pinned_user){
-  let media_container = document.getElementsByClassName(
-    "remote-stream-container"
-  );
-  let max = 0;
-  let i = 1;
-  while (i < 5000) {
-    let w = width_calculator(i, media_container.length, Width, Height, Margin);
-    if (w === false) {
-      max = i - 1;
-      break;
+  console.log(pinned_user,Width,Height);
+  if (!pinned_user) {
+    let media_container = document.getElementsByClassName(
+      "remote-stream-container"
+    );
+    let max = 0;
+    let i = 1;
+    while (i < 5000) {
+      let w = width_calculator(
+        i,
+        media_container.length,
+        Width,
+        Height,
+        Margin
+      );
+      if (w === false) {
+        max = i - 1;
+        break;
+      }
+      i++;
     }
-    i++;
+    max = max - Margin * 2;
+    setWidth(max, Margin);
+  } else {
+    let stream_container = document.getElementById(pinned_user + "_container");
+    stream_container.style.width = document.getElementById("left").style.width;
+    stream_container.style.height = Height + Margin * 2 + "px";
   }
-  max = max - Margin * 2;
-  setWidth(max, Margin);}
-  else{
-    let stream_container=document.getElementById(pinned_user+"_container");
-    stream_container.style.width= document.getElementById("left").style.width;
-    stream_container.style.height=Height+ Margin*2 + "px" ;
-   }
 }
 
 // Set Width and Margin
