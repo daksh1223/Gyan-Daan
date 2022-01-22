@@ -13,6 +13,7 @@ const passport = require("passport");
 const multerAzure = require('multer-azure')
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const MicrosoftStrategy = require("passport-microsoft").Strategy;
+const bodyParser = require('body-parser')
 
 const adminbro = require("./adminbro");
 const User = require("./Schemas/UserSchema.js");
@@ -29,11 +30,15 @@ const dburl = process.env.DB_URL;
 const PORT = process.env.PORT || 3000;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-let count = 1;
 app.set("view engine", "ejs");
 app.use(favicon(__dirname + "/public/favicon.ico"));
 app.use(express.static("public"));
 app.use(cors());
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 app.use(mongoose_morgan({ connectionString: dburl }, {}, "short"));
 app.use(
@@ -117,6 +122,7 @@ app.get("/auth/google/callback",
   }));
   
 app.post("/auth/microsoft", (req, res, next) => {
+  console.log(reg.body)
   req.session.isEducator = req.body.isEducator === "true";
   passport.authenticate("microsoft", {
     scope: ["openid", "profile", "email"],
@@ -205,10 +211,17 @@ app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
       name: req.file.blobPath,
       path: req.file.url,
       displayName: req.file.originalname,
+      createdBy: req.user._id
     });
+
+    // req.file
+    const channel = await find_channel_by_id(req.body.channelID)
+    channel.files.push(newFile)
+    channel.save();
+    
     res.send(newFile);
   } catch (error) {
-    res.json({
+    res.status(500).json({
       error,
     });
   }

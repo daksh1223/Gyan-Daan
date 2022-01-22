@@ -9,11 +9,14 @@ var general_channel; // ID of the General channel
 var current_channel_message_id; // ID of the current channel message
 var current_channel_meet_link = null;
 var current_meet;
+let current_context_channel;
 let create_meet_container = document.getElementById("create_meet");
 let create_poll_container = document.getElementById("create_poll");
+let show_files_container = document.getElementById("show_files");
 if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
   create_poll_container.innerHTML = `<i class="fas fa-poll-h"></i> Create Poll `;
+  show_files_container.innerHTML = `<i class="fas fa-folder"></i> Files`;
 }
 
 const room_data = async (url) => {
@@ -152,6 +155,8 @@ const room_data = async (url) => {
   return promise.data;
 };
 const channel_data = async (cid) => {
+  document.getElementById('files_container').style.display = 'none';
+  document.getElementsByClassName('chat_container')[0].style.display = 'flex';
   channel_id = cid;
   if (current_channel) {
     document.getElementById(
@@ -168,6 +173,7 @@ const channel_data = async (cid) => {
   current_channel = cid; // Set the current channel as cid
   current_channel_message_id = cid;
   channel_data_copy = channel.data;
+  current_context_channel = channel_data_copy;
 
   document.getElementById("channel_name_display").innerHTML = channel.data.name;
   channel_data_messages = channel.data.messages;
@@ -190,7 +196,6 @@ const channel_data = async (cid) => {
     let status="Educator";
     if(channel.data.users[i].isEducator===false)status="Student";
 
-    console.log(channel.data.users[i])
     temp_user.innerHTML = `
     <div style="display:flex">
       <image src="${channel.data.users[i].profilepicUrl}" class="pic"></>
@@ -256,7 +261,6 @@ const show_chat = (prefix) => {
   while (messages.firstChild) {
     messages.removeChild(messages.firstChild); // Remove previous channel's chats
   }
-
   if (current_channel_meet_link) {
     // If the current channel is a meet channel then show join meet else show create meet option.
     document.getElementById("create_meet").style.display = "none";
@@ -358,10 +362,16 @@ const send_chat_message = async (msg) => {
     const file = document.getElementById("myFile").files[0];
     let form = new FormData();
     form.append("upload", file);
-    const response = await axios.post("/api/uploadFile", form);
-    if (response.data)
+    form.append('channelID', current_channel);
+    try {
+      const response = await axios.post("/api/uploadFile", form);
       message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`;
-    else return;
+      channel_data_copy.files.push(response.data._id)
+    }
+    catch(err) {
+      document.getElementById('editor').value = "There is some problem in uploading file! Sorry for inconvenience"
+      return;
+    }
     clear_editor();
   } else {
     message_in_html_form =
@@ -400,9 +410,12 @@ function start_meet() {
   location = current_channel_meet_link; // Will change the current url to the meet's url
 }
 async function meet_message(cid) {
+  document.getElementById('files_container').style.display = 'none';
+  document.getElementsByClassName('chat_container')[0].style.display = 'flex';
   current_channel_message_id = cid;
   channel = await axios.get(`/api/channel/${cid}`); //Get the meet channel's data
   channel_data_messages = channel.data.messages;
+  current_context_channel = channel.data;
   document.getElementById("channel_name_display").innerHTML = channel.data.name;
   if (current_meet) {
     document.getElementById(`${current_meet}meet`).style.backgroundColor = "";
@@ -428,7 +441,6 @@ function channel_modal_submission() {
   const name = document.getElementById("channel_name").value;
   let users = document.getElementById("user_tags").value;
   users = users.split(" ");
-  console.log(users);
   if (name.length) {
     userinfo = {
       name: name,
@@ -501,7 +513,6 @@ async function meet_modal_submission() {
   const allow_students_stream = document.getElementById(
     "Allow_Students_Stream"
   ).checked;
-  console.log(name, date, time, allow_students_stream);
   if (name.length && time.length && date.length) {
     userinfo = {
       name: name,
@@ -577,7 +588,6 @@ async function leave_room(room_id, channel_id) {
     data: { channel_id: channel_id },
   });
 
-  console.log(response);
   response = await axios.delete("/api/room/", {
     data: { room_id: ROOM_ID },
   });
@@ -606,13 +616,11 @@ async function add_users_modal_submission() {
   // Modal for adding user in the room or channel
   var users = document.getElementById("add_user_tags").value;
   users = users.split(" ");
-  console.log(users);
   if (ROOM_ID == document.getElementsByClassName("add_users_link")[0].id) {
     var response = await axios.post("/api/add_users", {
       room_id: ROOM_ID,
       users: users,
     });
-    console.log(response.data);
     if (general_channel == current_channel) {
       user_container = document.getElementById("users_container");
 
@@ -633,7 +641,6 @@ async function add_users_modal_submission() {
       channel_room: ROOM_ID,
       users: users,
     });
-    console.log(response.data);
     if (
       document.getElementsByClassName("add_users_link")[0].id == current_channel
     ) {
@@ -658,18 +665,15 @@ async function user_deletion_modal_submission() {
   // Modal for adding user in the room or channel
   var users = document.getElementById("user_deletion_tags").value;
   users = users.split(" ");
-  console.log(users);
   if (ROOM_ID == document.getElementsByClassName("remove_users_link")[0].id) {
     var response = await axios.post("/api/remove_users", {
       room_id: ROOM_ID,
       users: users,
     });
-    console.log(response.data);
     user_container = document.getElementById("users_container");
 
     for (var i = 0; i < response.data.length; i++) {
       temp_user = document.getElementById(response.data[i].email);
-      console.log(temp_user);
       if (temp_user) user_container.removeChild(temp_user);
     }
   } else {
@@ -678,7 +682,6 @@ async function user_deletion_modal_submission() {
       channel_room: ROOM_ID,
       users: users,
     });
-    console.log(response.data);
     if (
       document.getElementsByClassName("remove_users_link")[0].id ==
       current_channel
@@ -727,7 +730,6 @@ async function poll_modal_submission() {
     type,
     channel_id,
   });
-  console.log(response.data);
   const input_type = type === "SCP" ? "radio" : "checkbox";
   let msg = `<h6>${poll_name}</h6>`;
   for (let i = 0; i < options.length; i++) {
@@ -832,4 +834,57 @@ function toggleChannelIcon(event, id) {
         ? "fas fa-caret-square-right mx-2"
         : "fas fa-caret-square-down mx-2"
     );
+}
+
+async function showChannelFiles() {
+  document.getElementById('files_container').style.display = 'flex';
+  document.getElementsByClassName('chat_container')[0].style.display = 'none';
+  let onclick_function;
+  if (current_context_channel.is_meet) {
+    onclick_function = `meet_message('${current_context_channel._id}')`;
+  }
+  else {
+    onclick_function = `channel_data('${current_context_channel._id}')`;
+  }
+  document.getElementById('files_container').innerHTML = `<a id="files_back" class="custom_link" 
+  href="#" style="margin:2%;width: fit-content;" onclick=${onclick_function}> 
+  <i class="fas fa-chevron-left mx-1"></i>Back
+            </a>
+            <table class="table mx-auto" style="width: 90%;"">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Uploaded By</th>
+                        <th scope="col">Upload Date</th>
+                    </tr>
+                </thead>
+                <tbody id="all_files">
+
+                </tbody>
+            </table>`;
+  let files;
+  try {
+    const response = await axios.get('/api/get_files/', {
+      params: {
+        files: current_context_channel.files
+      }
+    })
+    files = response.data;
+  }
+  catch (err) {
+    console.log(err);
+    document.getElementById('all_files').innerHTML = 'We have encountered an error while fetching you files. Sorry for Inconvnience!';
+    
+    return;
+  }
+  let file_view = "";
+  files.forEach(file => {
+    let time = new Date(file.createdAt)
+    file_view+= `<tr class="file_row" ><td><a href="${file.path}">${file.displayName}</a></td>
+    <td><a href="/profile/${file.createdBy.email}">${file.createdBy.name}</a></td>
+    <td>${time.getDate()}-${time.toLocaleString('default', { month: 'short' })}-${time.getFullYear()}</td>
+    </tr>
+    `
+  })
+  document.getElementById('all_files').innerHTML = file_view;
 }

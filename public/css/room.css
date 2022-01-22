@@ -222,3 +222,28 @@ pre{
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+#files_container{
+  width: 65%;
+  display: none;
+  height: 100%;
+  background-color: #e5ddd5;
+  flex-direction: column;
+}
+
+thead{
+  background-color: #4f46e5;
+  color: white;
+}
+.file_row{
+  background-color: #ededed;
+}
+td{
+  color: #4f46e5;
+}
+td a{
+  color: #4f46e5;
+}
+td a:hover{
+  color: black;
+}
