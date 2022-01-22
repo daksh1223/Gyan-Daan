@@ -362,11 +362,11 @@ const send_chat_message = async (msg) => {
     const file = document.getElementById("myFile").files[0];
     let form = new FormData();
     form.append("upload", file);
-    form.append('channelID', current_channel);
+    form.append('channelID', current_context_channel._id);
     try {
       const response = await axios.post("/api/uploadFile", form);
       message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`;
-      channel_data_copy.files.push(response.data._id)
+      current_context_channel.files.push(response.data._id)
     }
     catch(err) {
       document.getElementById('editor').value = "There is some problem in uploading file! Sorry for inconvenience"
