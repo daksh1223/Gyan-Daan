@@ -231,22 +231,23 @@ io.on("connection", (socket) => {
     socket.broadcast.to(roomID).emit("user-joined", user, email, socket.id, profile_pic, educator_status, channelId);
     socket.on(
       "receive_channel_message",
-      async (username, data, email, channel_id) => {
-        var timestring = new Date().toLocaleString("en-US", {
-          timeZone: "Asia/Kolkata",
-        });
-
-        if (channel_id != -1) {
-          var Channel = await find_channel_by_id(channel_id);
-          let new_message = create_new_chat(username, data, email, timestring);
-          Channel.messages.push(new_message.id);
-          Channel.save();
-        }
+      async (username, data, email, channel_id,message_id,timestring) => {
         socket.broadcast
           .to(roomID)
-          .emit("send_channel_message", username, data, timestring, channel_id);
+          .emit("send_channel_message", username, data, timestring, channel_id,message_id,email);
       }
     );
+      socket.on(
+				"deleteChat",
+				async (message_id) => {
+					socket.broadcast.to(roomID).emit("deleteChat", message_id);
+				}
+    );
+      socket.on("editChat", async (message_id, newData, timeString) => {
+				socket.broadcast
+					.to(roomID)
+					.emit("editChat", message_id, newData, timeString);
+			});
     socket.on("disconnect", () => {
       new_track_record.EndTime = new Date().toLocaleString("en-US", {
         timeZone: "Asia/Kolkata",

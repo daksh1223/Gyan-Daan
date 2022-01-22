@@ -440,7 +440,7 @@ const send_chat_message = async (msg) => {
 		form.append("upload", file);
 		const response = await axios.post("/api/uploadFile", form);
 		if (response.data)
-			message_in_html_form = `<div class="reply" ><a href="${response.data.path}"><pre>${response.data.displayName}</pre></a></div>`;
+			message_in_html_form = `<pre><a href="${response.data.path}">${response.data.displayName}</a></pre>`;
 		else return;
 		clear_editor();
 	} else {
@@ -1017,10 +1017,10 @@ const geteditchatData = async (id) => {
 	let newchatData = document.getElementById(`chatInput_${id}`).value;
 	let replyData = "";
 	let chat = document.getElementById(id);
-	let timeString = new Date().toLocaleString("en-US", {
-			timeZone: "Asia/Kolkata",
-		});
-	timeString = timeString + ' edited'; 
+	let timeString = chat.getElementsByClassName("chatTimeString")[0].innerHTML;
+	if (timeString.slice(-6) != "edited") {
+		timeString = timeString + " edited";
+	}
 	if (chat.getElementsByClassName("reply").length > 0) {
 		replyData =
 			'<div class="card shadow reply">' +
@@ -1029,12 +1029,12 @@ const geteditchatData = async (id) => {
 	}
 	chat.getElementsByClassName("chatContent")[0].innerHTML =
 		replyData + "<pre>" + newchatData + "</pre";
-	editchatData(id, newchatData,timeString);
+	editchatData(id, newchatData, timeString);
 	await socket.emit("editChat", id, newchatData, timeString);
 	axios.put("/api/message", {
 		message_id: id,
 		message_content: replyData + "<pre>" + newchatData + "</pre>",
-		message_timestamp:timeString,
+		message_timestamp: timeString,
 	});
 
 	chat.style.width = "fit-content";
@@ -1044,7 +1044,7 @@ const geteditchatData = async (id) => {
 			message.timestamp = timeString;
 		}
 	});
-	
+
 	chat.getElementsByClassName("chatTimeString")[0].innerHTML = timeString;
 	chat.getElementsByClassName("topnav")[0].style.display = "block";
 };

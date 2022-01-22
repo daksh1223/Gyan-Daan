@@ -1,11 +1,11 @@
 let val = document.getElementById("navbar_menu").innerHTML;
 
 if (isEducator === "true") {
-    console.log(val); 
+    //console.log(val); 
     document.getElementById("navbar_menu").innerHTML =
     `<li>
   <a class="dropdown-item" href='/Requested-Courses' type="button">
-      <i class="fas fa-user-plus" style="color:black;"></i> Requestd <br> Courses</a>
+      <i class="fas fa-user-plus" style="color:black;"></i> Requested <br> Courses</a>
   </li>` + 
       val;
   } else

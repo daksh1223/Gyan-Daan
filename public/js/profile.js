@@ -117,8 +117,8 @@ const profileEJS = async () => {
 					<div style="display:flex;justify-content:space-around">
 						<div style="margin-top: 2%;">
 							<img src="#" id='profile_pic' class="avatar"/>
-							<button id="edit_profile_pic" type="button" style="background-color: transparent;border: none;color:white" >
-								<span  class="material-icons">
+							<button id="edit_profile_pic" type="button" style="background-color: transparent;border: none;" >
+								<span  class="material-icons" style="color:rgb(79, 70, 229);">
 									edit
 								</span>
 							</button>

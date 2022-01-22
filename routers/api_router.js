@@ -25,7 +25,11 @@ const {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const { get_tag_by_name, create_new_tag ,get_all_tags} = require("../Repository/tag_repository.js");
 const {create_new_option, update_vote, create_new_poll, find_poll_by_id} = require('../Repository/poll_repository')
-
+const {
+	create_new_chat,
+	delete_chat,
+	edit_chat,
+} = require("../Repository/chat_repository");
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 router.get("/get_user_details", async (req, res) => {
   let req_data = await get_user_by_id_and_populate_Rooms(req.user._id);
@@ -459,6 +463,7 @@ router.route("/set_user_profile").post(async (req, res) => {
     }
   }
   user.profilepicUrl = req.body.profilepicUrl;
+  req.user.profilepicUrl = req.body.profilepicUrl;
   user.about = req.body.about;
   if (req.body.idUrl) {
     user.idUrl = req.body.idUrl
@@ -608,5 +613,46 @@ router.get('/get_poll/:poll', async (req, res) => {
   const poll = await find_poll_by_id(req.params.poll)
   res.json(poll)
 })
+router.route("/message").post(async (req, res) => {
+		console.log(req.body);
+
+		if (req.body.channel_id != -1) {
+			let Channel = await find_channel_by_id(req.body.channel_id);
+			let new_message = create_new_chat(
+				req.body.user_name,
+				req.body.message,
+				req.body.email,
+        req.body.timestring
+        
+			);
+			Channel.messages.push(new_message.id);
+			await Channel.save();
+
+			res.json(new_message._id);
+		}
+	})
+  .delete(async (req, res) => {
+    //console.log(req.body);
+
+	
+    let Channel = await find_channel_by_id(req.body.channel_id);
+    let index = Channel.messages.indexOf(req.body.message_id);
+    // console.log(index);
+    Channel.messages.splice(index, 1);
+    await delete_chat(req.body.message_id);
+
+    await Channel.save();
+
+    res.json("Deleted");
+  }
+		
+).put(async (req, res) => { 
+  await edit_chat(
+		req.body.message_id,
+		req.body.message_content,
+		req.body.message_timestamp
+	);
+});
+  
 
 exports.router = router;

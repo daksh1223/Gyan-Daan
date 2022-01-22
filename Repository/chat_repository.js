@@ -9,5 +9,22 @@ const create_new_chat = (username, message, useremail,timestamp) => {
     newchat.timestamp = timestamp;
     newchat.save();
     return newchat;
-  };
+};
+const delete_chat = async (id) => {
+  let delChat=await Chats.findById(id);
+  await delChat.delete();
+  return 'success';
+
+}
+const edit_chat = async (id, newData, timestamp) => {
+	let chat = await Chats.findById(id);
+	//console.log(chat)
+	chat.message = newData;
+	chat.timestamp = timestamp;
+	await chat.save();
+	//console.log(chat);
+	return "success";
+};
 exports.create_new_chat = create_new_chat;
+exports.delete_chat = delete_chat;
+exports.edit_chat = edit_chat;
