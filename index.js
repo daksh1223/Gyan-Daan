@@ -214,10 +214,15 @@ app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
       createdBy: req.user._id
     });
 
-    // req.file
-    const channel = await find_channel_by_id(req.body.channelID)
-    channel.files.push(newFile)
-    channel.save();
+    if(req.body.channelID)
+    {
+      const channel = await find_channel_by_id(req.body.channelID)
+      if (req.body.isRecording)
+        channel.recordings.push(newFile)
+      else 
+        channel.files.push(newFile)
+      channel.save();
+    }
     
     res.send(newFile);
   } catch (error) {

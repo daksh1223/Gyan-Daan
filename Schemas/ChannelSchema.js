@@ -10,7 +10,8 @@ const ChannelSchema = mongoose.Schema({
   meet_allow_students_stream:{ type:Boolean,default:false},
   meets: [{ type: Schema.Types.ObjectId, ref: "Channel" }], // All meet channels present in a normal channel
   polls: [{ type: Schema.Types.ObjectId, ref: "Poll" }],
-  files: [{ type: Schema.Types.ObjectId, ref: "File" }]
+  files: [{ type: Schema.Types.ObjectId, ref: "File" }],
+  recordings: [{ type: Schema.Types.ObjectId, ref: "File" }]
 });
 
 const Channel = mongoose.model("Channel", ChannelSchema);

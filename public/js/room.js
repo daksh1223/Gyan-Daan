@@ -263,9 +263,11 @@ const show_chat = (prefix) => {
   }
   if (current_channel_meet_link) {
     // If the current channel is a meet channel then show join meet else show create meet option.
+    document.getElementById("show_files").innerHTML = '<i class="fas fa-folder mx-1"></i>Recordings'
     document.getElementById("create_meet").style.display = "none";
     document.getElementById("join_meet").style.display = "";
   } else {
+    document.getElementById("show_files").innerHTML = '<i class="fas fa-folder mx-1"></i>Files'
     document.getElementById("create_meet").style.display = "";
     document.getElementById("join_meet").style.display = "none";
   }
@@ -362,7 +364,8 @@ const send_chat_message = async (msg) => {
     const file = document.getElementById("myFile").files[0];
     let form = new FormData();
     form.append("upload", file);
-    form.append('channelID', current_context_channel._id);
+    form.append('channelID', current_channel);
+    form.append('isRecording', false);
     try {
       const response = await axios.post("/api/uploadFile", form);
       message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`;
@@ -862,11 +865,12 @@ async function showChannelFiles() {
 
                 </tbody>
             </table>`;
-  let files;
+  let files = current_context_channel.is_meet ? current_context_channel.recordings : current_context_channel.files;
+  console.log(files)
   try {
     const response = await axios.get('/api/get_files/', {
       params: {
-        files: current_context_channel.files
+        files
       }
     })
     files = response.data;
