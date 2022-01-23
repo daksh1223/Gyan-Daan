@@ -106,12 +106,10 @@ async function toggle_play_stop_video(cid) {
       } else size = size + " KB";
     } else size = size + " B";
 
-    
-
     let formData = new FormData();
     formData.append("upload", recording);
     formData.append("channelID", cid);
-    formData.append("isRecording", true);
+    formData.append("isRecording", 'true');
     let response = await axios.post("/api/uploadFile", formData);
     video_stream = null;
     media_recorder = null;
