@@ -52,7 +52,7 @@
 </head>
 
 <body>
-    <nav class="navbar navbar-expand-md navbar-light justify-content-start" >
+    <nav class="navbar navbar-expand-md navbar-light justify-content-start">
 
         <a class="navbar-brand mb-0 h1" href="/home"><img src="/images/logo.png" style="width: 100px;" /></a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar6">
@@ -70,8 +70,9 @@
                     <div class="dropdown">
                         <a class="dropdown-toggle nav-link active" id="user_data" href='#' role="button"
                             data-toggle="dropdown" aria-expanded="false">
-                            <img src="<%- user_profilePic %>" style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;"/>
-                          
+                            <img src="<%- user_profilePic %>"
+                                style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;" />
+
                             <%= user_name %>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
@@ -92,7 +93,7 @@
                                     <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
                                 </a>
                             </li>
-                                               </ul>
+                        </ul>
                     </div>
                 </li>
             </ul>
@@ -102,27 +103,33 @@
         <div class="data_container shadow" style="height:100%;width:20%;;overflow:auto;">
             <div id="channels" style="width:100%;">
                 <div id="room_name"></div>
-                
-                    <div id="channels_container" class="card-body p-0" style="display:flex;flex-direction:column;">
-                    </div>
-                    <div id="meet_container" class="card-body p-0" style="display:flex;flex-direction:column;">
-                    </div>
+
+                <div id="channels_container" class="card-body p-0" style="display:flex;flex-direction:column;">
+                </div>
+                <div id="meet_container" class="card-body p-0" style="display:flex;flex-direction:column;">
+                </div>
             </div>
 
 
         </div>
         <div class="chat_container" style="height:100%;width:60%;overflow:auto; background-color: #e5ddd5;">
-            <div style="margin-top:1%;margin-bottom: 1%;">
+            <div style="margin-top:1%;margin-bottom: 1%;display: flex; align-items:baseline;">
                 <h4 id="channel_name_display" style="float:left;margin-left:2.5%;max-width:65%;word-break: break-word;color: black;">
                 </h4>
-                <a id="create_poll" class="custom_link" href="#" data-toggle="modal" data-target="#pollcreationmodal"
-                    style="float:right;margin-right:3%;">
+                <a id="channel_notifications" href="#"  data-toggle="modal" onclick="new_update_adder(0)"
+                    data-target="#notifications_modal" class="custom_link" style="margin-left:2.5%;">
+                    <i class="fas fa-bell"></i> <i id="alert_notification" style="display: none;" class="fas fa-exclamation alert_notification"></i>Notifications
                 </a>
                 <a id="create_meet" class="custom_link" href="#" data-toggle="modal" data-target="#meetcreationmodal"
-                    style="float:right;margin-right:3%;">
+                    style="margin-left:auto; margin-right:2%;">
                 </a>
-                <a id="join_meet" class="custom_link" href="#" style="float: right;margin-right: 2%;">
+                <a id="join_meet" class="custom_link" href="#" style="margin-left:auto;margin-right: 2%;">
                 </a>
+                <a id="create_poll" class="custom_link" href="#" data-toggle="modal" data-target="#pollcreationmodal"
+                    style=" margin-right:2%;">
+                </a>
+
+
                 <a id="show_files" class="custom_link" href="#" style="margin-right:2%; float: right;" onclick="showChannelFiles()">
                     
                 </a>
@@ -135,14 +142,15 @@
 
                 <div id="chat_sender" style="display: flex;align-items: flex-end;background-color: #ededed;">
                     <div id="editor_container" style="display: flex;">
-                        <label style="cursor:pointer;align-self: center;margin:2%;"><i title="upload File" class="fas fa-paperclip fa-lg"
-                                style="color:black;"></i>
-                            <input type="file" class="admin__input" id="myFile" name="upload" onChange="handleChatFileUpload()" /></label>
+                        <label style="cursor:pointer;align-self: center;margin:2%;"><i title="upload File"
+                                class="fas fa-paperclip fa-lg" style="color:black;"></i>
+                            <input type="file" class="admin__input" id="myFile" name="upload"
+                                onChange="handleChatFileUpload()" /></label>
                         <textarea id="editor" oninput="auto_grow(this)" placeholder="Type here..." rows=1></textarea>
-                        <i id="editor_clear" onclick="clear_editor()" title="clean"
-                            class="fas fa-window-close fa-lg" style="margin:2%;"></i>
-                        <i id="submit_button" title="Send Message" onclick="send_chat_message()" class="fa fa-send fa-lg"
-                            style="color:black;cursor:pointer;align-self: center;margin: 2%;">
+                        <i id="editor_clear" onclick="clear_editor()" title="clean" class="fas fa-window-close fa-lg"
+                            style="margin:2%;"></i>
+                        <i id="submit_button" title="Send Message" onclick="send_chat_message()"
+                            class="fa fa-send fa-lg" style="color:black;cursor:pointer;align-self: center;margin: 2%;">
                         </i>
                     </div>
                 </div>
@@ -151,20 +159,22 @@
             <div class="modal fade" id="pollcreationmodal" tabindex="-1" role="dialog"
                 aria-labelledby="pollcreationmodalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document" style="color:black;z-index: 9999;">
-                    <div class="modal-content" >
+                    <div class="modal-content">
                         <div class="modal-header" style="border-color: #292929;">
                             <h5 class="modal-title" id="pollcreationmodalLongTitle">Create Poll</h5>
                         </div>
                         <form>
-            
+
                             <div class="modal-body" style="border-color: #292929;overflow:auto;">
                                 <div class="form-group">
                                     <label for="poll_name">Poll Name</label>
-                                    <input type="text" class="form-control" id="poll_name" style="color: black;" required>
+                                    <input type="text" class="form-control" id="poll_name" style="color: black;"
+                                        required>
                                 </div>
                                 <div class="form-group">
                                     <label>Add Options:</label>
-                                    <input type="text" class="form-control" id="poll_tags" data-role="tagsinput" required/>
+                                    <input type="text" class="form-control" id="poll_tags" data-role="tagsinput"
+                                        required />
                                     <small class="form-text " style="font-weight:400;">
                                         Add options that will be shown in the poll<br>
                                         Press enter after typing an option to add an option.
@@ -177,15 +187,16 @@
                                     <input type="radio" id="SCP" name="poll_type" value="SCP" checked="true">
                                     <label for="SCP">Single Correct</label><br>
                                 </div>
-                                <button type="button" class="btn btn-primary" style="float: right; margin-left:1%;margin-bottom:1%"
+                                <button type="button" class="btn btn-primary"
+                                    style="float: right; margin-left:1%;margin-bottom:1%"
                                     onclick="poll_modal_submission()">Create
                                     Poll</button>
                                 <button type="button" id="modal_close" class="btn btn-secondary" data-dismiss="modal"
                                     style="float: right;margin-bottom:1%">Close</button>
-            
+
                             </div>
                         </form>
-            
+
                     </div>
                 </div>
             </div>
@@ -223,51 +234,53 @@
                         </form>
 
                     </div>
-                    </div>
-                    </div>
-                    <div class="modal fade" id="RoomcreationModal" tabindex="-1" role="dialog"
-                        aria-labelledby="RoomcreationModalCenterTitle" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                            <div class="modal-content" >
-                                <div class="modal-header" style="border-color: #292929;">
-                                    <h5 class="modal-title" id="RoomcreationModalLongTitle">Edit Course</h5>
+                </div>
+            </div>
+            <div class="modal fade" id="RoomcreationModal" tabindex="-1" role="dialog"
+                aria-labelledby="RoomcreationModalCenterTitle" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header" style="border-color: #292929;">
+                            <h5 class="modal-title" id="RoomcreationModalLongTitle">Edit Course</h5>
+                        </div>
+                        <form>
+
+                            <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                                <div class="form-group">
+                                    <label for="room_name">Course Name</label>
+                                    <input type="text" class="form-control" id="edit_room_name" style="color: black;"
+                                        required>
                                 </div>
-                                <form>
-                    
-                                    <div class="modal-body" style="border-color: #292929;overflow:auto;">
-                                        <div class="form-group">
-                                            <label for="room_name">Course Name</label>
-                                            <input type="text" class="form-control" id="edit_room_name" style="color: black;" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="room_description">Course Description</label>
-                                            <textarea row="3" class="form-control" id="edit_room_description" style="color: black;"> </textarea>
-                                        </div>
-                                        <div class="form-group">
-                                            <label>Edit Course Tags:</label>
-                                            <input type="text" id="edit_room_tags" data-role="tagsinput" />
-                                            <small class="form-text " style="font-weight:400;">
-                                                Add Tags associated with this course. <br>Eg. Trignometry, Maths, Class Xth
-                                                etc...<br>
-                                                Press enter after typing a tag name to add a new tag.
-                                            </small>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer" style="border-color: #292929;">
-                                        <button type="button" id="room_edit_modal_close" class="btn btn-secondary"
-                                            data-dismiss="modal">Close</button>
-                                        <button type="button" class="btn btn-primary" onclick="room_edit_modal_submission(ROOM_ID)">Edit
-                                            Room</button>
-                                    </div>
-                                </form>
+                                <div class="form-group">
+                                    <label for="room_description">Course Description</label>
+                                    <textarea row="3" class="form-control" id="edit_room_description"
+                                        style="color: black;"> </textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Edit Course Tags:</label>
+                                    <input type="text" id="edit_room_tags" data-role="tagsinput" />
+                                    <small class="form-text " style="font-weight:400;">
+                                        Add Tags associated with this course. <br>Eg. Trignometry, Maths, Class Xth
+                                        etc...<br>
+                                        Press enter after typing a tag name to add a new tag.
+                                    </small>
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="border-color: #292929;">
+                                <button type="button" id="room_edit_modal_close" class="btn btn-secondary"
+                                    data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary"
+                                    onclick="room_edit_modal_submission(ROOM_ID)">Edit
+                                    Room</button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
             <div class="modal fade" id="meetcreationmodal" tabindex="-1" role="dialog"
                 aria-labelledby="meetcreationmodalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content"
-                        atyle="z-index: 9999;">
+                    <div class="modal-content" atyle="z-index: 9999;">
                         <div class="modal-header" style="border-color: #292929;">
                             <h5 class="modal-title" id="meetcreationmodalLongTitle">Create meet</h5>
                         </div>
@@ -317,8 +330,7 @@
             <div class="modal fade" id="adduserModal" tabindex="-1" role="dialog"
                 aria-labelledby="adduserModalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content"
-                        style="z-index: 9999;">
+                    <div class="modal-content" style="z-index: 9999;">
                         <div class="modal-header" style="border-color: #292929;">
                             <h5 class="modal-title" id="adduserLongTitle">Add Users</h5>
                         </div>
@@ -326,11 +338,9 @@
                             <div class="form-group">
                                 <label>Add Users:</label>
                                 <input type="text" class="form-control" id="add_user_tags" data-role="tagsinput">
-                                <small class="form-text " id="add_users_muted_text"
-                                    style="font-weight:400;">
+                                <small class="form-text " id="add_users_muted_text" style="font-weight:400;">
                                 </small>
-                                <small class="form-text " id="add_users_muted_text"
-                                    style="font-weight:400;">
+                                <small class="form-text " id="add_users_muted_text" style="font-weight:400;">
 
                                     Press enter after typing user's email to add a new user.
                                 </small>
@@ -350,8 +360,7 @@
             <div class="modal fade" id="userdeletionmodal" tabindex="-1" role="dialog"
                 aria-labelledby="userdeletionmodalCenterTitle" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered" role="document">
-                    <div class="modal-content"
-                        style="z-index: 9999;">
+                    <div class="modal-content" style="z-index: 9999;">
                         <div class="modal-header" style="border-color: #292929;">
                             <h5 class="modal-title" id="userdeletionmodalLongTitle">Remove Users</h5>
                         </div>
@@ -359,8 +368,7 @@
                             <div class="form-group">
                                 <label>Remove Users:</label>
                                 <input type="text" class="form-control" id="user_deletion_tags" data-role="tagsinput">
-                                <small class="form-text " id="userdeletionmodals_muted_text"
-                                    style="font-weight:400;">
+                                <small class="form-text " id="userdeletionmodals_muted_text" style="font-weight:400;">
                                     Remove users that are currently present in the course/channel by typing their email
                                     id.
                                     Press enter after typing user's email to add a new user.
@@ -384,8 +392,8 @@
         </div>
         <div class="shadow" style="width: 20%;">
             <div style="width:100%;display:flex;flex-direction:row;">
-                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapsemeets" aria-expanded="false"
-                    aria-controls="collapseusers" style="text-decoration: none;
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapsemeets"
+                    aria-expanded="false" aria-controls="collapseusers" style="text-decoration: none;
                                       float:left;
                                       color: rgb(79, 70, 229); 
                                       display: flex;
@@ -409,11 +417,8 @@
           display: flex;
           flex-direction: row;
           align-items: center;
-          padding: 1%;"
-
-          onclick="toggleChannelIcon(this, 'channel_users_icon')"
-          >
-                    <i class="fas fa-caret-square-right mx-2" id="channel_users_icon" ></i>
+          padding: 1%;" onclick="toggleChannelIcon(this, 'channel_users_icon')">
+                    <i class="fas fa-caret-square-right mx-2" id="channel_users_icon"></i>
                     <h6 style="margin-bottom: 0%;">Channel Users</h6>
                 </button>
             </div>
@@ -421,13 +426,12 @@
                 <div id="users_container" class="card-body" style="display:flex;flex-direction:column;">
                 </div>
             </div>
-            
+
         </div>
         <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"
             aria-labelledby="user_display_modalCenterTitle" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content"
-                    style="z-index: 9999;">
+                <div class="modal-content" style="z-index: 9999;">
                     <div class="modal-header" style="border-color: #292929;">
                         <h5 class="modal-title" id="user_display_modalLongTitle">Members</h5>
                     </div>
@@ -446,8 +450,47 @@
                 </div>
             </div>
         </div>
-
     </div>
+    <div class="modal fade" id="notifications_modal" tabindex="-1" role="dialog"
+        aria-labelledby="notifications_modalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered" role="document">
+            <div class="modal-content" style="z-index: 9999;">
+                <div class="modal-header" style="border-color: #292929;display:flex;align-items:baseline;color:white;background-color:rgb(79, 70, 229);">
+                    <h3 class="modal-title" id="notifications_modalLongTitle" style="text-align:center">Notifications</h3>
+                    <div id="add_notification" onclick="toggle_add_edit_notification_container(0)"
+                        style="display: none;margin-left: auto;margin-right: 2%; cursor: pointer;"><i class="fas fa-plus"></i> New
+                        notification</div>
+                        <div type="button" id="notifications_modal_close" 
+                        data-dismiss="modal"><i class="fas fa-times" style="position: absolute;top:6px;right:6px;"></i></div>
+                      
+                </div>
+                <form>
+
+                    <div class="modal-body" style="border-color: #292929;overflow:auto;">
+
+                        <div class="form-group" id="notification_title" style="display: none">
+                            <label for="notification_titlefield">Notification Title:</label>
+                            <input type="text" id="notification_titlefield" class="form-control" />
+                        </div>
+
+                        <div class="form-group" id="notification_input" style="display: none">
+                            <label for="notification_inputfield">Notification Description:</label>
+                            <textarea type="text" id="notification_inputfield" class="form-control" ></textarea>
+                        </div>
+                        <div class="form-group" id="add_button_container"
+                            style="border-color: #292929;display: none;padding-bottom:2%;border-bottom: 1px solid;">
+                            <button type="button" id="add_notifications_close" onclick="notification_submit_handler()"
+                                style="margin-left: auto;background-color: rgb(79, 70, 229); color: white;" class="btn" data-dismiss="modal">Add</button>
+                        </div>
+
+                        <div class="form-group" id="notifications_modal_container">
+                        </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

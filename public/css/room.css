@@ -8,13 +8,13 @@ html {
   line-height: 150%;
   font-family: "Red Hat Display";
 }
-a{
+a {
   color: black;
 }
-a:hover{
+a:hover {
   text-decoration: none;
 }
-.form-check-label{
+.form-check-label {
   width: 100%;
 }
 
@@ -43,7 +43,6 @@ a:hover{
 }
 
 .data_container::-webkit-scrollbar-thumb {
-
   border-radius: 100px;
 }
 .chat-input {
@@ -144,18 +143,18 @@ iframe {
   text-decoration: none;
 }
 
-#editor_container{
+#editor_container {
   width: 100%;
   min-height: 62px;
   margin: 0 1%;
 }
 
-#editor{
-  border:0;
+#editor {
+  border: 0;
   border-radius: 2rem;
   outline: none;
   overflow: hidden;
-  margin: 1% ;
+  margin: 1%;
   width: calc(95% - 100px);
   height: 100%;
   resize: none;
@@ -163,66 +162,93 @@ iframe {
   align-self: center;
 }
 
-#editor_clear{
+#editor_clear {
   border: 0;
   outline: none;
-  float: right; align-self: center;cursor: pointer
+  float: right;
+  align-self: center;
+  cursor: pointer;
 }
 
-
-input[type="file"] { 
+input[type="file"] {
   opacity: 0; /* make transparent */
   z-index: -1; /* move under anything else */
   position: absolute; /* don't let it take up space */
 }
 
-pre{
+pre {
   font-size: 1em;
-  white-space:pre-wrap;
+  white-space: pre-wrap;
   color: inherit;
   font-family: inherit;
 }
 
-#room_desc{
+#room_desc {
   padding: 5%;
   color: grey;
 }
 
-.channel_headers{
+.channel_headers {
   text-decoration: none;
-  float:left;
-  color: rgb(79, 70, 229); 
+  float: left;
+  color: rgb(79, 70, 229);
   display: flex;
   flex-direction: row;
 }
 
-.poll_option{
+.poll_option {
   min-height: 30px;
 }
 
-.participant_details{
-  display:flex;
-  flex-direction:column;
+.participant_details {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
   text-overflow: ellipsis;
   justify-content: center;
 }
-.pic{
-  height:3rem;
-  width:3rem;
-  border-radius:50%;
+.pic {
+  height: 3rem;
+  width: 3rem;
+  border-radius: 50%;
   margin-right: 2%;
   align-self: center;
 }
-.participant_details div
-{
+.participant_details div {
   width: 100%;
   font-size: 1 rem;
-  white-space:nowrap;
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.notification {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1%;
+  margin-right: 1%;
+  border-bottom: 1px solid black;
+}
+
+.notification div {
+  width: 100%;
+  word-wrap: break-word;
+}
+.notification small {
+  color: grey;
+}
+.notification_dropdown {
+  visibility: hidden;
+}
+.notification:hover .notification_dropdown {
+  visibility: visible;
+}
+.alert_notification {
+  position: relative;
+  font-size: 12px;
+  bottom: 10px;
+  right: 7px;
+}
 #files_container{
   width: 60%;
   display: none;

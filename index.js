@@ -244,6 +244,9 @@ io.on("connection", (socket) => {
     socket.on("connect_to_new_user", (username, id) => {
       socket.to(id).emit("user-joined", user, email, id, profile_pic, educator_status, channelId);
     });
+    socket.on("notification_message",(type,id,title,content,timestamp,current_channel)=>{
+      socket.broadcast.to(roomID).emit("receive_notification_message",type,id,title,content,timestamp,current_channel);
+    })
     socket.on("toggle_option", (poll) => {
       socket.broadcast
           .to(roomID)
