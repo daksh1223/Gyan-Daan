@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-
+const Schema = mongoose.Schema;
 // Creating a Schema for uploaded files
 const fileSchema = new mongoose.Schema({
   createdAt: {
@@ -15,6 +15,10 @@ const fileSchema = new mongoose.Schema({
   },
   displayName: {
     type: String,
+  },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: "User"
   }
 });
 

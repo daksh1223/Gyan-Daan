@@ -11,7 +11,9 @@ const ChannelSchema = mongoose.Schema({
   meets: [{ type: Schema.Types.ObjectId, ref: "Channel" }], // All meet channels present in a normal channel
   polls: [{ type: Schema.Types.ObjectId, ref: "Poll" }],
   notifications: [{type: Schema.Types.ObjectId, ref: "Notification"}],
-  last_notification_id: {type: Number, default: 0}
+  last_notification_id: {type: Number, default: 0},
+  files: [{ type: Schema.Types.ObjectId, ref: "File" }],
+  recordings: [{ type: Schema.Types.ObjectId, ref: "File" }]
 });
 
 const Channel = mongoose.model("Channel", ChannelSchema);

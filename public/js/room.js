@@ -9,21 +9,24 @@ var general_channel; // ID of the General channel
 var current_channel_message_id; // ID of the current channel message
 var current_channel_meet_link = null;
 var current_meet;
+let current_context_channel;
 let create_meet_container = document.getElementById("create_meet");
 let create_poll_container = document.getElementById("create_poll");
 let notifications_container = document.getElementById("channel_notifications");
 let notification_toggler = 0;
 let channel_last_notification_id = 0;
 let user_last_notification_id = 0;
+let show_files_container = document.getElementById("show_files");
+
 if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
   create_poll_container.innerHTML = `<i class="fas fa-poll-h"></i> Create Poll `;
   notifications_container.title = `Notifications for students`;
+  show_files_container.innerHTML = `<i class="fas fa-folder"></i> Files`;
 } else {
   notifications_container.title =
     "See all the notifications given by the educator";
 }
-
 const room_data = async (url) => {
   promise = await axios.get(url); // Fetch all the data present in this room
   var room = document.getElementById("room_name");
@@ -160,6 +163,8 @@ const room_data = async (url) => {
   return promise.data;
 };
 const channel_data = async (cid) => {
+  document.getElementById("files_container").style.display = "none";
+  document.getElementsByClassName("chat_container")[0].style.display = "flex";
   channel_id = cid;
   if (current_channel) {
     document.getElementById(
@@ -182,6 +187,7 @@ const channel_data = async (cid) => {
   current_channel = cid; // Set the current channel as cid
   current_channel_message_id = cid;
   channel_data_copy = channel;
+  current_context_channel = channel_data_copy;
   document.getElementById("channel_name_display").innerHTML = channel.name;
   channel_data_messages = channel.messages;
   messages = document.getElementById("chat_messages");
@@ -269,12 +275,15 @@ const show_chat = (prefix) => {
   while (messages.firstChild) {
     messages.removeChild(messages.firstChild); // Remove previous channel's chats
   }
-
   if (current_channel_meet_link) {
     // If the current channel is a meet channel then show join meet else show create meet option.
+    document.getElementById("show_files").innerHTML =
+      '<i class="fas fa-folder mx-1"></i>Recordings';
     document.getElementById("create_meet").style.display = "none";
     document.getElementById("join_meet").style.display = "";
   } else {
+    document.getElementById("show_files").innerHTML =
+      '<i class="fas fa-folder mx-1"></i>Files';
     document.getElementById("create_meet").style.display = "";
     document.getElementById("join_meet").style.display = "none";
   }
@@ -371,10 +380,17 @@ const send_chat_message = async (msg) => {
     const file = document.getElementById("myFile").files[0];
     let form = new FormData();
     form.append("upload", file);
-    const response = await axios.post("/api/uploadFile", form);
-    if (response.data)
+    form.append("channelID", current_channel);
+    form.append("isRecording", false);
+    try {
+      const response = await axios.post("/api/uploadFile", form);
       message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`;
-    else return;
+      current_context_channel.files.push(response.data._id);
+    } catch (err) {
+      document.getElementById("editor").value =
+        "There is some problem in uploading file! Sorry for inconvenience";
+      return;
+    }
     clear_editor();
   } else {
     message_in_html_form =
@@ -413,9 +429,12 @@ function start_meet() {
   location = current_channel_meet_link; // Will change the current url to the meet's url
 }
 async function meet_message(cid) {
+  document.getElementById("files_container").style.display = "none";
+  document.getElementsByClassName("chat_container")[0].style.display = "flex";
   current_channel_message_id = cid;
   channel = await axios.get(`/api/channel/${cid}`); //Get the meet channel's data
   channel = channel.data.channel_details;
+  current_context_channel = channel;
   channel_data_messages = channel.messages;
   document.getElementById("channel_name_display").innerHTML = channel.name;
   if (current_meet) {
@@ -435,13 +454,41 @@ async function meet_message(cid) {
   current_channel_meet_link = channel.meet_link;
   // After joining the meet channel display it's content in the frontend
   show_chat("");
+  for (let i = 0; i < current_context_channel.polls.length; i++) {
+    let poll = await axios.get(
+      `/api/get_poll/${current_context_channel.polls[i]}`
+    );
+    poll = poll.data;
+    let total_votes = 0;
+    for (let j = 0; j < poll.options.length; j++) {
+      document.getElementById(
+        `label_${poll.options[j]._id}`
+      ).innerHTML = `<div style="display:flex;flex-direction:column;width:100%">
+      <div style="display:flex;flex-direction:row; width:100%">
+      <div>${poll.options[j].name}</div> <div style="margin-left:auto">${poll.options[j].likeCount}</div></div></div>`;
+      if (poll.options[j].likes.includes(userID)) {
+        document.getElementById(`option_${poll.options[j]._id}`).checked = true;
+      }
+      total_votes += poll.options[j].likeCount;
+    }
+    for (let j = 0; j < poll.options.length; j++) {
+      let width = total_votes
+        ? Math.floor((poll.options[j].likeCount * 100) / total_votes)
+        : 0;
+      document
+        .getElementById(`progressbar_${poll.options[j]._id}`)
+        .setAttribute("aria-valuenow", width);
+      document.getElementById(
+        `progressbar_${poll.options[j]._id}`
+      ).style.width = `${width}%`;
+    }
+  }
 }
 function channel_modal_submission() {
   //For creatin a new channel
   const name = document.getElementById("channel_name").value;
   let users = document.getElementById("user_tags").value;
   users = users.split(" ");
-  console.log(users);
   if (name.length) {
     userinfo = {
       name: name,
@@ -514,7 +561,6 @@ async function meet_modal_submission() {
   const allow_students_stream = document.getElementById(
     "Allow_Students_Stream"
   ).checked;
-  console.log(name, date, time, allow_students_stream);
   if (name.length && time.length && date.length) {
     userinfo = {
       name: name,
@@ -590,7 +636,6 @@ async function leave_room(room_id, channel_id) {
     data: { channel_id: channel_id },
   });
 
-  console.log(response);
   response = await axios.delete("/api/room/", {
     data: { room_id: ROOM_ID },
   });
@@ -619,13 +664,11 @@ async function add_users_modal_submission() {
   // Modal for adding user in the room or channel
   var users = document.getElementById("add_user_tags").value;
   users = users.split(" ");
-  console.log(users);
   if (ROOM_ID == document.getElementsByClassName("add_users_link")[0].id) {
     var response = await axios.post("/api/add_users", {
       room_id: ROOM_ID,
       users: users,
     });
-    console.log(response.data);
     if (general_channel == current_channel) {
       user_container = document.getElementById("users_container");
 
@@ -646,7 +689,6 @@ async function add_users_modal_submission() {
       channel_room: ROOM_ID,
       users: users,
     });
-    console.log(response.data);
     if (
       document.getElementsByClassName("add_users_link")[0].id == current_channel
     ) {
@@ -671,18 +713,15 @@ async function user_deletion_modal_submission() {
   // Modal for adding user in the room or channel
   var users = document.getElementById("user_deletion_tags").value;
   users = users.split(" ");
-  console.log(users);
   if (ROOM_ID == document.getElementsByClassName("remove_users_link")[0].id) {
     var response = await axios.post("/api/remove_users", {
       room_id: ROOM_ID,
       users: users,
     });
-    console.log(response.data);
     user_container = document.getElementById("users_container");
 
     for (var i = 0; i < response.data.length; i++) {
       temp_user = document.getElementById(response.data[i].email);
-      console.log(temp_user);
       if (temp_user) user_container.removeChild(temp_user);
     }
   } else {
@@ -691,7 +730,6 @@ async function user_deletion_modal_submission() {
       channel_room: ROOM_ID,
       users: users,
     });
-    console.log(response.data);
     if (
       document.getElementsByClassName("remove_users_link")[0].id ==
       current_channel
@@ -738,16 +776,15 @@ async function poll_modal_submission() {
     name: poll_name,
     options,
     type,
-    channel_id,
+    channel_id: current_context_channel._id,
   });
-  console.log(response.data);
   const input_type = type === "SCP" ? "radio" : "checkbox";
   let msg = `<h6>${poll_name}</h6>`;
   for (let i = 0; i < options.length; i++) {
     msg += `
     <div class="form-check poll_option" >
       <input class="form-check-input"  type=${input_type} value="" id="option_${response.data.options[i]._id}" name="poll_${response.data._id}" onchange="toggle_option('${response.data._id}')">
-      <label class="form-check-label" for="poll_${response.data.options[i]._id}" id="label_${response.data.options[i]._id}">
+      <label class="form-check-label" for="option_${response.data.options[i]._id}" id="label_${response.data.options[i]._id}">
       <div style="display:flex;flex-direction:column;width:100%;">
       <div style="display:flex;flex-direction:row;width:100%">
       <div>${options[i]}</div> <div style="margin-left:auto">${response.data.options[i].likeCount}</div></div></div>
@@ -762,9 +799,33 @@ async function poll_modal_submission() {
   document.getElementById("modal_close").click();
 }
 
+function update_poll(poll) {
+  console.log("here");
+  let total_votes = 0;
+  for (let i = 0; i < poll.options.length; i++) {
+    document.getElementById(
+      `label_${poll.options[i]._id}`
+    ).innerHTML = `<div style="display:flex;flex-direction:column;width:100%">
+      <div style="display:flex;flex-direction:row; width:100%">
+      <div>${poll.options[i].name}</div> <div style="margin-left:auto">${poll.options[i].likeCount}</div></div></div>`;
+    total_votes += poll.options[i].likeCount;
+  }
+  for (let j = 0; j < poll.options.length; j++) {
+    let width = total_votes
+      ? Math.floor((poll.options[j].likeCount * 100) / total_votes)
+      : 0;
+    document
+      .getElementById(`progressbar_${poll.options[j]._id}`)
+      .setAttribute("aria-valuenow", width);
+    document.getElementById(
+      `progressbar_${poll.options[j]._id}`
+    ).style.width = `${width}%`;
+  }
+}
+socket.on("update_poll", update_poll);
 async function toggle_option(id) {
   const options = document.getElementsByName("poll_" + id);
-  const is_checked = [];
+  let is_checked = [];
   for (let i = 0; i < options.length; i++) {
     is_checked.push(options[i].checked);
   }
@@ -793,6 +854,7 @@ async function toggle_option(id) {
       `progressbar_${poll.options[j]._id}`
     ).style.width = `${width}%`;
   }
+  await socket.emit("toggle_option", poll);
 }
 
 function fillRoomEditModal() {
@@ -1116,3 +1178,66 @@ const notification_alert = () => {
     document.getElementById("alert_notification").style.display = "none";
   }
 };
+
+async function showChannelFiles() {
+  document.getElementById("files_container").style.display = "flex";
+  document.getElementsByClassName("chat_container")[0].style.display = "none";
+  let onclick_function;
+  if (current_context_channel.is_meet) {
+    onclick_function = `meet_message('${current_context_channel._id}')`;
+  } else {
+    onclick_function = `channel_data('${current_context_channel._id}')`;
+  }
+  document.getElementById(
+    "files_container"
+  ).innerHTML = `<a id="files_back" class="custom_link" 
+  href="#" style="margin:2%;width: fit-content;" onclick=${onclick_function}> 
+  <i class="fas fa-chevron-left mx-1"></i>Back
+            </a>
+            <table class="table mx-auto" style="width: 90%;"">
+                <thead>
+                    <tr>
+                        <th scope="col">Name</th>
+                        <th scope="col">Uploaded By</th>
+                        <th scope="col">Upload Date</th>
+                    </tr>
+                </thead>
+                <tbody id="all_files">
+
+                </tbody>
+            </table>`;
+  let files = current_context_channel.is_meet
+    ? current_context_channel.recordings
+    : current_context_channel.files;
+  console.log(files);
+  try {
+    const response = await axios.get("/api/get_files/", {
+      params: {
+        files,
+      },
+    });
+    files = response.data;
+  } catch (err) {
+    console.log(err);
+    document.getElementById("all_files").innerHTML =
+      "We have encountered an error while fetching you files. Sorry for Inconvnience!";
+
+    return;
+  }
+  let file_view = "";
+  files.forEach((file) => {
+    let time = new Date(file.createdAt);
+    file_view += `<tr class="file_row" ><td><a href="${file.path}">${
+      file.displayName
+    }</a></td>
+    <td><a href="/profile/${file.createdBy.email}">${
+      file.createdBy.name
+    }</a></td>
+    <td>${time.getDate()}-${time.toLocaleString("default", {
+      month: "short",
+    })}-${time.getFullYear()}</td>
+    </tr>
+    `;
+  });
+  document.getElementById("all_files").innerHTML = file_view;
+}

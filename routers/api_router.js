@@ -26,18 +26,9 @@ const {
   find_channel_by_id_and_populate_all_data,
 } = require("../Repository/channel_repository.js");
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const {
-  get_tag_by_name,
-  create_new_tag,
-  get_all_tags,
-} = require("../Repository/tag_repository.js");
-const {
-  create_new_option,
-  update_vote,
-  create_new_poll,
-  find_poll_by_id,
-} = require("../Repository/poll_repository");
-
+const { get_tag_by_name, create_new_tag ,get_all_tags} = require("../Repository/tag_repository.js");
+const {create_new_option, update_vote, create_new_poll, find_poll_by_id} = require('../Repository/poll_repository')
+const File = require('../Schemas/FileScema')
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 router.get("/get_user_details", async (req, res) => {
   let req_data = await get_user_by_id_and_populate_Rooms(req.user._id);
@@ -682,5 +673,17 @@ router.get("/get_poll/:poll", async (req, res) => {
   const poll = await find_poll_by_id(req.params.poll);
   res.json(poll);
 });
+
+router.get('/get_files/', async (req, res) => {
+
+  try {
+    const files = await File.find({ '_id': { '$in': req.query.files } }).populate('createdBy');
+    res.json(files)
+  }
+  catch (err) {
+    res.status(500).json(err);
+  }
+
+})
 
 exports.router = router;

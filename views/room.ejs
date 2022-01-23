@@ -112,10 +112,9 @@
 
 
         </div>
-        <div class="chat_container" style="height:100%;width:65%;overflow:auto; background-color: #e5ddd5;">
-            <div style="margin-top:1%;margin-bottom: 1%; display:flex;align-items: baseline;">
-                <h4 id="channel_name_display"
-                    style="margin-left:2.5%;max-width:65%;word-break: break-word;color: black;">
+        <div class="chat_container" style="height:100%;width:60%;overflow:auto; background-color: #e5ddd5;">
+            <div style="margin-top:1%;margin-bottom: 1%;display: flex; align-items:baseline;">
+                <h4 id="channel_name_display" style="float:left;margin-left:2.5%;max-width:65%;word-break: break-word;color: black;">
                 </h4>
                 <a id="channel_notifications" href="#"  data-toggle="modal" onclick="new_update_adder(0)"
                     data-target="#notifications_modal" class="custom_link" style="margin-left:2.5%;">
@@ -131,6 +130,9 @@
                 </a>
 
 
+                <a id="show_files" class="custom_link" href="#" style="margin-right:2%; float: right;" onclick="showChannelFiles()">
+                    
+                </a>
             </div>
 
             <div class="message_container">
@@ -386,7 +388,9 @@
                 </div>
             </div>
         </div>
-        <div class="shadow" style="width: 15%;">
+        <div id="files_container">
+        </div>
+        <div class="shadow" style="width: 20%;">
             <div style="width:100%;display:flex;flex-direction:row;">
                 <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapsemeets"
                     aria-expanded="false" aria-controls="collapseusers" style="text-decoration: none;

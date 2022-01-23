@@ -2,7 +2,6 @@ let download_link = {};
 let video_stream = null,
   media_recorder = null,
   blobs_recorded = [];
-
 function enableUiControls(localStream) {
   $("#mic-btn").click(function () {
     toggle_user_mic(localStream);
@@ -66,7 +65,7 @@ function toggleVisibility(remoteStream, stream_mute_unmute_id, muted) {
       .setAttribute("class", "fas fa-microphone mute");
   }
 }
-async function toggle_play_stop_video() {
+async function toggle_play_stop_video(cid) {
   toggle_button_background($("#record-btn"));
   let record_icon=document.getElementById("record-icon");
   if(record_icon.innerHTML=="play_circle") {record_icon.innerHTML="pause";}
@@ -106,10 +105,13 @@ async function toggle_play_stop_video() {
         size = Math.trunc(size / 1024) + " MB";
       } else size = size + " KB";
     } else size = size + " B";
-    console.log(recording, size);
+
+    
 
     let formData = new FormData();
     formData.append("upload", recording);
+    formData.append("channelID", cid);
+    formData.append("isRecording", true);
     let response = await axios.post("/api/uploadFile", formData);
     video_stream = null;
     media_recorder = null;
@@ -214,7 +216,7 @@ function onParticipantsClick() {
   }
   resize();
 }
-function controls_provide() {
+function controls_provide(cid) {
   let controls_container = document.getElementById("main__controls"),
     val = controls_container.innerHTML;
 
@@ -234,7 +236,7 @@ function controls_provide() {
           >
            </button>
         <button id="record-btn" type="button" class="btn btn-dark main__controls__button  btn-lg pointer"
-            onclick="toggle_play_stop_video()">
+            onclick="toggle_play_stop_video('${cid}')">
             <span class="material-icons" id="record-icon"
             >play_circle</span
             </button>
@@ -248,4 +250,5 @@ function controls_provide() {
            <span onclick="end_call()" class="material-icons">call_end</span>
       </button>`;
 }
-controls_provide();
+
+controls_provide(channelName)
