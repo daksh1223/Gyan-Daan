@@ -11,9 +11,17 @@ var current_channel_meet_link = null;
 var current_meet;
 let create_meet_container = document.getElementById("create_meet");
 let create_poll_container = document.getElementById("create_poll");
+let notifications_container = document.getElementById("channel_notifications");
+let notification_toggler = 0;
+let channel_last_notification_id = 0;
+let user_last_notification_id = 0;
 if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
   create_poll_container.innerHTML = `<i class="fas fa-poll-h"></i> Create Poll `;
+  notifications_container.title = `Notifications for students`;
+} else {
+  notifications_container.title =
+    "See all the notifications given by the educator";
 }
 
 const room_data = async (url) => {
@@ -165,15 +173,21 @@ const channel_data = async (cid) => {
   current_channel_meet_link = null;
 
   channel = await axios.get(`/api/channel/${cid}`); // Get the current channel's data
+  channel = channel.data;
+  user_last_notification_id = channel.user_last_notification_id;
+  console.log(channel);
+  channel = channel.channel_details;
+  channel_last_notification_id = channel.last_notification_id;
+  notification_alert();
   current_channel = cid; // Set the current channel as cid
   current_channel_message_id = cid;
-  channel_data_copy = channel.data;
-
-  document.getElementById("channel_name_display").innerHTML = channel.data.name;
-  channel_data_messages = channel.data.messages;
+  channel_data_copy = channel;
+  document.getElementById("channel_name_display").innerHTML = channel.name;
+  channel_data_messages = channel.messages;
   messages = document.getElementById("chat_messages");
   meets_container = document.getElementById("meets_container");
   user_container = document.getElementById("users_container");
+  notifications_handler();
   while (user_container.firstChild) {
     user_container.removeChild(user_container.firstChild); // Remove all the users present in the channel users container
   }
@@ -181,21 +195,20 @@ const channel_data = async (cid) => {
   while (meets_container.firstChild) {
     meets_container.removeChild(meets_container.firstChild); // Remove all the meets present in the channel meet container
   }
-  for (var i = 0; i < channel.data.users.length; i++) {
+  for (var i = 0; i < channel.users.length; i++) {
     // Add current channel's users
     temp_user = document.createElement("div");
-    temp_user.setAttribute("id", channel.data.users[i].email);
-    temp_user.setAttribute("title", "Email Id: " + channel.data.users[i].email);
+    temp_user.setAttribute("id", channel.users[i].email);
+    temp_user.setAttribute("title", "Email Id: " + channel.users[i].email);
     temp_user.setAttribute("class", "container_element users pointer");
-    let status="Educator";
-    if(channel.data.users[i].isEducator===false)status="Student";
+    let status = "Educator";
+    if (channel.users[i].isEducator === false) status = "Student";
 
-    console.log(channel.data.users[i])
     temp_user.innerHTML = `
     <div style="display:flex">
-      <image src="${channel.data.users[i].profilepicUrl}" class="pic"></>
+      <image src="${channel.users[i].profilepicUrl}" class="pic"></>
       <div class="participant_details"> 
-        <div>${channel.data.users[i].name}</div> 
+        <div>${channel.users[i].name}</div> 
         <div>
          <small> ${status} </small>
         </div> 
@@ -204,20 +217,20 @@ const channel_data = async (cid) => {
     `;
     user_container.appendChild(temp_user);
   }
-  for (var i = 0; i < channel.data.meets.length; i++) {
+  for (var i = 0; i < channel.meets.length; i++) {
     // Add current channel's meet
     temp_meet = document.createElement("div");
     temp_meet.innerHTML = `
-    <a  href="#" onclick="meet_message('${channel.data.meets[i]._id}')" >
-      ${channel.data.meets[i].name}
+    <a  href="#" onclick="meet_message('${channel.meets[i]._id}')" >
+      ${channel.meets[i].name}
     </a>
     `;
     // temp_meet.setAttribute("class", "container_element");
-    temp_meet.setAttribute("id", `${channel.data.meets[i]._id}meet`);
-    temp_meet.setAttribute("class", 'container_element');
+    temp_meet.setAttribute("id", `${channel.meets[i]._id}meet`);
+    temp_meet.setAttribute("class", "container_element");
     temp_meet.setAttribute(
       "onclick",
-      `meet_message( '${channel.data.meets[i]._id}')`
+      `meet_message( '${channel.meets[i]._id}')`
     );
     temp_meet.style.cursor = "pointer";
     meets_container.appendChild(temp_meet);
@@ -402,8 +415,9 @@ function start_meet() {
 async function meet_message(cid) {
   current_channel_message_id = cid;
   channel = await axios.get(`/api/channel/${cid}`); //Get the meet channel's data
-  channel_data_messages = channel.data.messages;
-  document.getElementById("channel_name_display").innerHTML = channel.data.name;
+  channel = channel.data.channel_details;
+  channel_data_messages = channel.messages;
+  document.getElementById("channel_name_display").innerHTML = channel.name;
   if (current_meet) {
     document.getElementById(`${current_meet}meet`).style.backgroundColor = "";
     document.getElementById(`${current_meet}meet`).children[0].style.color = "";
@@ -414,12 +428,11 @@ async function meet_message(cid) {
   current_meet = cid;
 
   // Set the properties of the join meet button
-  document
-    .getElementById("join_meet").innerHTML = '<i class="fas fa-sign-in-alt mx-1"></i>Join Meet'
-   document
-    .getElementById("join_meet").setAttribute("onclick", "start_meet()");
+  document.getElementById("join_meet").innerHTML =
+    '<i class="fas fa-sign-in-alt mx-1"></i>Join Meet';
+  document.getElementById("join_meet").setAttribute("onclick", "start_meet()");
 
-  current_channel_meet_link = channel.data.meet_link;
+  current_channel_meet_link = channel.meet_link;
   // After joining the meet channel display it's content in the frontend
   show_chat("");
 }
@@ -833,3 +846,273 @@ function toggleChannelIcon(event, id) {
         : "fas fa-caret-square-down mx-2"
     );
 }
+let zero_adder = (val) => {
+  if (val <= 9) {
+    return "0" + val;
+  } else {
+    return val;
+  }
+};
+let date_parser = (date) => {
+  date = new Date(date);
+  return (
+    zero_adder(date.getDate()) +
+    "/" +
+    zero_adder(date.getMonth() + 1) +
+    "/" +
+    date.getFullYear() +
+    "   " +
+    zero_adder(date.getHours()) +
+    " : " +
+    zero_adder(date.getMinutes()) +
+    " : " +
+    zero_adder(date.getSeconds())
+  );
+};
+
+const new_notification_former = (id, title, content, timestamp) => {
+  let notifications_container = document.getElementById(
+      "notifications_modal_container"
+    ),
+    temp = "";
+  let temp_date = date_parser(timestamp);
+  temp += `
+      <div class="notification" style="padding:2%" id=${id}>
+          <div style="color: rgb(79, 70, 229);display:flex;"><b><div id=${id}_title>${title}</div></b>`;
+  if (isEducator != "false") {
+    temp += `
+      <div class="dropdown" style="margin-left:3px;">
+          <a class="dropdown-toggle notification_dropdown"  type="button" id="dropdownMenuButton_${id}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          </a>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton_${id}" style="width:max-content;">
+            <a class="dropdown-item" href="#" onclick="notification_handler('${id}',0)"><i class="fas fa-pen"></i> Edit</a>
+            <a class="dropdown-item" href="#" onclick="notification_handler('${id}',1)"><i class="fas fa-trash"></i> Delete</a>
+          </div>
+      </div>
+      `;
+  }
+
+  temp += `
+          </div>
+          <small>${temp_date}</small>
+          <div id=${id}_content > ${content} </div>
+        </div>
+      `;
+
+  notifications_container.innerHTML = temp + notifications_container.innerHTML;
+};
+const add_edit_delete_notifications = (
+  type,
+  id,
+  title,
+  content,
+  timestamp,
+  current_channel_id
+) => {
+  console.log(current_channel_id, current_channel);
+  if (current_channel_id == current_channel) {
+    if (type == 2) {
+      channel_data_copy.notifications = channel_data_copy.notifications.filter(
+        (notification) => {
+          return notification._id != id;
+        }
+      );
+      if (document.getElementById(`${id}`))
+        document.getElementById(`${id}`).remove();
+    } else {
+      if (type == 1) {
+        let notification = channel_data_copy.notifications.find(
+          (e) => e._id == id
+        );
+        notification.title = title;
+        notification.content = content;
+        if (document.getElementById(`${id}`)) {
+          document.getElementById(`${id}_title`).innerHTML = title;
+          document.getElementById(`${id}_content`).innerHTML = content;
+        }
+      } else {
+        channel_data_copy.notifications.push({
+          _id: id,
+          title,
+          content,
+          timestamp,
+        });
+        new_notification_former(id, title, content, timestamp);
+      }
+    }
+    new_update_adder();
+  }
+};
+
+const notifications_handler = () => {
+  let notifications_container = document.getElementById(
+    "notifications_modal_container"
+  );
+
+  if (isEducator != "false") {
+    document.getElementById("add_notification").style.display = "";
+  }
+  let notifications = channel_data_copy.notifications;
+  notifications.innerHTML = "";
+  let temp = "";
+  for (let i = 0; i < notifications.length; i++) {
+    new_notification_former(
+      notifications[i]._id,
+      notifications[i].title,
+      notifications[i].content,
+      notifications[i].timestamp
+    );
+  }
+};
+let edit_notification_id;
+const notification_submit_handler = async () => {
+  let type =
+    document.getElementById("add_notifications_close").innerHTML == "Add";
+  if (isEducator != "false") {
+    let data = {};
+    let content = document.getElementById("notification_inputfield"),
+      title = document.getElementById("notification_titlefield");
+    data.content = content.value;
+    data.title = title.value;
+    if (type) {
+      let return_data = await axios.post(
+        `/api/channel/${current_channel}/notifications`,
+        { data }
+      );
+      return_data = return_data.data;
+      add_edit_delete_notifications(
+        0,
+        return_data._id,
+        return_data.title,
+        return_data.content,
+        return_data.timestamp,
+        current_channel
+      );
+      socket.emit(
+        "notification_message",
+        0,
+        return_data._id,
+        return_data.title,
+        return_data.content,
+        return_data.timestamp,
+        current_channel
+      );
+    } else {
+      axios.put(
+        `/api/channel/${current_channel}/notification/${edit_notification_id}`,
+        { data }
+      );
+      add_edit_delete_notifications(
+        1,
+        edit_notification_id,
+        title.value,
+        content.value,
+        0,
+        current_channel
+      );
+      socket.emit(
+        "notification_message",
+        1,
+        edit_notification_id,
+        title.value,
+        content.value,
+        0,
+        current_channel
+      );
+    }
+    new_update_adder(0);
+    content.value = "";
+    title.value = "";
+  }
+};
+
+const toggle_add_edit_notification_container = (
+  type,
+  title = "",
+  content = ""
+) => {
+  if (type == 0) notification_toggler = 1 - notification_toggler;
+  else if (type == 1) notification_toggler = 1;
+  else notification_toggler = 0;
+
+  if (notification_toggler) {
+    document.getElementById(
+      "add_notification"
+    ).innerHTML = `<i class="fas fa-eye-slash"></i> Hide option`;
+
+    document.getElementById("notification_title").style.display = "";
+    document.getElementById("notification_input").style.display = "";
+    document.getElementById("notification_titlefield").value = title;
+    document.getElementById("notification_inputfield").value = content;
+    document.getElementById("add_button_container").style.display = "flex";
+    if (type == 1) {
+      document.getElementById("add_notifications_close").innerHTML = "Edit";
+    } else document.getElementById("add_notifications_close").innerHTML = "Add";
+  } else {
+    document.getElementById(
+      "add_notification"
+    ).innerHTML = `<i class="fas fa-plus"></i> New notification`;
+    document.getElementById("notification_title").style.display = "none";
+    document.getElementById("notification_input").style.display = "none";
+    document.getElementById("add_button_container").style.display = "none";
+    document.getElementById("notification_inputfield").value = "";
+    document.getElementById("notification_titlefield").value = "";
+  }
+};
+
+const notification_handler = (id, type) => {
+  if (type) {
+    axios.delete(`/api/channel/${current_channel}/notification/${id}`);
+    add_edit_delete_notifications(2, id, 0, 0, 0, current_channel);
+    new_update_adder(0);
+    socket.emit("notification_message", 2, id, 0, 0, 0, current_channel);
+  } else {
+    let notification = channel_data_copy.notifications.find((e) => e._id == id);
+    edit_notification_id = id;
+    toggle_add_edit_notification_container(
+      1,
+      notification.title,
+      notification.content
+    );
+  }
+};
+socket.on(
+  "receive_notification_message",
+  (type, id, title, content, timestamp, channel_id) => {
+    add_edit_delete_notifications(
+      type,
+      id,
+      title,
+      content,
+      timestamp,
+      channel_id
+    );
+  }
+);
+$("#notifications_modal").on("hidden.bs.modal", function (e) {
+  toggle_add_edit_notification_container(2);
+});
+
+const new_update_adder = (type = 1) => {
+  if (type == 1) {
+    channel_last_notification_id++;
+  } else {
+    if (type == 0) user_last_notification_id = channel_last_notification_id;
+  }
+  notification_alert();
+  if (isEducator != "false" || type == 0)
+    axios.post(`/api/channel/${current_channel}/update_notification_id`, {
+      type,
+      last_notification_id: channel_last_notification_id,
+    });
+};
+const notification_alert = () => {
+  console.log(user_last_notification_id, channel_last_notification_id);
+  if (user_last_notification_id != channel_last_notification_id) {
+    document.getElementById("channel_notifications").style.color = "red";
+    document.getElementById("alert_notification").style.display = "";
+  } else {
+    document.getElementById("channel_notifications").style.color = "";
+    document.getElementById("alert_notification").style.display = "none";
+  }
+};
