@@ -438,6 +438,33 @@ async function meet_message(cid) {
   current_channel_meet_link = channel.data.meet_link;
   // After joining the meet channel display it's content in the frontend
   show_chat("");
+  for (let i = 0; i < current_context_channel.polls.length; i++) {
+    let poll = await axios.get(`/api/get_poll/${current_context_channel.polls[i]}`);
+    poll = poll.data;
+    let total_votes = 0;
+    for (let j = 0; j < poll.options.length; j++) {
+      document.getElementById(
+        `label_${poll.options[j]._id}`
+      ).innerHTML = `<div style="display:flex;flex-direction:column;width:100%">
+      <div style="display:flex;flex-direction:row; width:100%">
+      <div>${poll.options[j].name}</div> <div style="margin-left:auto">${poll.options[j].likeCount}</div></div></div>`;
+      if (poll.options[j].likes.includes(userID)) {
+        document.getElementById(`option_${poll.options[j]._id}`).checked = true;
+      }
+      total_votes += poll.options[j].likeCount;
+    }
+    for (let j = 0; j < poll.options.length; j++) {
+      let width = total_votes
+        ? Math.floor((poll.options[j].likeCount * 100) / total_votes)
+        : 0;
+      document
+        .getElementById(`progressbar_${poll.options[j]._id}`)
+        .setAttribute("aria-valuenow", width);
+      document.getElementById(
+        `progressbar_${poll.options[j]._id}`
+      ).style.width = `${width}%`;
+    }
+  }
 }
 function channel_modal_submission() {
   //For creatin a new channel
@@ -731,7 +758,7 @@ async function poll_modal_submission() {
     name: poll_name,
     options,
     type,
-    channel_id,
+    channel_id:current_context_channel._id,
   });
   const input_type = type === "SCP" ? "radio" : "checkbox";
   let msg = `<h6>${poll_name}</h6>`;
@@ -739,7 +766,7 @@ async function poll_modal_submission() {
     msg += `
     <div class="form-check poll_option" >
       <input class="form-check-input"  type=${input_type} value="" id="option_${response.data.options[i]._id}" name="poll_${response.data._id}" onchange="toggle_option('${response.data._id}')">
-      <label class="form-check-label" for="poll_${response.data.options[i]._id}" id="label_${response.data.options[i]._id}">
+      <label class="form-check-label" for="option_${response.data.options[i]._id}" id="label_${response.data.options[i]._id}">
       <div style="display:flex;flex-direction:column;width:100%;">
       <div style="display:flex;flex-direction:row;width:100%">
       <div>${options[i]}</div> <div style="margin-left:auto">${response.data.options[i].likeCount}</div></div></div>
@@ -754,9 +781,33 @@ async function poll_modal_submission() {
   document.getElementById("modal_close").click();
 }
 
+function update_poll(poll) {
+  console.log('here')
+  let total_votes = 0;
+  for (let i = 0; i < poll.options.length; i++) {
+    document.getElementById(
+      `label_${poll.options[i]._id}`
+      ).innerHTML = `<div style="display:flex;flex-direction:column;width:100%">
+      <div style="display:flex;flex-direction:row; width:100%">
+      <div>${poll.options[i].name}</div> <div style="margin-left:auto">${poll.options[i].likeCount}</div></div></div>`;
+      total_votes += poll.options[i].likeCount;
+    }
+    for (let j = 0; j < poll.options.length; j++) {
+      let width = total_votes
+      ? Math.floor((poll.options[j].likeCount * 100) / total_votes)
+      : 0;
+      document
+      .getElementById(`progressbar_${poll.options[j]._id}`)
+      .setAttribute("aria-valuenow", width);
+      document.getElementById(
+        `progressbar_${poll.options[j]._id}`
+        ).style.width = `${width}%`;
+      }
+}
+socket.on("update_poll", update_poll);
 async function toggle_option(id) {
   const options = document.getElementsByName("poll_" + id);
-  const is_checked = [];
+  let is_checked = []
   for (let i = 0; i < options.length; i++) {
     is_checked.push(options[i].checked);
   }
@@ -769,22 +820,23 @@ async function toggle_option(id) {
   for (let i = 0; i < poll.options.length; i++) {
     document.getElementById(
       `label_${poll.options[i]._id}`
-    ).innerHTML = `<div style="display:flex;flex-direction:column;width:100%">
+      ).innerHTML = `<div style="display:flex;flex-direction:column;width:100%">
       <div style="display:flex;flex-direction:row; width:100%">
       <div>${poll.options[i].name}</div> <div style="margin-left:auto">${poll.options[i].likeCount}</div></div></div>`;
-    total_votes += poll.options[i].likeCount;
-  }
-  for (let j = 0; j < poll.options.length; j++) {
-    let width = total_votes
+      total_votes += poll.options[i].likeCount;
+    }
+    for (let j = 0; j < poll.options.length; j++) {
+      let width = total_votes
       ? Math.floor((poll.options[j].likeCount * 100) / total_votes)
       : 0;
-    document
+      document
       .getElementById(`progressbar_${poll.options[j]._id}`)
       .setAttribute("aria-valuenow", width);
-    document.getElementById(
-      `progressbar_${poll.options[j]._id}`
-    ).style.width = `${width}%`;
-  }
+      document.getElementById(
+        `progressbar_${poll.options[j]._id}`
+        ).style.width = `${width}%`;
+      }
+      await socket.emit("toggle_option", poll)
 }
 
 function fillRoomEditModal() {

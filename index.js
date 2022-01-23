@@ -122,7 +122,6 @@ app.get("/auth/google/callback",
   }));
   
 app.post("/auth/microsoft", (req, res, next) => {
-  console.log(reg.body)
   req.session.isEducator = req.body.isEducator === "true";
   passport.authenticate("microsoft", {
     scope: ["openid", "profile", "email"],
@@ -244,6 +243,11 @@ io.on("connection", (socket) => {
     });
     socket.on("connect_to_new_user", (username, id) => {
       socket.to(id).emit("user-joined", user, email, id, profile_pic, educator_status, channelId);
+    });
+    socket.on("toggle_option", (poll) => {
+      socket.broadcast
+          .to(roomID)
+          .emit("update_poll", poll);
     });
 
     socket.broadcast.to(roomID).emit("user-joined", user, email, socket.id, profile_pic, educator_status, channelId);
