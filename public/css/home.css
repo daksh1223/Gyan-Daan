@@ -163,7 +163,7 @@ height: 40%;
 .room_bottom{
     margin: auto;
 
-    width: 90%;
+    width: 100%;
 }
 .room {
   height:2rem;
@@ -218,7 +218,11 @@ margin-top: 2%;
 .nav-link-par{
   margin-right: 0%;
   margin-bottom: 2%;
+  
 }
+/* #createRequestLink{
+  width: 100%;
+} */
 }
 .room_description {
 	text-align: center;

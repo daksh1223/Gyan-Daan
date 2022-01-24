@@ -6,6 +6,7 @@ const ChatSchema = mongoose.Schema({
   email: String,
   timestamp: String, // Time at which the message was send
   message: String,
+  type:String
 });
 
 const Chat = mongoose.model("Chat", ChatSchema);

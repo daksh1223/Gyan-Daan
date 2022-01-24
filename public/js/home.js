@@ -46,8 +46,11 @@ function modal_submission() {
 	let name = document.getElementById("room_name").value;
 	let description = document.getElementById("room_description").value;
 	//console.log(name, description);
-	let room_tags = document.getElementById("room_tags").value;
-	room_tags = room_tags.split(",");
+	let room_tags = []
+	if (document.getElementById("room_tags").value) {
+		room_tags = document.getElementById("room_tags").value;
+		room_tags = room_tags.split(",");
+	}
 	if (name.length) {
 		roominfo = {
 			name,
@@ -72,28 +75,37 @@ function modal_submission() {
 		document.getElementById("modal_close").click();
 	}
 }
-async function Roomrequest_submission() {
+function Roomrequest_submission() {
 	let name = document.getElementById("Roomrequest_name").value;
 	let requirements = document.getElementById("Roomrequest_description").value;
 	let tags = document.getElementById("Roomrequest_tags").value;
-	if (!name.length) return;
-	let response = await axios.post("/api/course_request", {
-		name: name,
-		requirements: requirements,
-		tags: tags,
-	});
+	if (name.length == 0) return;
+	axios.post("/api/course_request", {
+			name: name,
+			requirements: requirements,
+			tags: tags,
+		});
+
 	document.getElementById("Requestmodal_close").click();
+	document.getElementById("Roomrequest_name").value = "";
+	document.getElementById("Roomrequest_description").value = "";
+	$("#Roomrequest_tags").tagsinput("removeAll");
+
+
+	
 }
 async function get_rooms(stat) {
 	response = await axios.get("/api/get_all_rooms"); // Will fetch all the rooms where the user is present
 	rooms_copy = response.data.rooms;
+
 	//console.log('rooms copy ---', rooms_copy, isEducator, stat);
-	if (isEducator === "true") {
+	if (isEducator == "true") {
+		
 		rooms_copy = rooms_copy.filter((room) => {
-			return room.creator === user_id;
+			return room.creator == user_id;
 		});
 	}
-
+//console.log("rooms copy ---", rooms_copy, isEducator, stat);
 	if (isEducator != "false") {
 		document.getElementById(
 			"createRequestLink"
@@ -154,6 +166,7 @@ async function showSearchResults(searchString) {
 		// Will be used to show the rooms
 		let rooms = data.data.rooms;
 		let users = data.data.users;
+		stat_rooms_copy = rooms.map((room) => { return room.room});
 		//console.log('----', rooms, users)
 
 		while (rooms_container.firstChild) {
@@ -184,7 +197,7 @@ async function showSearchResults(searchString) {
 			educators_container_title.innerHTML = "No educators for this search";
 		} // Then add the rooms that fullfill all the conditions
 	} else {
-    //console.log("room--------");
+    // console.log("room--------");
     // 	console.log(rooms_copy);
 
     deactivate_stat_links();
@@ -235,12 +248,14 @@ function add_room(cur_room, container) {
 		icon_value += room_name[1].toUpperCase();
 	}
 	let join_icon = "";
+	if (isEducator=="false" && !cur_room.users.includes(user_id)) {
+		join_icon = `<div class="nav-link-par" style="float:right; color: rgb(79, 70, 229);"><div title="Join" class="cus-nav-link nav-link" id="join_icon_${id}" onClick="joinRoom('${id}')" style="cursor:pointer;margin-left:auto;">Enroll</div></div>`;
+	}
+
 	like_counts[`${id}`] = cur_room.likeCount;
 	if (cur_room.likes.includes(user_id)) {
 		like_icons[`${id}`] = '<i title="Liked" class="fas fa-thumbs-up"></i>';
 	} else like_icons[`${id}`] = '<i title="Like" class="far fa-thumbs-up"></i>';
-	if (!cur_room.users.includes(user_id))
-		join_icon = `<button title="Join" class="btn btn-primary" id="join_icon_${id}" onClick="joinRoom('${id}')" style="cursor:pointer;background:rgb(79, 70, 229);">Enroll</button>`;
 	room.innerHTML = `
      <div style="height:60%">
         <a href="/room/${id}/" class="icon"><img src="https://place-hold.it/200/${room_color}/fff&text=${icon_value}&fontsize=50"  ></a>
@@ -252,13 +267,21 @@ function add_room(cur_room, container) {
 
 	
 	 	  <div class="room_bottom"> 
-	 <small style="float:left; cursor:pointer;" class="like_icon_${id}" onClick="toggleLike('${id}')">
+	 <small style="float: left;
+    cursor: pointer;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+	margin-left: 1%;" class="like_icon_${id}" onClick="toggleLike('${id}')">
+	<div>
       ${like_icons[`${id}`]}
       ${like_counts[`${id}`]}
+	  </div>
       </small>
-	    <small  style="float:right">
+	    
 			${join_icon}
-		</small>
+
 		</div>
 		</div>
 	 `;
@@ -337,9 +360,9 @@ async function toggleLike(id) {
 		like_counts[`${id}`] += 1;
 	}
 	for (let i = 0; i < like_buttons.length; i++) {
-		like_buttons[i].innerHTML = `${like_icons[`${id}`]} ${
+		like_buttons[i].innerHTML = `<div>${like_icons[`${id}`]} ${
 			like_counts[`${id}`]
-		}`;
+		}</div>`;
 	}
 	await axios.post(`/api/room/${id}/toggle_like`);
 }
@@ -355,7 +378,8 @@ async function joinRoom(id) {
 	for (let i = 0; i < user_counts.length; i++) {
 		user_counts[i].innerHTML = room.userCount;
 	}
-	add_room(room, rooms_container);
+	//add_room(room, rooms_container);
+	rooms_copy.push(room);
 	await axios.post(`/api/room/${id}/join`);
 }
 const checkIfVerified = () => {

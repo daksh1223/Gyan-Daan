@@ -28,6 +28,11 @@ const {
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 const { get_tag_by_name, create_new_tag ,get_all_tags} = require("../Repository/tag_repository.js");
 const {create_new_option, update_vote, create_new_poll, find_poll_by_id} = require('../Repository/poll_repository')
+const {
+	create_new_chat,
+	delete_chat,
+	edit_chat,
+} = require("../Repository/chat_repository");
 const File = require('../Schemas/FileScema')
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 router.get("/get_user_details", async (req, res) => {
@@ -530,6 +535,7 @@ router.route("/set_user_profile").post(async (req, res) => {
     }
   }
   user.profilepicUrl = req.body.profilepicUrl;
+  req.user.profilepicUrl = req.body.profilepicUrl;
   user.about = req.body.about;
   if (req.body.idUrl) {
     user.idUrl = req.body.idUrl;
@@ -687,5 +693,41 @@ router.get('/get_files/', async (req, res) => {
   }
 
 })
+router.route("/message").post(async (req, res) => {
+		//console.log(req.body);
+
+		if (req.body.channel_id != -1) {
+			let Channel = await find_channel_by_id(req.body.channel_id);
+			let new_message = create_new_chat(
+				req.body.user_name,
+				req.body.message,
+				req.body.email,
+        req.body.timestring,
+        req.body.type
+        
+			);
+			Channel.messages.push(new_message.id);
+			await Channel.save();
+
+			res.json(new_message._id);
+		}
+	})
+  .delete(async (req, res) => {
+    //console.log(req.body);
+
+
+    await delete_chat(req.body.message_id);
+
+    res.json("Deleted");
+  }
+		
+).put(async (req, res) => { 
+  await edit_chat(
+		req.body.message_id,
+		req.body.message_content,
+		req.body.message_timestamp
+	);
+});
+  
 
 exports.router = router;
