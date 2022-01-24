@@ -216,7 +216,7 @@ app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
     if(req.body.channelID)
     {
       const channel = await find_channel_by_id(req.body.channelID)
-      if (req.body.isRecording==='true')
+      if (req.body.isRecording)
         channel.recordings.push(newFile)
       else 
         channel.files.push(newFile)
@@ -226,7 +226,7 @@ app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
     res.send(newFile);
   } catch (error) {
     res.status(500).json({
-      error
+      error,
     });
   }
 });
