@@ -9,7 +9,6 @@ html {
 	font-family: "Red Hat Display";
 }
 a {
-<<<<<<< HEAD
 	color: black;
 }
 a:hover {
@@ -17,15 +16,6 @@ a:hover {
 }
 .form-check-label {
 	width: 100%;
-=======
-  color: black;
-}
-a:hover {
-  text-decoration: none;
-}
-.form-check-label {
-  width: 100%;
->>>>>>> 0258ab7d6e121eb894278999c77169221a26f6eb
 }
 
 .chat_container {
@@ -53,11 +43,7 @@ a:hover {
 }
 
 .data_container::-webkit-scrollbar-thumb {
-<<<<<<< HEAD
 	border-radius: 100px;
-=======
-  border-radius: 100px;
->>>>>>> 0258ab7d6e121eb894278999c77169221a26f6eb
 }
 .chat-input {
 	display: flex;
