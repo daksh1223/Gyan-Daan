@@ -8,9 +8,6 @@ html {
   line-height: 150%;
   font-family: "Red Hat Display";
 }
-*::-webkit-scrollbar{
-  display: none;
-}
 a {
   color: black;
 }
@@ -258,7 +255,6 @@ pre {
   height: 100%;
   background-color: #e5ddd5;
   flex-direction: column;
-  overflow: scroll;
 }
 
 thead{
