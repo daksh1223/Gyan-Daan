@@ -141,24 +141,11 @@ async function add_camera_stream(uid) {
       // If not able to connect to the camera stream
       document
         .getElementById("video-icon")
-        .setAttribute("class", "fas fa-video-slash");
-      document
-        .getElementById("video-btn")
-        .setAttribute("class", "btn btn-danger btn-lg point");
-
-      document
-        .getElementById("mic-icon")
-        .setAttribute("class", "fas fa-microphone-slash");
-      document
-        .getElementById("mic-btn")
-        .setAttribute("class", "btn btn-danger btn-lg point");
+        .innerHTML="videocam_off";
       document
         .getElementById("screen-share-icon")
-        .setAttribute("class", "fas fa-times");
-      document
-        .getElementById("screen-share-btn")
-        .setAttribute("class", "btn btn-danger btn-lg point");
-
+        .innerHTML="stop_screen_share";
+     
       alert(
         "Please provide appropriate permissions to share your video and screen!" // Send a alert message to the user that provide permissions to add his/her stream
       );
@@ -318,9 +305,7 @@ const pin_unpin_stream = (streamid) =>{
     pinned_user=streamid;
     video_grid_container.style.visibility="hidden";
     stream_container.style.visibility="visible";
-    // stream_container.style.width=document.getElementById("left").style.width;
     stream_container.style.position="absolute";
-    // stream_container.style.height="90%";
     stream_container.style.alignSelf="center";
     resize();
      }

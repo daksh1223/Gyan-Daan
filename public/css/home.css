@@ -81,13 +81,7 @@ float: left;
  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
  
 }
-.room {
-  text-align: center;
-  font-size: 1.5rem;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  /* margin-bottom: 5%; */
-}
+
 .custom_link {
   text-decoration: none;
   /* color: white; */
@@ -172,15 +166,15 @@ height: 40%;
     width: 100%;
 }
 .room {
-  height:20%;
+  height:2rem;
+  line-height: 2rem;
 	font-size: 1.5rem;
 	overflow: hidden;
 	text-overflow: ellipsis;
   display:flex;
   flex-direction: column;
-  justify-content: center;
   margin: auto;
-	/* margin-bottom: 5%; */
+  text-align: center;
 }
 .nav-link-par{
   margin-right: 1%;
@@ -233,6 +227,8 @@ margin-top: 2%;
 .room_description {
 	text-align: center;
 	width: 100%;
+  height: 3rem;
+  line-height: 1.5rem;
     overflow: hidden;
 	text-overflow: ellipsis;
   

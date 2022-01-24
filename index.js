@@ -13,6 +13,7 @@ const passport = require("passport");
 const multerAzure = require('multer-azure')
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const MicrosoftStrategy = require("passport-microsoft").Strategy;
+const bodyParser = require('body-parser')
 
 const adminbro = require("./adminbro");
 const User = require("./Schemas/UserSchema.js");
@@ -29,11 +30,15 @@ const dburl = process.env.DB_URL;
 const PORT = process.env.PORT || 3000;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-let count = 1;
 app.set("view engine", "ejs");
 app.use(favicon(__dirname + "/public/favicon.ico"));
 app.use(express.static("public"));
 app.use(cors());
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+
+// parse application/json
+app.use(bodyParser.json())
 
 app.use(mongoose_morgan({ connectionString: dburl }, {}, "short"));
 app.use(
@@ -110,12 +115,12 @@ app.post("/auth/google", (req, res, next) => {
     scope: ["email", "profile"],
   })(req, res, next);
 });
-app.get("/auth/google/callback", (req, res, next) => {
+app.get("/auth/google/callback", 
   passport.authenticate("google", {
     successRedirect: "/home",
     failureRedirect: "/",
-  })(req, res, next);
-});
+  }));
+  
 app.post("/auth/microsoft", (req, res, next) => {
   req.session.isEducator = req.body.isEducator === "true";
   passport.authenticate("microsoft", {
@@ -205,10 +210,22 @@ app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
       name: req.file.blobPath,
       path: req.file.url,
       displayName: req.file.originalname,
+      createdBy: req.user._id
     });
+
+    if(req.body.channelID)
+    {
+      const channel = await find_channel_by_id(req.body.channelID)
+      if (req.body.isRecording)
+        channel.recordings.push(newFile)
+      else 
+        channel.files.push(newFile)
+      channel.save();
+    }
+    
     res.send(newFile);
   } catch (error) {
-    res.json({
+    res.status(500).json({
       error,
     });
   }
@@ -217,7 +234,7 @@ app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
 io.on("connection", (socket) => {
   socket.on("join-room", (roomID, user, email, userID, profile_pic, educator_status, channelId) => {
     socket.join(roomID);
-    console.log(userID);
+    console.log(userID,"YES");
     let new_track_record = new Tracker();
     new_track_record.user = userID;
     new_track_record.course = roomID;
@@ -226,6 +243,14 @@ io.on("connection", (socket) => {
     });
     socket.on("connect_to_new_user", (username, id) => {
       socket.to(id).emit("user-joined", user, email, id, profile_pic, educator_status, channelId);
+    });
+    socket.on("notification_message",(type,id,title,content,timestamp,current_channel)=>{
+      socket.broadcast.to(roomID).emit("receive_notification_message",type,id,title,content,timestamp,current_channel);
+    })
+    socket.on("toggle_option", (poll) => {
+      socket.broadcast
+          .to(roomID)
+          .emit("update_poll", poll);
     });
 
     socket.broadcast.to(roomID).emit("user-joined", user, email, socket.id, profile_pic, educator_status, channelId);

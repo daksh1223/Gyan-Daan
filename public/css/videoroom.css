@@ -18,7 +18,7 @@ body {
 }
 
 .videos_container {
-  flex-grow: 1;
+  height: calc(100% - 60px);
   background-color: black;
   display: flex;
   justify-content: center;
