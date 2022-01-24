@@ -226,10 +226,29 @@ const channel_data = async (cid) => {
   for (var i = 0; i < channel.meets.length; i++) {
     // Add current channel's meet
     temp_meet = document.createElement("div");
+    let date = channel.meets[i].start_date.split('-');
+    let datetime = date[0] + date[1] + date[2]
+    let time = channel.meets[i].start_time.split(':');
+    datetime += "T" + time[0] + time[1] + "00Z"
+    
+    let google_link_calendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${channel.meets[i].name}&dates=${datetime}`;
     temp_meet.innerHTML = `
-    <a  href="#" onclick="meet_message('${channel.meets[i]._id}')" >
+    <a  style="float:left;width:80%" href="#" onclick="meet_message('${channel.meets[i]._id}')" >
       ${channel.meets[i].name}
     </a>
+    <div class="container_element_settings dropdown">
+          <a id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="float:right;margin-right:1%;">
+            <i class="fas fa-ellipsis-h"></i>
+          </a>
+  
+          <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item" href="${google_link_calendar}">
+                  Add to Google Calendar
+                </a>
+            </li>
+          </ul>
+      </div>
     `;
     // temp_meet.setAttribute("class", "container_element");
     temp_meet.setAttribute("id", `${channel.meets[i]._id}meet`);
@@ -570,10 +589,11 @@ async function meet_modal_submission() {
     };
 
     response = await axios.post("/api/room/" + ROOM_ID + "/add_channel", {
-      data: { userinfo: userinfo },
+      data: { userinfo: userinfo , date, time},
     });
     response = response.data;
 
+    
     meet = `<br><div style="border: 1px solid;border-radius: 5px;width:fit-content;padding:2%;">
         <b>Meet Detail:<hr style="border: 1px solid black;background-color: black;height:1px;">
         Meet scheduled by: ${user_name}<br> 
@@ -585,9 +605,8 @@ async function meet_modal_submission() {
         To get more info about this 
         <button class="btn btn-dark">
         <a href='#' onclick=meet_message('${response._id}') class="custom_link_black" type="button"  style="color:white;"
-        >click here</a></button>
-        </div>
-        `;
+        >click here</a>
+        </button> `;
     // Will send a new message to other users by the name of GyanDaan Bot
     await socket.emit(
       "receive_channel_message",
@@ -607,13 +626,32 @@ async function meet_modal_submission() {
 
     meets_container = document.getElementById("meets_container");
     temp_meet = document.createElement("div");
-    temp_meet_name = document.createElement("a");
     temp_meet.setAttribute("class", "container_element");
     temp_meet.setAttribute("id", `${response._id}meet`);
-    temp_meet_name.innerHTML = name;
-    temp_meet_name.href = "#";
-    temp_meet_name.setAttribute("onclick", `meet_message('${response._id}')`);
-    temp_meet.appendChild(temp_meet_name);
+
+    let parsedDate = date.split('-');
+    let datetime = parsedDate[0] + parsedDate[1] + parsedDate[2]
+    let parsedTime = time.split(':');
+    datetime+= "T" + parsedTime[0] + parsedTime[1] + "00Z"
+    let google_link_calendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${name}&dates=${datetime}`;
+    temp_meet.innerHTML = `
+    <a  style="float:left;width:80%" href="#" onclick="meet_message('${response._id}')" >
+      ${name}
+    </a>
+    <div class="container_element_settings dropdown">
+          <a id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="float:right;margin-right:1%;">
+            <i class="fas fa-ellipsis-h"></i>
+          </a>
+  
+          <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item" href="${google_link_calendar}">
+                  Add to Google Calendar
+                </a>
+            </li>
+          </ul>
+      </div>
+    `;
     meets_container.appendChild(temp_meet);
     document.getElementById("meet_modal_close").click();
   }

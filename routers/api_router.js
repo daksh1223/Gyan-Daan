@@ -351,6 +351,8 @@ router
       channel.meet_allow_students_stream = channelinfo.allow_students_stream;
       channel.meet_link = `/room/${room._id}/meetroom/${parent_channel._id}/meet/${channel._id}`;
       parent_channel.save();
+      channel.start_date = req.body.data.date;
+      channel.start_time = req.body.data.time;
     }
 
     channel.save();
