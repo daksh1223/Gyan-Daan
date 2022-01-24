@@ -40,8 +40,9 @@ async function create_room(roominfo, session_user) {
   room.room_color = roominfo.color;
   channel.is_meet = false;
   room.description = roominfo.description;
-  console.log(roominfo.room_tags);
-	let addTags = roominfo.room_tags;
+  //console.log(roominfo.room_tags);
+	let addTags = [roominfo.name ,...roominfo.room_tags];
+	
 			if (addTags) {
 				for (let i = 0; i < addTags.length; i++) {
 					let addTag = await get_tag_by_name(addTags[i]);

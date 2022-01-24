@@ -4,7 +4,7 @@ socket.on("connect", () => {
 });
 
 var current_channel_message_id;
-
+var channel_data_messages;
 function onChatClick() {
   // For changing the size of chat window when clicked
   let l = document.getElementById("left");
@@ -36,98 +36,181 @@ function setup() {
     add_user(username, useremail, id, pic, educator_status); // When a user join add user's details in the participants list
   });
   socket.on("user-disconnected", remove_user);
-  socket.on("send_channel_message", generate_message);
+socket.on(
+	"send_channel_message",
+	(
+		username,
+		message,
+		timestamp,
+		current_channel_message_id,
+		id,
+		email,
+		type
+	) => {
+		
+		generate_message(
+			username,
+			message,
+			timestamp,
+			current_channel_message_id,
+			id,
+			type
+		);
+
+	}
+	);
+	socket.on("deleteChat", deleteChat);
+	socket.on("editChat", editchatData);
   document.getElementById("defaultCanvas0").style.display = "none";
 }
+
 const generate_message = (
-  user_name,
-  message,
-  timestring,
-  channelid,
-  is_user_post
+	user_name,
+	message,
+	timestring,
+	channel_id,
+	message_id,
+	type,
+	is_user_post
 ) => {
-  if (channelName == channelid) {
-    // If channelid is same as current channel's id add the message in the chat container
-    messages = document.getElementById("chat_messages");
+	if (channel_id == channelName) {
+		// If the ID of the channel from where this request came from is same as te current channel message ID ten add the emited message.
+		messages = document.getElementById("chat_messages");
     container = document.getElementsByClassName("right_window_chat")[0];
-    message_card = document.createElement("div");
-    message_card.className = "card message_container";
-    message_card.innerHTML = `
-      <strong style="margin-top:0.5%;">
-        ${user_name}
-      </strong>
-    <div style="margin-top:0.5%;word-wrap: break-word;overflow:hidden">
+		message_card = document.createElement("div");
+
+		message_card.style.marginBottom = "1%";
+		message_card.style.width = "fit-content";
+		message_card.style.marginLeft = "2.5%";
+		message_card.style.maxWidth = "60%";
+		message_card.style.padding = "1%";
+		message_card.className = "card shadow";
+		let topSection,
+			nav = getNavHtml(type, user_name, message_id, is_user_post);
+
+		topSection = `  <strong class="chatHeader">
+        <div class="chatUserName">${user_name}</div>
+       
+       ${nav}
+
+      </strong>`;
+
+		message_card.innerHTML = `
+    ${topSection}
+    <div class="chatContent">
       ${message}
     </div>
-    <small  style="margin-left:auto;">
+    <small class="chatFooter" style="margin-left:auto;">
         ${timestring}
       </small>
     `;
-    if (is_user_post) {
-      message_card.style.marginLeft = "auto";
-      message_card.style.marginRight = "2.5%";
-      message_card.style.backgroundColor = "rgb(79, 70, 229)";
-      message_card.style.color = "white";
-    }
-    messages.append(message_card);
-    container.scrollTop = container.scrollHeight;
-  }
+		if (is_user_post) {
+			message_card.style.marginLeft = "auto";
+			message_card.style.marginRight = "2.5%";
+			message_card.style.backgroundColor = "rgb(79, 70, 229)";
+			message_card.style.color = "white";
+		}
+		// if (user_name == "True-Meet Bot") {
+		// 	message_card.getElementsByClassName("topnav")[0].style.display = "none";
+		// }
+		message_card.setAttribute("id", message_id);
+		messages.append(message_card);
+		container.scrollTop = container.scrollHeight;
+	}
 };
 const show_chat = async (cid) => {
   channel = await axios.get(`/api/channel/${cid}`); // Get the channel data
 
   current_channel_message_id = cid;
-  messages = document.getElementById("chat_messages");
+  // messages = document.getElementById("chat_messages");
+  console.log(channel.data.messages);
   channel.data.messages.map((chat) => {
     // Add all the previous messages in the chat container
     let user_post = false;
     if (chat.email == user__email) {
       user_post = true;
     }
-    generate_message(
-      chat.username,
-      chat.message,
-      chat.timestamp,
-      current_channel_message_id,
-      user_post
-    );
+    // generate_message(
+    //   chat.username,
+    //   chat.message,
+    //   chat.timestamp,
+    //   current_channel_message_id,
+    //   user_post
+    // );
+    		generate_message(
+					chat.username,
+					chat.message,
+					chat.timestamp,
+					current_channel_message_id,
+					chat._id,
+					chat.type,
+					user_post
+				);
   });
 };
 show_chat(channelName);
 
-const send_chat_message = async () => {
-   var message_in_html_form = ''
-  if (document.getElementById('myFile').files.length) {
-    const file = document.getElementById('myFile').files[0];
-    let form = new FormData();
-    form.append('upload', file)
-    const response = await axios.post('/api/uploadFile', form)
-    if (response.data) message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`
-    else return;
-    clear_editor()
-  }
-  else {
-    message_in_html_form = '<pre>' + document.getElementById('editor').value + '</pre>'
-    clear_editor()
-  }
-  messages = document.getElementById("chat_messages");
+const send_chat_message = async (msg) => {
 
-  var message = message_in_html_form;
+	let message_in_html_form = "";
+	let type = "message";
+	if (msg) {
+		message_in_html_form = msg;
+	} else if (document.getElementById("myFile").files.length) {
+		const file = document.getElementById("myFile").files[0];
+		let form = new FormData();
+		form.append("upload", file);
+		const response = await axios.post("/api/uploadFile", form);
+		if (response.data)
+			message_in_html_form = `<div><a href="${response.data.path}"><pre>${response.data.displayName}</pre></a></div>`;
+		else return;
+		clear_editor();
+		type = "file";
+	} else {
+		message_in_html_form =
+			"<pre>" + document.getElementById("editor").value + "</pre>";
+		clear_editor();
+	}
+	let message = message_in_html_form;
+	let timestring = new Date().toLocaleString("en-US", {
+		timeZone: "Asia/Kolkata",
+	});
 
-  await socket.emit(
-    "receive_channel_message",
-    user__name,
-    message,
-    user__email,
-    channelName
-  );
-  generate_message(
-    user__name,
-    message,
-    new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" }),
-    channelName,
-    true
-  );
+	let generatedMessageId = await axios.post("/api/message", {
+		user_name:user__name,
+		message,
+		email:user__email,
+		timestring,
+		channel_id: channelName,
+		type,
+	});
+	console.log(generatedMessageId);
+	generatedMessageId = generatedMessageId.data;
+	await socket.emit(
+		"receive_channel_message",
+		user__name,
+		message,
+		user__email,
+		channelName,
+		generatedMessageId,
+		timestring,
+		type
+	);
+
+
+
+	generate_message(
+		user__name,
+		message,
+		timestring,
+		channelName,
+		generatedMessageId,
+		type,
+		true
+	);
+
+
+
 };
 function add_user(username, email, id, pic, educator_status) {
   // Will add the new user in the participant list

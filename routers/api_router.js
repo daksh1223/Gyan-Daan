@@ -614,7 +614,7 @@ router.get('/get_poll/:poll', async (req, res) => {
   res.json(poll)
 })
 router.route("/message").post(async (req, res) => {
-		console.log(req.body);
+		//console.log(req.body);
 
 		if (req.body.channel_id != -1) {
 			let Channel = await find_channel_by_id(req.body.channel_id);
@@ -622,7 +622,8 @@ router.route("/message").post(async (req, res) => {
 				req.body.user_name,
 				req.body.message,
 				req.body.email,
-        req.body.timestring
+        req.body.timestring,
+        req.body.type
         
 			);
 			Channel.messages.push(new_message.id);
@@ -634,14 +635,8 @@ router.route("/message").post(async (req, res) => {
   .delete(async (req, res) => {
     //console.log(req.body);
 
-	
-    let Channel = await find_channel_by_id(req.body.channel_id);
-    let index = Channel.messages.indexOf(req.body.message_id);
-    // console.log(index);
-    Channel.messages.splice(index, 1);
-    await delete_chat(req.body.message_id);
 
-    await Channel.save();
+    await delete_chat(req.body.message_id);
 
     res.json("Deleted");
   }

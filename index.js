@@ -231,10 +231,10 @@ io.on("connection", (socket) => {
     socket.broadcast.to(roomID).emit("user-joined", user, email, socket.id, profile_pic, educator_status, channelId);
     socket.on(
       "receive_channel_message",
-      async (username, data, email, channel_id,message_id,timestring) => {
+      async (username, data, email, channel_id,message_id,timestring,type) => {
         socket.broadcast
           .to(roomID)
-          .emit("send_channel_message", username, data, timestring, channel_id,message_id,email);
+          .emit("send_channel_message", username, data, timestring, channel_id,message_id,email,type);
       }
     );
       socket.on(

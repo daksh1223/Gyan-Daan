@@ -289,7 +289,9 @@ const show_chat = (prefix) => {
 				chat.timestamp,
 				current_channel_message_id,
 				chat._id,
-				user_post
+				chat.type,
+				user_post,
+				
 			);
 		}
 	});
@@ -320,6 +322,7 @@ const generate_message = (
 	timestring,
 	channel_id,
 	message_id,
+	type,
 	is_user_post
 ) => {
 	if (channel_id == current_channel_message_id) {
@@ -334,84 +337,22 @@ const generate_message = (
 		message_card.style.maxWidth = "60%";
 		message_card.style.padding = "1%";
 		message_card.className = "card shadow";
-		let topSection;
-		if (is_user_post) {
-			topSection = `  <strong    style="margin-top:0.5%;display:flex;justify-content:space-between;">
+		let topSection,nav=getNavHtml(type,user_name,message_id,is_user_post);
+
+		
+			topSection = `  <strong class="chatHeader">
         <div class="chatUserName">${user_name}</div>
        
-
-   <div class="dropdown topnav">
-                        <div class="dropdown-toggle nav-link active message-dropdown-toggle"  role="button"
-                            data-toggle="dropdown" aria-expanded="false">
-                           
-                          
-                           <span class="material-icons" style="color:white">
-more_vert
-</span> 
-                        </div>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      
-                            <li  class="messageOptions" onclick="replychatHtml('${message_id}','${user_name}')">
-                   
-                               <i class="fas fa-reply" aria-hidden="true" style="height:fit-content;margin-left:20%;"></i>
-                               <p style="margin:0%;margin-left:2%;">Reply</p>
-
-                            </li>
-                         
-                            <li class="messageOptions" onclick="editchatHtml('${message_id}')">
-                   
-                               <i class="fas fa-edit" aria-hidden="true" style="height:fit-content;margin-left:20%;"></i>
-                               <p style="margin:0%;margin-left:2%;">Edit</p>
-
-                            </li>
-                         
-              
-                              <li class="messageOptions"onclick="deleteChatDatabase('${message_id}')">
-                               <i class="far fa-trash-alt" aria-hidden="true" style="height:fit-content;margin-left:20%;"></i>
-                               <p style="margin:0%;margin-left:2%;">Delete</p>
-
-                            </li>
-                       
-                                               </ul>
-                    </div>
-                </li>
-            </ul>
-        </div>
+       ${nav}
 
       </strong>`;
-		} else {
-			topSection = ` <strong  class="topsection" style="margin-top:0.5%;display:flex;justify-content:space-between;">
-        <div>${user_name}</div>
-       
-
-   <div class="dropdown topnav">
-                        <div class="dropdown-toggle nav-link active message-dropdown-toggle"  href='#' role="button"
-                            data-toggle="dropdown" aria-expanded="false">
-                           
-                          
-                           <span class="material-icons">
-more_vert
-</span> 
-                        </div>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-                      
-                            <li  class="messageOptions" onclick="replychatHtml('${message_id}','${user_name}')">
-                   
-                               <i class="fas fa-reply" aria-hidden="true" style="height:fit-content;margin-left:20%;"></i>
-                               <p style="margin:0%;margin-left:2%;">Reply</p>
-
-                            </li>
-						</ul>
-        </div>
-		</strong>
-							`;
-		}
+		
 		message_card.innerHTML = `
     ${topSection}
     <div class="chatContent">
       ${message}
     </div>
-    <small class="chatTimeString" style="margin-left:auto;">
+    <small class="chatFooter" style="margin-left:auto;">
         ${timestring}
       </small>
     `;
@@ -421,17 +362,16 @@ more_vert
 			message_card.style.backgroundColor = "rgb(79, 70, 229)";
 			message_card.style.color = "white";
 		}
-		if (user_name == "True-Meet Bot") {
-			message_card.getElementsByClassName("topnav")[0].style.display = "none";
-		}
+		// if (user_name == "True-Meet Bot") {
+		// 	message_card.getElementsByClassName("topnav")[0].style.display = "none";
+		// }
 		message_card.setAttribute("id", message_id);
 		messages.append(message_card);
 		messages.scrollTop = messages.scrollHeight;
 	}
 };
-const send_chat_message = async (msg) => {
-	show = true;
-	var message_in_html_form = "";
+const send_chat_message = async (msg, type="message") => {
+	let message_in_html_form = "";
 	if (msg) {
 		message_in_html_form = msg;
 	} else if (document.getElementById("myFile").files.length) {
@@ -440,15 +380,16 @@ const send_chat_message = async (msg) => {
 		form.append("upload", file);
 		const response = await axios.post("/api/uploadFile", form);
 		if (response.data)
-			message_in_html_form = `<div class="reply" ><a href="${response.data.path}"><pre>${response.data.displayName}</pre></a></div>`;
+			message_in_html_form = `<div><a href="${response.data.path}"><pre>${response.data.displayName}</pre></a></div>`;
 		else return;
 		clear_editor();
+		type = "file";
 	} else {
 		message_in_html_form =
 			"<pre>" + document.getElementById("editor").value + "</pre>";
 		clear_editor();
 	}
-	var message = message_in_html_form;
+	let message = message_in_html_form;
 	let timestring = new Date().toLocaleString("en-US", {
 		timeZone: "Asia/Kolkata",
 	});
@@ -459,6 +400,7 @@ const send_chat_message = async (msg) => {
 		email,
 		timestring,
 		channel_id: current_channel_message_id,
+		type,
 	});
 	//console.log(generatedMessageId);
 	generatedMessageId = generatedMessageId.data;
@@ -469,7 +411,8 @@ const send_chat_message = async (msg) => {
 		email,
 		current_channel_message_id,
 		generatedMessageId,
-		timestring
+		timestring,
+		type
 	);
 
 	// After emiting the message to the server add this message in the chat container.
@@ -480,6 +423,7 @@ const send_chat_message = async (msg) => {
 		timestring,
 		current_channel_message_id,
 		generatedMessageId,
+		type,
 		true
 	);
 	let temp_data = {
@@ -488,6 +432,7 @@ const send_chat_message = async (msg) => {
 		username: user_name,
 		timestamp: timestring,
 		_id: generatedMessageId,
+		type,
 	};
 	//Add this message in channel_data_messages to access it while searching in the search bar
 	channel_data_messages.push(temp_data);
@@ -604,13 +549,15 @@ async function meet_modal_submission() {
 			is_meet: true,
 			allow_students_stream,
 		};
+	
 
 		response = await axios.post("/api/room/" + ROOM_ID + "/add_channel", {
 			data: { userinfo: userinfo },
 		});
 		response = response.data;
 
-		meet = `<br><div style="border: 1px solid;border-radius: 5px;width:fit-content;padding:2%;">
+
+		meet = `<br><div class="meet">
         <b>Meet Detail:<hr style="border: 1px solid black;background-color: black;height:1px;">
         Meet scheduled by: ${user_name}<br> 
         Meet name: ${name}<br>
@@ -634,6 +581,7 @@ async function meet_modal_submission() {
 			email: "",
 			timestring,
 			channel_id: current_channel_message_id,
+			type:"meet"
 		});
 		//console.log(generatedMessageId);
 		generatedMessageId = generatedMessageId.data;
@@ -644,7 +592,8 @@ async function meet_modal_submission() {
 			"",
 			current_channel_message_id,
 			generatedMessageId,
-			timestring
+			timestring,
+			"meet"
 		);
 
 		generate_message(
@@ -653,6 +602,7 @@ async function meet_modal_submission() {
 			timestring,
 			current_channel_message_id,
 			generatedMessageId,
+			"meet",
 			false
 		);
 
@@ -818,13 +768,14 @@ function handleChatFileUpload() {
 }
 socket.on(
 	"send_channel_message",
-	(username, message, timestamp, current_channel_message_id, id, email) => {
+	(username, message, timestamp, current_channel_message_id, id, email,type) => {
 		generate_message(
 			username,
 			message,
 			timestamp,
 			current_channel_message_id,
-			id
+			id,
+			type
 		);
 		let temp_data = {
 			email: email,
@@ -832,6 +783,7 @@ socket.on(
 			username: username,
 			timestamp: timestamp,
 			_id: id,
+			type
 		};
 		//Add this message in channel_data_messages to access it while searching in the search bar
 		channel_data_messages.push(temp_data);
@@ -877,7 +829,7 @@ async function poll_modal_submission() {
     </div>
     `;
 	}
-	send_chat_message(msg);
+	send_chat_message(msg,"poll");
 	document.getElementById("modal_close").click();
 }
 
@@ -966,197 +918,3 @@ function toggleChannelIcon(event, id) {
 		);
 }
 
-const deleteChatDatabase = async (id) => {
-	await axios.delete("/api/message", {
-		data: {
-			message_id: id,
-			channel_id: current_channel_message_id,
-		},
-	});
-	deleteChat(id);
-	await socket.emit("deleteChat", id);
-};
-function deleteChat(id) {
-	//console.log(channel_data_messages);
-	document.getElementById(id).style.display = "none";
-	channel_data_messages = channel_data_messages.filter((message) => {
-		return message._id != id;
-	});
-	// console.log(channel_data_messages);
-}
-
-const editchatHtml = async (id) => {
-	let chat = document.getElementById(id);
-
-	if (chat.getElementsByTagName("pre").length == 0) return;
-	let replyData = "";
-	let chatContent =
-		chat.getElementsByTagName("pre")[
-			chat.getElementsByTagName("pre").length - 1
-		].innerHTML;
-	if (chat.getElementsByClassName("reply").length > 0) {
-		replyData =
-			'<div class="card shadow reply" style="width:50%;">' +
-			chat.getElementsByClassName("reply")[0].innerHTML +
-			"</div>";
-	}
-	chat.getElementsByClassName("chatContent")[0].innerHTML = `
-	${replyData}
-
-  <input style="width:100%;" class="w3-input w3-border" type="text" id="chatInput_${id}" value='${chatContent}'>
-  <div style="display:flex;justify-content:flex-end;">
-  <i class="fas fa-times" style="cursor:pointer" onclick="cancelchatData('${id}','${chatContent}')"></i>
-  <i class="fas fa-check" style="margin-left:3%;cursor:pointer;" onclick="geteditchatData('${id}')"></i>
-  </div>
-
-  `;
-	chat.getElementsByClassName("topnav")[0].style.display = "none";
-	chat.style.width = "60%";
-};
-const geteditchatData = async (id) => {
-	let newchatData = document.getElementById(`chatInput_${id}`).value;
-	let replyData = "";
-	let chat = document.getElementById(id);
-	let timeString = new Date().toLocaleString("en-US", {
-			timeZone: "Asia/Kolkata",
-		});
-	timeString = timeString + ' edited'; 
-	if (chat.getElementsByClassName("reply").length > 0) {
-		replyData =
-			'<div class="card shadow reply">' +
-			chat.getElementsByClassName("reply")[0].innerHTML +
-			"</div>";
-	}
-	chat.getElementsByClassName("chatContent")[0].innerHTML =
-		replyData + "<pre>" + newchatData + "</pre";
-	editchatData(id, newchatData,timeString);
-	await socket.emit("editChat", id, newchatData, timeString);
-	axios.put("/api/message", {
-		message_id: id,
-		message_content: replyData + "<pre>" + newchatData + "</pre>",
-		message_timestamp:timeString,
-	});
-
-	chat.style.width = "fit-content";
-	channel_data_messages.forEach((message) => {
-		if (message._id == id) {
-			message.message = replyData + "<pre>" + newchatData + "</pre>";
-			message.timestamp = timeString;
-		}
-	});
-	
-	chat.getElementsByClassName("chatTimeString")[0].innerHTML = timeString;
-	chat.getElementsByClassName("topnav")[0].style.display = "block";
-};
-const cancelchatData = (id, prevData) => {
-	let replyData = "";
-
-	let chat = document.getElementById(id);
-
-	if (chat.getElementsByClassName("reply").length > 0) {
-		replyData =
-			'<div class="card shadow reply">' +
-			chat.getElementsByClassName("reply")[0].innerHTML +
-			"</div>";
-	}
-
-	chat.getElementsByClassName("chatContent")[0].innerHTML =
-		replyData + "<pre>" + prevData + "</pre>";
-
-	chat.style.width = "fit-content";
-	chat.getElementsByClassName("topnav")[0].style.display = "block";
-};
-function editchatData(id, newChat, timeString) {
-	let chat = document.getElementById(id);
-	chat.getElementsByTagName("pre")[
-		chat.getElementsByTagName("pre").length - 1
-	].innerHTML = newChat;
-	chat.getElementsByClassName("chatTimeString")[0].innerHTML = timeString;
-}
-const replychatHtml = (id, username) => {
-	let replyData = "";
-	let chat = document.getElementById(id);
-	let chatContent =
-		chat.getElementsByTagName("pre")[
-			chat.getElementsByTagName("pre").length - 1
-		].innerHTML;
-	if (chat.getElementsByClassName("reply").length > 0) {
-		replyData = `
-			<div class="card shadow reply" style="width:50%;display:none">
-			${chat.getElementsByClassName("reply")[0].innerHTML}
-			</div>`;
-	}
-	replyData =
-		replyData +
-		`
-				
-	<div class="card shadow" style="width:50%;color:black;margin-bottom:1%">
-    <strong>${username}</strong>
-    <div>
-      ${chatContent}
-    </div>
-
-	  </div>
-    `;
-
-	chat.getElementsByClassName("chatContent")[0].innerHTML = `
-${replyData}
-  <input style="width:100%;" class="w3-input w3-border" type="text" id="chatInput_${id}">
-  <div style="display:flex;justify-content:flex-end;margin-top:2%;">
-  <i class="fas fa-times" style="cursor:pointer" onclick="cancelchatData('${id}','${chatContent}')"></i>
-  <i class="fas fa-check" style="margin-left:3%;cursor:pointer;" onclick="replytoChat('${id}','${chatContent}','${username}')"></i>
-  </div>
-
-  `;
-	chat.getElementsByClassName("topnav")[0].style.display = "none";
-
-	chat.style.width = "60%";
-};
-const replytoChat = (id, mes, username) => {
-	let replyData = "";
-	let chat = document.getElementById(id);
-	if (chat.getElementsByClassName("reply").length > 0) {
-		replyData =
-			'<div class="card shadow reply">' +
-			chat.getElementsByClassName("reply")[0].innerHTML +
-			"</div>";
-	}
-
-	let chatmes = `
-	<div style="color:back;" class="card shadow reply">
-	<div onclick="scrollto('${id}')" style="cursor:pointer">
-    <strong>${username}</strong>
-    <div>
-      ${mes}
-    </div>
-</div>
-	  </div>
-    `;
-	// console.log(chat);
-	let msg =
-		chatmes +
-		"<pre>" +
-		document.getElementById(`chatInput_${id}`).value +
-		"</pre>";
-	chat.getElementsByClassName("chatContent")[0].innerHTML =
-		replyData + "<pre>" + mes + "</pre";
-
-	chat.style.width = "fit-content";
-	chat.getElementsByClassName("topnav")[0].style.display = "block";
-	send_chat_message(msg);
-};
-const scrollto = (id) => {
-	if (document.getElementById(id)) {
-		$("#chat_messages").scrollTop($("#chat_messages").position().top);
-		$("#chat_messages").scrollTop($(`#${id}`).position().top);
-		let el = document.getElementById(id);
-		let b = el.style.backgroundColor;
-		let c = el.style.color;
-		el.style.backgroundColor = "darkslateblue";
-		el.style.color = "white";
-		setTimeout(() => {
-			el.style.backgroundColor = b;
-			el.style.color = c;
-		}, 1000);
-	}
-};

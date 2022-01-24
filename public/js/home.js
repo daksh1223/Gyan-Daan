@@ -46,8 +46,11 @@ function modal_submission() {
 	let name = document.getElementById("room_name").value;
 	let description = document.getElementById("room_description").value;
 	//console.log(name, description);
-	let room_tags = document.getElementById("room_tags").value;
-	room_tags = room_tags.split(",");
+	let room_tags = []
+	if (document.getElementById("room_tags").value) {
+		room_tags = document.getElementById("room_tags").value;
+		room_tags = room_tags.split(",");
+	}
 	if (name.length) {
 		roominfo = {
 			name,
@@ -94,10 +97,12 @@ function Roomrequest_submission() {
 async function get_rooms(stat) {
 	response = await axios.get("/api/get_all_rooms"); // Will fetch all the rooms where the user is present
 	rooms_copy = response.data.rooms;
+
 	//console.log('rooms copy ---', rooms_copy, isEducator, stat);
-	if (isEducator === "true") {
+	if (isEducator == "true") {
+		
 		rooms_copy = rooms_copy.filter((room) => {
-			return room.creator === user_id;
+			return room.creator == user_id;
 		});
 	}
 
@@ -161,6 +166,7 @@ async function showSearchResults(searchString) {
 		// Will be used to show the rooms
 		let rooms = data.data.rooms;
 		let users = data.data.users;
+		stat_rooms_copy = rooms.map((room) => { return room.room});
 		//console.log('----', rooms, users)
 
 		while (rooms_container.firstChild) {
@@ -191,7 +197,7 @@ async function showSearchResults(searchString) {
 			educators_container_title.innerHTML = "No educators for this search";
 		} // Then add the rooms that fullfill all the conditions
 	} else {
-    //console.log("room--------");
+    // console.log("room--------");
     // 	console.log(rooms_copy);
 
     deactivate_stat_links();
@@ -373,6 +379,7 @@ async function joinRoom(id) {
 		user_counts[i].innerHTML = room.userCount;
 	}
 	//add_room(room, rooms_container);
+	rooms_copy.push(room);
 	await axios.post(`/api/room/${id}/join`);
 }
 const checkIfVerified = () => {

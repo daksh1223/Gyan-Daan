@@ -254,3 +254,12 @@ pre {
 pre{
 	margin-bottom: 0%;
 }
+.meet{
+	border: 1px solid;
+	border-radius: 5px;
+	width:fit-content;
+	padding:2%;
+}
+.chatHeader{
+	   margin-top:0.5%;display:flex;justify-content:space-between;
+}
