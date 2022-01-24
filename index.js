@@ -234,7 +234,7 @@ app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
 io.on("connection", (socket) => {
   socket.on("join-room", (roomID, user, email, userID, profile_pic, educator_status, channelId) => {
     socket.join(roomID);
-    console.log(userID);
+    console.log(userID,"YES");
     let new_track_record = new Tracker();
     new_track_record.user = userID;
     new_track_record.course = roomID;

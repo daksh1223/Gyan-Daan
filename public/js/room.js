@@ -18,6 +18,9 @@ let channel_last_notification_id = 0;
 let user_last_notification_id = 0;
 let show_files_container = document.getElementById("show_files");
 
+socket.on("connect", () => {
+  console.log("yes");
+});
 if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
   create_poll_container.innerHTML = `<i class="fas fa-poll-h"></i> Create Poll `;
@@ -319,7 +322,7 @@ function setup() {
   // For setting up the froala editor (Rich Text editor)
   socket.emit("join-room", ROOM_ID, null, null, userID);
 }
-
+setup();
 const get_data = (username, message, timestring, channel_id) => {
   if (channel_id == current_channel_message_id) {
     // If the channel ID from where the signal came is same as the current channel message ID

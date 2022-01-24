@@ -1,6 +1,6 @@
 var socket = io("/");
 socket.on("connect", () => {
-  add_user(user__name, user__email, -1,profile_pic,isEducator);
+  add_user(user__name, user__email, -1, profile_pic, isEducator);
 });
 
 var current_channel_message_id;
@@ -29,16 +29,29 @@ function onChatClick() {
 
 function setup() {
   // To setup the froala editor
-  socket.emit("join-room", ROOMID, user__name, user__email,userID, profile_pic, isEducator,channelName);
-  socket.on("user-joined", (username, useremail, id, pic, educator_status, channelId) => {
-    console.log(username, useremail, id, pic, educator_status); 
-    if(channelId==channelName)
-    add_user(username, useremail, id, pic, educator_status); // When a user join add user's details in the participants list
-  });
+  socket.emit(
+    "join-room",
+    ROOMID,
+    user__name,
+    user__email,
+    userID,
+    profile_pic,
+    isEducator,
+    channelName
+  );
+  socket.on(
+    "user-joined",
+    (username, useremail, id, pic, educator_status, channelId) => {
+      console.log(username, useremail, id, pic, educator_status);
+      if (channelId == channelName)
+        add_user(username, useremail, id, pic, educator_status); // When a user join add user's details in the participants list
+    }
+  );
   socket.on("user-disconnected", remove_user);
   socket.on("send_channel_message", generate_message);
   document.getElementById("defaultCanvas0").style.display = "none";
 }
+setup();
 const generate_message = (
   user_name,
   message,
@@ -96,19 +109,20 @@ const show_chat = async (cid) => {
 show_chat(channelName);
 
 const send_chat_message = async () => {
-   var message_in_html_form = ''
-  if (document.getElementById('myFile').files.length) {
-    const file = document.getElementById('myFile').files[0];
+  var message_in_html_form = "";
+  if (document.getElementById("myFile").files.length) {
+    const file = document.getElementById("myFile").files[0];
     let form = new FormData();
-    form.append('upload', file)
-    const response = await axios.post('/api/uploadFile', form)
-    if (response.data) message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`
+    form.append("upload", file);
+    const response = await axios.post("/api/uploadFile", form);
+    if (response.data)
+      message_in_html_form = `<a href="${response.data.path}">${response.data.displayName}</a>`;
     else return;
-    clear_editor()
-  }
-  else {
-    message_in_html_form = '<pre>' + document.getElementById('editor').value + '</pre>'
-    clear_editor()
+    clear_editor();
+  } else {
+    message_in_html_form =
+      "<pre>" + document.getElementById("editor").value + "</pre>";
+    clear_editor();
   }
   messages = document.getElementById("chat_messages");
 
@@ -132,10 +146,12 @@ const send_chat_message = async () => {
 function add_user(username, email, id, pic, educator_status) {
   // Will add the new user in the participant list
   let participant = document.createElement("div");
-  let status="Educator";
-  if(educator_status==="false")status="Student";
-  if(pic==null){pic=`/images/user.jpg`;}
-  let participant_details=`
+  let status = "Educator";
+  if (educator_status === "false") status = "Student";
+  if (pic == null) {
+    pic = `/images/user.jpg`;
+  }
+  let participant_details = `
     <image src="${pic}" style="height:3rem;width:3rem;border-radius:50%;"/>
     <div class="participant_details"> 
         <div>${username}</div> 
@@ -155,35 +171,35 @@ function add_user(username, email, id, pic, educator_status) {
     socket.emit("connect_to_new_user", username, id);
   }
 }
-function remove_user(useremail,channelId) {
+function remove_user(useremail, channelId) {
   // When the user leaves, then it will remove his/her details from the list
-  if(channelId==channelName)
-  document
-    .getElementById("participants_list")
-    .removeChild(document.getElementById(useremail));
+  if (channelId == channelName)
+    document
+      .getElementById("participants_list")
+      .removeChild(document.getElementById(useremail));
 }
 
 function auto_grow(element) {
-    element.style.height = "5px";
-    element.style.height = (element.scrollHeight)+"px";
+  element.style.height = "5px";
+  element.style.height = element.scrollHeight + "px";
 }
 
 function handleChatFileUpload() {
-  const file = document.getElementById('myFile').files[0];
-    document.getElementById('editor').value = file.name;
-  document.getElementById('editor').readOnly = true;
-  document.getElementById('editor_container').style.backgroundColor = '#898989';
-  document.getElementById('editor').style.backgroundColor = '#898989';
-  document.getElementById('editor').style.color = 'white';
-  document.getElementById('editor_clear').style.backgroundColor = 'white'
+  const file = document.getElementById("myFile").files[0];
+  document.getElementById("editor").value = file.name;
+  document.getElementById("editor").readOnly = true;
+  document.getElementById("editor_container").style.backgroundColor = "#898989";
+  document.getElementById("editor").style.backgroundColor = "#898989";
+  document.getElementById("editor").style.color = "white";
+  document.getElementById("editor_clear").style.backgroundColor = "white";
 }
 
 function clear_editor() {
-  document.getElementById('editor').value = '';
-  document.getElementById('myFile').value = '';
-  document.getElementById('editor').readOnly = false;
-  document.getElementById('editor_container').style.backgroundColor = '#ededed';
-  document.getElementById('editor').style.backgroundColor = 'white';
-  document.getElementById('editor').style.color = 'black';
+  document.getElementById("editor").value = "";
+  document.getElementById("myFile").value = "";
+  document.getElementById("editor").readOnly = false;
+  document.getElementById("editor_container").style.backgroundColor = "#ededed";
+  document.getElementById("editor").style.backgroundColor = "white";
+  document.getElementById("editor").style.color = "black";
   document.getElementById("editor").style.height = "100%";
 }
