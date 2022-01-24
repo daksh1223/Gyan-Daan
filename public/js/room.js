@@ -47,7 +47,7 @@ const room_data = async (url) => {
     <a href="/home" class="home_link" style="float:left;margin-left:5%;">
       <i class="fas fa-home mx-1" ></i> Home</a>
     <div style="padding:5%; width:15vw; height:15vw;align-self:center;" >
-      <img src="https://place-hold.it/80/${promise.data.room_detail.room_color}/fff&text=${icon_value}&fontsize=20" style="border-radius:50%;height:100%;width:100%;"></img>
+      <img src="https://place-hold.it/200/${promise.data.room_detail.room_color}/fff&text=${icon_value}&fontsize=80" style="border-radius:50%;height:100%;width:100%;"></img>
     </div>
     <div style="width:100%;display:flex;flex-direction:row;padding:0 10%;" class="shadow-sm">
         <h2 style="color:black;text-align:center; width:80%;word-break:break-word;" id="room_data_name">${promise.data.room_detail.name}</h2>

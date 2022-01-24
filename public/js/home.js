@@ -243,7 +243,7 @@ function add_room(cur_room, container) {
 		join_icon = `<button title="Join" class="btn btn-primary" id="join_icon_${id}" onClick="joinRoom('${id}')" style="cursor:pointer;background:rgb(79, 70, 229);">Enroll</button>`;
 	room.innerHTML = `
      <div style="height:60%">
-        <a href="/room/${id}/" class="icon"><img src="https://place-hold.it/100/${room_color}/fff&text=${icon_value}&fontsize=20"  ></a>
+        <a href="/room/${id}/" class="icon"><img src="https://place-hold.it/200/${room_color}/fff&text=${icon_value}&fontsize=50"  ></a>
      </div>
 	 <div class="room_content">
 	  <div class="room">${room_name}</div>
