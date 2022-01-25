@@ -337,37 +337,37 @@ setup()
 // 	generate_message(username, message, timestring, channel_id, false); // Generate the message if the above condition is true
 // };
 const generate_message = (
-	user_name,
-	message,
-	timestring,
-	channel_id,
-	message_id,
-	type,
-	is_user_post
+  user_name,
+  message,
+  timestring,
+  channel_id,
+  message_id,
+  type,
+  is_user_post
 ) => {
-	if (channel_id == current_channel_message_id) {
-		// If the ID of the channel from where this request came from is same as te current channel message ID ten add the emited message.
-		messages = document.getElementById("chat_messages");
+  if (channel_id == current_channel_message_id) {
+    // If the ID of the channel from where this request came from is same as te current channel message ID ten add the emited message.
+    messages = document.getElementById("chat_messages");
 
-		message_card = document.createElement("a");
+    message_card = document.createElement("div");
 
-		message_card.style.marginBottom = "1%";
-		message_card.style.width = "fit-content";
-		message_card.style.marginLeft = "2.5%";
-		message_card.style.maxWidth = "60%";
-		message_card.style.padding = "1%";
-		message_card.className = "card shadow";
-		let topSection,nav=getNavHtml(type,user_name,message_id,is_user_post);
+    message_card.style.marginBottom = "1%";
+    message_card.style.width = "fit-content";
+    message_card.style.marginLeft = "2.5%";
+    message_card.style.maxWidth = "60%";
+    message_card.style.padding = "1%";
+    message_card.className = "card shadow";
+    let topSection, nav = getNavHtml(type, user_name, message_id, is_user_post);
 
 		
-			topSection = `  <strong class="chatHeader">
+    topSection = `  <strong class="chatHeader">
         <div class="chatUserName">${user_name}</div>
        
        ${nav}
 
       </strong>`;
 		
-		message_card.innerHTML = `
+    message_card.innerHTML = `
     ${topSection}
     <div class="chatContent">
       ${message}
@@ -376,20 +376,37 @@ const generate_message = (
         ${timestring}
       </small>
     `;
-		if (is_user_post) {
-			message_card.style.marginLeft = "auto";
-			message_card.style.marginRight = "2.5%";
-			message_card.style.backgroundColor = "rgb(79, 70, 229)";
-			message_card.style.color = "white";
-		}
-		// if (user_name == "True-Meet Bot") {
-		// 	message_card.getElementsByClassName("topnav")[0].style.display = "none";
-		// }
-		message_card.setAttribute("id", message_id);
-		messages.append(message_card);
-		messages.scrollTop = messages.scrollHeight;
-	}
-};
+    if (is_user_post) {
+      message_card.style.marginLeft = "auto";
+      message_card.style.marginRight = "2.5%";
+      message_card.style.backgroundColor = "rgb(79, 70, 229)";
+      message_card.style.color = "white";
+    }
+    // if (user_name == "True-Meet Bot") {
+    // 	message_card.getElementsByClassName("topnav")[0].style.display = "none";
+    // }
+    message_card.setAttribute("id", message_id);
+    messages.append(message_card);
+    messages.scrollTop = messages.scrollHeight;
+   
+ 
+    $(message_card).hover(
+      function () {
+            if (document.getElementById(`nav_${message_id}`)) {
+						document.getElementById(`nav_${message_id}`).style.display =
+								"flex";
+						}
+      },
+      function () {
+               if (document.getElementById(`nav_${message_id}`)) {
+						document.getElementById(`nav_${message_id}`).style.display = "none";
+						}
+      }
+		);
+		
+	
+  };
+}
 const send_chat_message = async (msg, type="message") => {
 	let message_in_html_form = "";
 	if (msg) {
@@ -813,7 +830,7 @@ function handleChatFileUpload() {
 socket.on(
 	"send_channel_message",
   (username, message, timestamp, current_channel_message_id, id, email, type) => {
-    console.log("eee")
+    
 		generate_message(
 			username,
 			message,
