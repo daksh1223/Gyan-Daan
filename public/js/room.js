@@ -389,18 +389,17 @@ const generate_message = (
     messages.append(message_card);
     messages.scrollTop = messages.scrollHeight;
    
- 
+  let navel=document.getElementById(`nav_${message_id}`)
     $(message_card).hover(
       function () {
-            if (document.getElementById(`nav_${message_id}`)) {
-						document.getElementById(`nav_${message_id}`).style.display =
-								"flex";
+            if (navel) {
+						navel.style.display = "flex";
 						}
       },
       function () {
-               if (document.getElementById(`nav_${message_id}`)) {
-						document.getElementById(`nav_${message_id}`).style.display = "none";
-						}
+               if (navel) {
+									navel.style.display = "none";
+								}
       }
 		);
 		
