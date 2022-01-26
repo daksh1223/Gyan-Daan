@@ -42,7 +42,7 @@ function setup() {
   socket.on(
     "user-joined",
     (username, useremail, id, pic, educator_status, channelId) => {
-      console.log(username, useremail, id, pic, educator_status);
+      // console.log(username, useremail, id, pic, educator_status);
       if (channelId == channelName)
         add_user(username, useremail, id, pic, educator_status); // When a user join add user's details in the participants list
     }
@@ -131,7 +131,7 @@ const generate_message = (
 };
 const show_chat = async (cid) => {
   channel = await axios.get(`/api/channel/${cid}`); // Get the channel data
-console.log(cid,channel)
+// console.log(cid,channel)
   current_channel_message_id = cid;
   // messages = document.getElementById("chat_messages");
   //console.log(channel.data.messages);
@@ -195,7 +195,7 @@ const send_chat_message = async (msg) => {
 		channel_id: channelName,
 		type,
 	});
-	console.log(generatedMessageId);
+	// console.log(generatedMessageId);
 	generatedMessageId = generatedMessageId.data;
 	await socket.emit(
 		"receive_channel_message",

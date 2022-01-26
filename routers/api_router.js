@@ -202,7 +202,7 @@ router
       await user.save();
     }
     let user_last_notification_id = user.channel_last_notification_id.find(e=>e.channel==req.params.channel).last_notification_id;
-    console.log(req.user._id,user.channel_last_notification_id)
+    // console.log(req.user._id,user.channel_last_notification_id)
 
     res.json({channel_details,user_last_notification_id});
   })

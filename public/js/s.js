@@ -168,7 +168,7 @@ const channel_data = async (cid) => {
 	current_channel = cid; // Set the current channel as cid
 	current_channel_message_id = cid;
 	channel_data_copy = channel.data;
-	console.log(channel.data);
+	// console.log(channel.data);
 	document.getElementById("channel_name_display").innerHTML = channel.data.name;
 	channel_data_messages = channel.data.messages;
 	messages = document.getElementById("chat_messages");
@@ -192,7 +192,7 @@ const channel_data = async (cid) => {
 		let status = "Educator";
 		if (channel.data.users[i].isEducator === false) status = "Student";
 
-		console.log(channel.data.users[i]);
+		// console.log(channel.data.users[i]);
 		temp_user.innerHTML = `
     <div style="display:flex">
       <image src="${channel.data.users[i].profilepicUrl}" class="pic"></>
@@ -268,7 +268,7 @@ const show_chat = (prefix) => {
 		document.getElementById("join_meet").style.display = "none";
 	}
 	prefix = prefix.toLowerCase();
-	console.log(channel_data_messages);
+	// console.log(channel_data_messages);
 	channel_data_messages.map((chat) => {
 		let name = chat.username.toLowerCase(),
 			message = chat.message.toLowerCase(),
@@ -523,7 +523,7 @@ function channel_modal_submission() {
 	const name = document.getElementById("channel_name").value;
 	let users = document.getElementById("user_tags").value;
 	users = users.split(" ");
-	console.log(users);
+	// console.log(users);
 	if (name.length) {
 		userinfo = {
 			name: name,
@@ -596,7 +596,7 @@ async function meet_modal_submission() {
 	const allow_students_stream = document.getElementById(
 		"Allow_Students_Stream"
 	).checked;
-	console.log(name, date, time, allow_students_stream);
+	// console.log(name, date, time, allow_students_stream);
 	if (name.length && time.length && date.length) {
 		userinfo = {
 			name: name,
@@ -687,7 +687,7 @@ async function leave_room(room_id, channel_id) {
 		data: { channel_id: channel_id },
 	});
 
-	console.log(response);
+	// console.log(response);
 	response = await axios.delete("/api/room/", {
 		data: { room_id: ROOM_ID },
 	});
@@ -716,13 +716,13 @@ async function add_users_modal_submission() {
 	// Modal for adding user in the room or channel
 	var users = document.getElementById("add_user_tags").value;
 	users = users.split(" ");
-	console.log(users);
+	// console.log(users);
 	if (ROOM_ID == document.getElementsByClassName("add_users_link")[0].id) {
 		var response = await axios.post("/api/add_users", {
 			room_id: ROOM_ID,
 			users: users,
 		});
-		console.log(response.data);
+		// console.log(response.data);
 		if (general_channel == current_channel) {
 			user_container = document.getElementById("users_container");
 
@@ -743,7 +743,7 @@ async function add_users_modal_submission() {
 			channel_room: ROOM_ID,
 			users: users,
 		});
-		console.log(response.data);
+		// console.log(response.data);
 		if (
 			document.getElementsByClassName("add_users_link")[0].id == current_channel
 		) {
@@ -768,18 +768,18 @@ async function user_deletion_modal_submission() {
 	// Modal for adding user in the room or channel
 	var users = document.getElementById("user_deletion_tags").value;
 	users = users.split(" ");
-	console.log(users);
+	// console.log(users);
 	if (ROOM_ID == document.getElementsByClassName("remove_users_link")[0].id) {
 		var response = await axios.post("/api/remove_users", {
 			room_id: ROOM_ID,
 			users: users,
 		});
-		console.log(response.data);
+		// console.log(response.data);
 		user_container = document.getElementById("users_container");
 
 		for (var i = 0; i < response.data.length; i++) {
 			temp_user = document.getElementById(response.data[i].email);
-			console.log(temp_user);
+			// console.log(temp_user);
 			if (temp_user) user_container.removeChild(temp_user);
 		}
 	} else {
@@ -788,7 +788,7 @@ async function user_deletion_modal_submission() {
 			channel_room: ROOM_ID,
 			users: users,
 		});
-		console.log(response.data);
+		// console.log(response.data);
 		if (
 			document.getElementsByClassName("remove_users_link")[0].id ==
 			current_channel
@@ -859,7 +859,7 @@ async function poll_modal_submission() {
 		type,
 		channel_id,
 	});
-	console.log(response.data);
+	// console.log(response.data);
 	const input_type = type === "SCP" ? "radio" : "checkbox";
 	let msg = `<h6>${poll_name}</h6>`;
 	for (let i = 0; i < options.length; i++) {

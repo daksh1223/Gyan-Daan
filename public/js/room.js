@@ -307,7 +307,7 @@ const show_chat = (prefix) => {
 		document.getElementById("join_meet").style.display = "none";
 	}
 	prefix = prefix.toLowerCase();
-	console.log(channel_data_messages);
+	// console.log(channel_data_messages);
 	channel_data_messages.map((chat) => {
 		let name = chat.username.toLowerCase(),
 			message = chat.message.toLowerCase(),
@@ -619,7 +619,7 @@ async function meet_modal_submission() {
 	const allow_students_stream = document.getElementById(
 		"Allow_Students_Stream"
 	).checked;
-	console.log(name, date, time, allow_students_stream);
+	// console.log(name, date, time, allow_students_stream);
 	if (name.length && time.length && date.length) {
 		userinfo = {
 			name: name,
@@ -922,7 +922,7 @@ async function poll_modal_submission() {
 }
 
 function update_poll(poll) {
-  console.log("here");
+  // console.log("here");
   let total_votes = 0;
   for (let i = 0; i < poll.options.length; i++) {
     document.getElementById(
@@ -1093,7 +1093,7 @@ const add_edit_delete_notifications = (
   timestamp,
   current_channel_id
 ) => {
-  console.log(current_channel_id, current_channel);
+  // console.log(current_channel_id, current_channel);
   if (current_channel_id == current_channel) {
     if (type == 2) {
       channel_data_copy.notifications = channel_data_copy.notifications.filter(
@@ -1291,7 +1291,7 @@ const new_update_adder = (type = 1) => {
     });
 };
 const notification_alert = () => {
-  console.log(user_last_notification_id, channel_last_notification_id);
+  // console.log(user_last_notification_id, channel_last_notification_id);
   if (user_last_notification_id != channel_last_notification_id) {
     document.getElementById("channel_notifications").style.color = "red";
     document.getElementById("alert_notification").style.display = "";
@@ -1340,7 +1340,7 @@ async function showChannelFiles() {
     });
     files = response.data;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     document.getElementById("all_files").innerHTML =
       "We have encountered an error while fetching you files. Sorry for Inconvnience!";
 

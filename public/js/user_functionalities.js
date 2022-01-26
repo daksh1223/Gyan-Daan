@@ -76,7 +76,7 @@ async function toggle_play_stop_video(cid) {
       audio: true,
       useraudio: true
     });
-    console.log(record_stream);
+    // console.log(record_stream);
     media_recorder = new MediaRecorder(record_stream, {
       mimeType: "video/webm",
     });
@@ -155,7 +155,7 @@ async function toggle_play_stop_video(cid) {
       channelName,
       true
     );
-    console.log(response, recording);
+    // console.log(response, recording);
   }
 }
 function toggle_user_mic(localStream) {

@@ -197,8 +197,7 @@ async function showSearchResults(searchString) {
 			educators_container_title.innerHTML = "No educators for this search";
 		} // Then add the rooms that fullfill all the conditions
 	} else {
-    // console.log("room--------");
-    // 	console.log(rooms_copy);
+
 
     deactivate_stat_links();
     activate_stat_link("enrolled");

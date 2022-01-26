@@ -4,7 +4,7 @@ const UserSchema = mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
   rooms: [{ type: Schema.Types.ObjectId, ref: "Room" }], // All the rooms that a particular user can access
-  isAdmin: { type: Boolean, default: false },
+  isAdmin: { type: Boolean, default: true },
   isEducator: { type: Boolean, default: false },
   isVerified: { type: Boolean, default: true },
   tags: [{ type: String }],
