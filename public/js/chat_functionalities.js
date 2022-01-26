@@ -121,7 +121,7 @@ const generate_message = (
 			message_card.style.backgroundColor = "rgb(79, 70, 229)";
 			message_card.style.color = "white";
 		}
-		// if (user_name == "True-Meet Bot") {
+		// if (user_name == "GyanDaan Bot") {
 		// 	message_card.getElementsByClassName("topnav")[0].style.display = "none";
 		// }
 		message_card.setAttribute("id", message_id);

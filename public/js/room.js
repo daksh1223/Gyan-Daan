@@ -389,7 +389,7 @@ const generate_message = (
       message_card.style.backgroundColor = "rgb(79, 70, 229)";
       message_card.style.color = "white";
     }
-    // if (user_name == "True-Meet Bot") {
+    // if (user_name == "GyanDaan Bot") {
     // 	message_card.getElementsByClassName("topnav")[0].style.display = "none";
     // }
     message_card.setAttribute("id", message_id);
@@ -648,12 +648,12 @@ async function meet_modal_submission() {
         >click here</a></button>
         </div>
         `;
-		// Will send a new message to other users by the name of True-Meet Bot
+		// Will send a new message to other users by the name of GyanDaan Bot
 		let timestring = new Date().toLocaleString("en-US", {
 			timeZone: "Asia/Kolkata",
 		});
 		let generatedMessageId = await axios.post("/api/message", {
-			user_name: "True-Meet Bot",
+			user_name: "GyanDaan Bot",
 			message: meet,
 			email: "",
 			timestring,
@@ -664,7 +664,7 @@ async function meet_modal_submission() {
 		generatedMessageId = generatedMessageId.data;
 		await socket.emit(
 			"receive_channel_message",
-			"True-Meet Bot",
+			"GyanDaan Bot",
 			meet,
 			"",
 			current_channel_message_id,
@@ -674,7 +674,7 @@ async function meet_modal_submission() {
 		);
 
 		generate_message(
-			"True-Meet Bot",
+			"GyanDaan Bot",
 			meet,
 			timestring,
 			current_channel_message_id,

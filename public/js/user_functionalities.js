@@ -125,14 +125,29 @@ async function toggle_play_stop_video(cid) {
     Download Size: ${size}
     </div>
     `;
-    console.log(message);
-    await socket.emit(
-      "receive_channel_message",
-      "GyanDaan Bot",
-      message,
-      "",
-      channelName
-    );
+    let timestring = new Date().toLocaleString("en-US", {
+			timeZone: "Asia/Kolkata",
+		});
+		let generatedMessageId = await axios.post("/api/message", {
+			user_name: "GyanDaan Bot",
+			message,
+			email: "",
+			timestring,
+			channel_id: cid,
+			type:"meet"
+		});
+		//console.log(generatedMessageId);
+		generatedMessageId = generatedMessageId.data;
+		await socket.emit(
+			"receive_channel_message",
+			"GyanDaan Bot",
+			message,
+			"",
+			cid,
+			generatedMessageId,
+			timestring,
+			"meet"
+		);
     generate_message(
       "GyanDaan Bot",
       message,
