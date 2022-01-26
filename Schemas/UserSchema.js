@@ -6,7 +6,7 @@ const UserSchema = mongoose.Schema({
   rooms: [{ type: Schema.Types.ObjectId, ref: "Room" }], // All the rooms that a particular user can access
   isAdmin: { type: Boolean, default: false },
   isEducator: { type: Boolean, default: false },
-  isVerified: { type: Boolean, default: false },
+  isVerified: { type: Boolean, default: true },
   tags: [{ type: String }],
   about: String,
   idUrl: String,
