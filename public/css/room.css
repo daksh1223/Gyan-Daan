@@ -263,10 +263,7 @@ pre{
 .chatHeader{
 	   margin-top:0.5%;display:flex;justify-content:space-between;
 }
-  width: 100%;
-  min-height: 62px;
-  margin: 0 1%;
-}
+  
 
 #editor {
   border: 0;
@@ -392,3 +389,4 @@ td a{
 td a:hover{
   color: black;
 }
+.topnav{display:none;} 

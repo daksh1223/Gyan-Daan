@@ -208,7 +208,7 @@ const getNavHtml = (type, user_name, message_id, is_user_post) => {
 	if (type == "message" || type == "meet") {
 		if (is_user_post) {
 			return `
-   <div class="dropdown topnav">
+   <div class="dropdown topnav" id='nav_${message_id}'>
                         <div class="dropdown-toggle nav-link active message-dropdown-toggle"  role="button"
                             data-toggle="dropdown" aria-expanded="false">
                            
@@ -246,7 +246,7 @@ more_vert
             </ul>
         </div>`;
 		} else {
-			return ` <div class="dropdown topnav">
+			return `   <div class="dropdown topnav" id='nav_${message_id}'>
                         <div class="dropdown-toggle nav-link active message-dropdown-toggle"  href='#' role="button"
                             data-toggle="dropdown" aria-expanded="false">
                            
@@ -271,7 +271,7 @@ more_vert
 	if (type == "file") {
 		if (is_user_post) {
 			return `
-   <div class="dropdown topnav">
+      <div class="dropdown topnav" id='nav_${message_id}'>
                         <div class="dropdown-toggle nav-link active message-dropdown-toggle"  role="button"
                             data-toggle="dropdown" aria-expanded="false">
                            
@@ -302,7 +302,7 @@ more_vert
             </ul>
         </div>`;
 		} else {
-			return ` <div class="dropdown topnav">
+			return `    <div class="dropdown topnav" id='nav_${message_id}'>
                         <div class="dropdown-toggle nav-link active message-dropdown-toggle"  href='#' role="button"
                             data-toggle="dropdown" aria-expanded="false">
                            
