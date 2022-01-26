@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GyanDaan | Time Tracker</title>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
@@ -21,24 +21,25 @@
     <script>
         const email = "<%= user_email %>";
         const isEducator = "<%= isEducator %>";
-       
+
     </script>
     <link rel="stylesheet" type="text/css" href="/css/tracker.css" />
     <link rel="stylesheet" type="text/css" href="/css/tags.css" />
     <script src="/js/time-tracker.js" defer></script>
     <script src="/js/tags.js"></script>
-    
+
 </head>
 
 <body>
     <div class="body_container">
-        <nav class="navbar navbar-expand-md navbar-light justify-content-start" style="box-shadow: 5px 0px 10px #888888;">
+        <nav class="navbar navbar-expand-md navbar-light justify-content-start"
+            style="box-shadow: 5px 0px 10px #888888;">
 
             <a class="navbar-brand mb-0 h1" href="/home"><img src="/images/logo.png" style="width: 100px;" /></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar6">
                 <span class="navbar-toggler-icon"></span>
             </button>
-    
+
             <div class="navbar-collapse collapse" id="navbar6">
                 <form class="mx-5 my-auto d-inline w-100">
                 </form>
@@ -47,8 +48,9 @@
                         <div class="dropdown">
                             <a class="dropdown-toggle nav-link active custom_link" id="user_data" href='#' role="button"
                                 data-toggle="dropdown" aria-expanded="false">
-                                <img src="<%- user_profilePic %>" style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;"/>
-                           
+                                <img src="<%- user_profilePic %>"
+                                    style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;" />
+
                                 <%= user_name %>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
@@ -69,13 +71,13 @@
                                         <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
                                     </a>
                                 </li>
-                             </ul>
+                            </ul>
                         </div>
                     </li>
                 </ul>
             </div>
         </nav>
-      <div class="main_time_container">
+        <div class="main_time_container">
             <div id="main_time_display">
                 <div onclick="(()=>{location='/home';})();"
                     style="white-space: unset; text-align: left;cursor:pointer; margin-top:1rem;margin-left:4%;">
@@ -85,8 +87,8 @@
             </div>
             <div class="progress_time_container">
                 <div id="progress-bar"></div>
-                <h5 style="margin-left: 1%;">Labels:</h5>   
-                 
+                <h5 style="margin-left: 1%;">Labels:</h5>
+
                 <div id="progress-bar-labels">
                 </div>
                 <div id="all_time_display">

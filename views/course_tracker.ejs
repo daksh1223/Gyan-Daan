@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GyanDaan | Course Tracker</title>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
@@ -24,94 +24,96 @@
         const email = "<%= user_email %>";
         const courseID = "<%= id %>";
         const isEducator = "<%= isEducator %>";
-       
+
     </script>
     <link rel="stylesheet" type="text/css" href="/css/tracker.css" />
     <link rel="stylesheet" type="text/css" href="/css/tags.css" />
     <script src="/js/course-time-tracker.js" defer></script>
     <script src="/js/tags.js"></script>
     <script src="/js/utility.js" defer></script>
-   
+
 </head>
 
 <body style="overflow: hidden;">
     <div class=" body_container" style="display:flex;flex-direction:column;">
-    <nav class="navbar navbar-expand-md navbar-light justify-content-start" style="box-shadow: 5px 0px 10px #888888;">
+        <nav class="navbar navbar-expand-md navbar-light justify-content-start"
+            style="box-shadow: 5px 0px 10px #888888;">
 
-        <a class="navbar-brand mb-0 h1" href="/home"><img src="/images/logo.png" style="width: 100px;" /></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar6">
-            <span class="navbar-toggler-icon"></span>
-        </button>
+            <a class="navbar-brand mb-0 h1" href="/home"><img src="/images/logo.png" style="width: 100px;" /></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar6">
+                <span class="navbar-toggler-icon"></span>
+            </button>
 
-        <div class="navbar-collapse collapse" id="navbar6">
-            <form class="mx-5 my-auto d-inline w-100">
-            </form>
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <div class="dropdown">
-                        <a class="dropdown-toggle nav-link active custom_link" id="user_data" href='#' role="button"
-                            data-toggle="dropdown" aria-expanded="false">
-                            <img src="<%- user_profilePic %>" style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;"/>
-                          
-                            <%= user_name %>
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
-                            <li>
-                                <a href="/profile/<%=user_email%>" class="dropdown-item">
+            <div class="navbar-collapse collapse" id="navbar6">
+                <form class="mx-5 my-auto d-inline w-100">
+                </form>
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <div class="dropdown">
+                            <a class="dropdown-toggle nav-link active custom_link" id="user_data" href='#' role="button"
+                                data-toggle="dropdown" aria-expanded="false">
+                                <img src="<%- user_profilePic %>"
+                                    style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;" />
 
-                                    <i class="fas fa-address-card" style="color:black;"></i> Profile</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href='/donate' type="button">
-                                    <div style="color:black">
-                                        <i class="fas fa-donate" style="color:black"></i> Donate
-                                    </div>
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href='/logout'>
-                                    <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
+                                <%= user_name %>
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
+                                <li>
+                                    <a href="/profile/<%=user_email%>" class="dropdown-item">
+
+                                        <i class="fas fa-address-card" style="color:black;"></i> Profile</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href='/donate' type="button">
+                                        <div style="color:black">
+                                            <i class="fas fa-donate" style="color:black"></i> Donate
+                                        </div>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href='/logout'>
+                                        <i class="fas fa-sign-out-alt" style="color:black;"></i> Sign out
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="main_time_container">
+            <div id="main_time_display">
+                <div onclick="(()=>{location='/home';})();"
+                    style="white-space: unset; text-align: left; cursor:pointer;margin-top:1rem;margin-left:4%;">
+                    <i class="fas fa-home"></i> Home
+                </div>
+            </div>
+            <div id="all_time_display"></div>
         </div>
-    </nav>
-    <div class="main_time_container">
-        <div id="main_time_display">
-            <div onclick="(()=>{location='/home';})();"
-                style="white-space: unset; text-align: left; cursor:pointer;margin-top:1rem;margin-left:4%;">
-                <i class="fas fa-home"></i> Home
+        <a class="custom_link" href="#" data-toggle="modal" id="Course_tracker" data-target="#Course_sessions"
+            style="display:none;">
+        </a>
+
+        <div class="modal fade" id="Course_sessions" tabindex="-1" role="dialog"
+            aria-labelledby="Course_sessionsCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content" style="box-shadow: 0px 0px 15px black;">
+                    <div class="modal-header" style="border-color: #292929;">
+                        <h5 class="modal-title" id="Course_sessionsLongTitle">Sessions</h5>
+                    </div>
+
+                    <div class="modal-body" style="border-color: #292929;overflow:auto;">
+                        <div id="Course_sessions_container">
+                        </div>
+                    </div>
+                    <div class="modal-footer" style="border-color: #292929;">
+                        <button type="button" id="Requestmodal_close" class="btn btn-secondary"
+                            data-dismiss="modal">Close</button>
+                    </div>
+
+                </div>
             </div>
         </div>
-        <div id="all_time_display"></div>
-    </div>
-    <a class="custom_link" href="#" data-toggle="modal" id="Course_tracker" data-target="#Course_sessions"
-        style="display:none;">
-    </a>
-
-    <div class="modal fade" id="Course_sessions" tabindex="-1" role="dialog"
-        aria-labelledby="Course_sessionsCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content" style="box-shadow: 0px 0px 15px black;">
-                <div class="modal-header" style="border-color: #292929;">
-                    <h5 class="modal-title" id="Course_sessionsLongTitle">Sessions</h5>
-                </div>
-
-                <div class="modal-body" style="border-color: #292929;overflow:auto;">
-                    <div id="Course_sessions_container">
-                    </div>
-                </div>
-                <div class="modal-footer" style="border-color: #292929;">
-                    <button type="button" id="Requestmodal_close" class="btn btn-secondary"
-                        data-dismiss="modal">Close</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
 
     </div>
 </body>
