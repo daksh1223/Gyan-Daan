@@ -25,7 +25,6 @@ if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
   create_poll_container.innerHTML = `<i class="fas fa-poll-h"></i> Create Poll `;
   notifications_container.title = `Notifications for students`;
-  show_files_container.innerHTML = `<i class="fas fa-folder"></i> Files`;
 } else {
   notifications_container.title =
     "See all the notifications given by the educator";
@@ -183,7 +182,6 @@ const channel_data = async (cid) => {
   channel = await axios.get(`/api/channel/${cid}`); // Get the current channel's data
   channel = channel.data;
   user_last_notification_id = channel.user_last_notification_id;
-  console.log(channel);
   channel = channel.channel_details;
   channel_last_notification_id = channel.last_notification_id;
   notification_alert();
@@ -233,8 +231,8 @@ const channel_data = async (cid) => {
     let datetime = date[0] + date[1] + date[2]
     let time = channel.meets[i].start_time.split(':');
     datetime += "T" + time[0] + time[1] + "00Z"
-    
-    let google_link_calendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${channel.meets[i].name}&dates=${datetime}`;
+    // let datetime =''
+    let google_link_calendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${channel.meets[i].name}&dates=${datetime}%2F`;
     temp_meet.innerHTML = `
     <a  style="float:left;width:80%" href="#" onclick="meet_message('${channel.meets[i]._id}')" >
       ${channel.meets[i].name}
@@ -300,9 +298,11 @@ const show_chat = (prefix) => {
 
 	if (current_channel_meet_link) {
 		// If the current channel is a meet channel then show join meet else show create meet option.
+    document.getElementById("show_files").innerHTML = '<i class="fas fa-folder mx-1"></i>Recordings'
 		document.getElementById("create_meet").style.display = "none";
 		document.getElementById("join_meet").style.display = "";
-	} else {
+  } else {
+    document.getElementById("show_files").innerHTML = '<i class="fas fa-folder mx-1"></i>Files'
 		document.getElementById("create_meet").style.display = "";
 		document.getElementById("join_meet").style.display = "none";
 	}
@@ -342,19 +342,7 @@ function setup() {
 	socket.emit("join-room", ROOM_ID, null, null, userID);
 }
 setup()
-// const get_data = (username, message, timestring, channel_id) => {
-// 	if (channel_id == current_channel_message_id) {
-// 		// If the channel ID from where the signal came is same as the current channel message ID
-// 		let temp_data = {
-// 			message: message,
-// 			username: username,
-// 			timestamp: timestring,
-// 		};
 
-// 		channel_data_messages.push(temp_data);
-// 	}
-// 	generate_message(username, message, timestring, channel_id, false); // Generate the message if the above condition is true
-// };
 const generate_message = (
 	user_name,
 	message,
@@ -416,8 +404,11 @@ const send_chat_message = async (msg, type="message") => {
 	} else if (document.getElementById("myFile").files.length) {
 		const file = document.getElementById("myFile").files[0];
 		let form = new FormData();
-		form.append("upload", file);
-		const response = await axios.post("/api/uploadFile", form);
+    form.append("upload", file);
+    form.append("isRecording", false);
+    form.append("channelID", current_channel);
+    const response = await axios.post("/api/uploadFile", form);
+    current_context_channel.files.push(response.data._id);
 		if (response.data)
 			message_in_html_form = `<div><a href="${response.data.path}"><pre>${response.data.displayName}</pre></a></div>`;
 		else return;
@@ -623,14 +614,9 @@ async function meet_modal_submission() {
 	
 
 		response = await axios.post("/api/room/" + ROOM_ID + "/add_channel", {
-			data: { userinfo: userinfo },
+			data: { userinfo: userinfo, date, time },
 		});
 		response = response.data;
-
-    response = await axios.post("/api/room/" + ROOM_ID + "/add_channel", {
-      data: { userinfo: userinfo , date, time},
-    });
-    response = response.data;
 
 		meet = `<br><div class="meet">
         <b>Meet Detail:<hr style="border: 1px solid black;background-color: black;height:1px;">
@@ -690,7 +676,7 @@ async function meet_modal_submission() {
     let datetime = parsedDate[0] + parsedDate[1] + parsedDate[2]
     let parsedTime = time.split(':');
     datetime+= "T" + parsedTime[0] + parsedTime[1] + "00Z"
-    let google_link_calendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${name}&dates=${datetime}`;
+    let google_link_calendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${name}&dates=${datetime}%2F`;
     temp_meet.innerHTML = `
     <a  style="float:left;width:80%" href="#" onclick="meet_message('${response._id}')" >
       ${name}
@@ -1329,7 +1315,7 @@ async function showChannelFiles() {
   let files = current_context_channel.is_meet
     ? current_context_channel.recordings
     : current_context_channel.files;
-  console.log(files);
+
   try {
     const response = await axios.get("/api/get_files/", {
       params: {
