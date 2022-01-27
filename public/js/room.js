@@ -69,9 +69,9 @@ const room_data = async (url) => {
            data-target="#channel_creation_modal"><i class="fas fa-plus"></i> Add Channel</a>
           </li>
           <li>
-            <a class="dropdown-item" href="#" title="Edit Room Details" data-toggle="modal"
+            <a class="dropdown-item" href="#" title="Edit Course Details" data-toggle="modal"
            data-target="#RoomcreationModal" onclick="fillRoomEditModal()">
-              <i class="fas fa-edit"></i> Edit Room
+              <i class="fas fa-edit"></i> Edit Course
             </a>
           </li>`;
 	}
@@ -196,35 +196,15 @@ const channel_data = async (cid) => {
   meets_container = document.getElementById("meets_container");
   user_container = document.getElementById("users_container");
   notifications_handler();
-  while (user_container.firstChild) {
-    user_container.removeChild(user_container.firstChild); // Remove all the users present in the channel users container
-  }
+
 
   while (meets_container.firstChild) {
     meets_container.removeChild(meets_container.firstChild); // Remove all the meets present in the channel meet container
   }
-  for (var i = 0; i < channel.users.length; i++) {
-    // Add current channel's users
-    temp_user = document.createElement("div");
-    temp_user.setAttribute("id", channel.users[i].email);
-    temp_user.setAttribute("title", "Email Id: " + channel.users[i].email);
-    temp_user.setAttribute("class", "container_element users pointer");
-    let status = "Educator";
-    if (channel.users[i].isEducator === false) status = "Student";
-
-    temp_user.innerHTML = `
-    <div style="display:flex">
-      <image src="${channel.users[i].profilepicUrl}" class="pic"></>
-      <div class="participant_details"> 
-        <div>${channel.users[i].name}</div> 
-        <div>
-         <small> ${status} </small>
-        </div> 
-      </div>
-    </div>
-    `;
-    user_container.appendChild(temp_user);
-  }
+  while (user_container.firstChild) {
+			user_container.removeChild(user_container.firstChild); // Remove all the users present in the channel users container
+		}
+  addUsersToContainer(channel.users, user_container);
   for (var i = 0; i < channel.meets.length; i++) {
     // Add current channel's meet
     temp_meet = document.createElement("div");
@@ -608,9 +588,11 @@ function channel_modal_submission() {
 				temp_channel_container.innerHTML = temp;
 				temp_channel_container.setAttribute("id", response._id + "container");
 				channel_container.appendChild(temp_channel_container);
-				document.getElementById("modal_close").click();
-			});
+		
+      });
+    document.getElementById("modal_close_channel").click();
 	}
+  		
 }
 async function meet_modal_submission() {
 	// For creating a new meet
@@ -762,24 +744,19 @@ async function add_users_modal_submission() {
   // Modal for adding user in the room or channel
   var users = document.getElementById("add_user_tags").value;
   users = users.split(" ");
+  let user_container = document.getElementById("users_container");
   if (ROOM_ID == document.getElementsByClassName("add_users_link")[0].id) {
     var response = await axios.post("/api/add_users", {
       room_id: ROOM_ID,
       users: users,
     });
+    //console.log(response.data,users);
+ 
     if (general_channel == current_channel) {
-      user_container = document.getElementById("users_container");
+    
 
-      for (var i = 0; i < response.data.length; i++) {
-        temp_user = document.createElement("div");
-        temp_user.setAttribute("title", "Email Id: " + response.data[i].email);
-        temp_user.setAttribute("id", response.data[i].email);
-        temp_user.setAttribute("class", "container_element pointer");
-        temp_user.innerHTML =
-          '<div style="border-radius:50%; width:40px; height:40px;background-color: grey;"> </div>' +
-          response.data[i].name;
-        user_container.appendChild(temp_user);
-      }
+     addUsersToContainer(response.data, user_container);
+      
     }
   } else {
     var response = await axios.post("/api/add_users", {
@@ -787,22 +764,12 @@ async function add_users_modal_submission() {
       channel_room: ROOM_ID,
       users: users,
     });
+    
     if (
       document.getElementsByClassName("add_users_link")[0].id == current_channel
     ) {
-      user_container = document.getElementById("users_container");
-
-      for (var i = 0; i < response.data.length; i++) {
-        temp_user = document.createElement("div");
-
-        temp_user.setAttribute("class", "container_element");
-        temp_user.setAttribute("title", "Email Id: " + response.data[i].email);
-        temp_user.setAttribute("id", response.data[i].email);
-        temp_user.innerHTML =
-          '<div style="border-radius:50%; width:40px; height:40px; background-color: grey;"></div>' +
-          response.data[i].name;
-        user_container.appendChild(temp_user);
-      }
+      
+      addUsersToContainer(response.data, user_container);
     }
   }
   document.getElementById("add_users_modal_close").click();
@@ -1332,7 +1299,7 @@ async function showChannelFiles() {
   let files = current_context_channel.is_meet
     ? current_context_channel.recordings
     : current_context_channel.files;
-
+  //console.log(files);
   try {
     const response = await axios.get("/api/get_files/", {
       params: {
@@ -1364,3 +1331,29 @@ async function showChannelFiles() {
   });
   document.getElementById("all_files").innerHTML = file_view;
 }
+const addUsersToContainer = (users, user_container) => {
+
+  for (let i = 0; i < users.length; i++) {
+   
+		// Add current channel's users
+		temp_user = document.createElement("div");
+		temp_user.setAttribute("id", users[i].email);
+		temp_user.setAttribute("title", "Email Id: " + users[i].email);
+		temp_user.setAttribute("class", "container_element users pointer");
+		let status = "Educator";
+		if (users[i].isEducator === false) status = "Student";
+
+		temp_user.innerHTML = `
+    <div style="display:flex">
+      <image src="${users[i].profilepicUrl}" class="pic"></>
+      <div class="participant_details"> 
+        <div>${users[i].name}</div> 
+        <div>
+         <small> ${status} </small>
+        </div> 
+      </div>
+    </div>
+    `;
+		user_container.appendChild(temp_user);
+	}
+};
