@@ -197,8 +197,7 @@ async function showSearchResults(searchString) {
 			educators_container_title.innerHTML = "No educators for this search";
 		} // Then add the rooms that fullfill all the conditions
 	} else {
-    // console.log("room--------");
-    // 	console.log(rooms_copy);
+
 
     deactivate_stat_links();
     activate_stat_link("enrolled");
@@ -258,7 +257,7 @@ function add_room(cur_room, container) {
 	} else like_icons[`${id}`] = '<i title="Like" class="far fa-thumbs-up"></i>';
 	room.innerHTML = `
      <div style="height:60%">
-        <a href="/room/${id}/" class="icon"><img src="https://place-hold.it/100/${room_color}/fff&text=${icon_value}&fontsize=20"  ></a>
+        <a href="/room/${id}/" class="icon"><img src="https://place-hold.it/200/${room_color}/fff&text=${icon_value}&fontsize=50"  ></a>
      </div>
 	 <div class="room_content">
 	  <div class="room">${room_name}</div>

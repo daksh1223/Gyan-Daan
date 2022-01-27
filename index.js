@@ -221,7 +221,7 @@ app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
     if(req.body.channelID)
     {
       const channel = await find_channel_by_id(req.body.channelID)
-      if (req.body.isRecording)
+      if (req.body.isRecording ==='true')
         channel.recordings.push(newFile)
       else 
         channel.files.push(newFile)
@@ -239,7 +239,6 @@ app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
 io.on("connection", (socket) => {
   socket.on("join-room", (roomID, user, email, userID, profile_pic, educator_status, channelId) => {
     socket.join(roomID);
-    console.log(userID,"YES");
     let new_track_record = new Tracker();
     new_track_record.user = userID;
     new_track_record.course = roomID;

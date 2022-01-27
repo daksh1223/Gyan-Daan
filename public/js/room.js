@@ -25,7 +25,6 @@ if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
   create_poll_container.innerHTML = `<i class="fas fa-poll-h"></i> Create Poll `;
   notifications_container.title = `Notifications for students`;
-  show_files_container.innerHTML = `<i class="fas fa-folder"></i> Files`;
 } else {
   notifications_container.title =
     "See all the notifications given by the educator";
@@ -47,7 +46,7 @@ const room_data = async (url) => {
     <a href="/home" class="home_link" style="float:left;margin-left:5%;">
       <i class="fas fa-home mx-1" ></i> Home</a>
     <div style="padding:5%; width:15vw; height:15vw;align-self:center;" >
-      <img src="https://place-hold.it/80/${promise.data.room_detail.room_color}/fff&text=${icon_value}&fontsize=20" style="border-radius:50%;height:100%;width:100%;"></img>
+      <img src="https://place-hold.it/200/${promise.data.room_detail.room_color}/fff&text=${icon_value}&fontsize=80" style="border-radius:50%;height:100%;width:100%;"></img>
     </div>
     <div style="width:100%;display:flex;flex-direction:row;padding:0 10%;" class="shadow-sm">
         <h2 style="color:black;text-align:center; width:80%;word-break:break-word;" id="room_data_name">${promise.data.room_detail.name}</h2>
@@ -183,7 +182,6 @@ const channel_data = async (cid) => {
   channel = await axios.get(`/api/channel/${cid}`); // Get the current channel's data
   channel = channel.data;
   user_last_notification_id = channel.user_last_notification_id;
-  console.log(channel);
   channel = channel.channel_details;
   channel_last_notification_id = channel.last_notification_id;
   notification_alert();
@@ -209,10 +207,29 @@ const channel_data = async (cid) => {
   for (var i = 0; i < channel.meets.length; i++) {
     // Add current channel's meet
     temp_meet = document.createElement("div");
+    let date = channel.meets[i].start_date.split('-');
+    let datetime = date[0] + date[1] + date[2]
+    let time = channel.meets[i].start_time.split(':');
+    datetime += "T" + time[0] + time[1] + "00Z"
+    // let datetime =''
+    let google_link_calendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${channel.meets[i].name}&dates=${datetime}%2F`;
     temp_meet.innerHTML = `
-    <a  href="#" onclick="meet_message('${channel.meets[i]._id}')" >
+    <a  style="float:left;width:80%" href="#" onclick="meet_message('${channel.meets[i]._id}')" >
       ${channel.meets[i].name}
     </a>
+    <div class="container_element_settings dropdown">
+          <a id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="float:right;margin-right:1%;">
+            <i class="fas fa-ellipsis-h"></i>
+          </a>
+  
+          <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item" href="${google_link_calendar}">
+                  Add to Google Calendar
+                </a>
+            </li>
+          </ul>
+      </div>
     `;
     // temp_meet.setAttribute("class", "container_element");
     temp_meet.setAttribute("id", `${channel.meets[i]._id}meet`);
@@ -261,14 +278,16 @@ const show_chat = (prefix) => {
 
 	if (current_channel_meet_link) {
 		// If the current channel is a meet channel then show join meet else show create meet option.
+    document.getElementById("show_files").innerHTML = '<i class="fas fa-folder mx-1"></i>Recordings'
 		document.getElementById("create_meet").style.display = "none";
 		document.getElementById("join_meet").style.display = "";
-	} else {
+  } else {
+    document.getElementById("show_files").innerHTML = '<i class="fas fa-folder mx-1"></i>Files'
 		document.getElementById("create_meet").style.display = "";
 		document.getElementById("join_meet").style.display = "none";
 	}
 	prefix = prefix.toLowerCase();
-	console.log(channel_data_messages);
+	// console.log(channel_data_messages);
 	channel_data_messages.map((chat) => {
 		let name = chat.username.toLowerCase(),
 			message = chat.message.toLowerCase(),
@@ -303,19 +322,7 @@ function setup() {
 	socket.emit("join-room", ROOM_ID, null, null, userID);
 }
 setup()
-// const get_data = (username, message, timestring, channel_id) => {
-// 	if (channel_id == current_channel_message_id) {
-// 		// If the channel ID from where the signal came is same as the current channel message ID
-// 		let temp_data = {
-// 			message: message,
-// 			username: username,
-// 			timestamp: timestring,
-// 		};
 
-// 		channel_data_messages.push(temp_data);
-// 	}
-// 	generate_message(username, message, timestring, channel_id, false); // Generate the message if the above condition is true
-// };
 const generate_message = (
   user_name,
   message,
@@ -362,7 +369,7 @@ const generate_message = (
       message_card.style.backgroundColor = "rgb(79, 70, 229)";
       message_card.style.color = "white";
     }
-    // if (user_name == "True-Meet Bot") {
+    // if (user_name == "GyanDaan Bot") {
     // 	message_card.getElementsByClassName("topnav")[0].style.display = "none";
     // }
     message_card.setAttribute("id", message_id);
@@ -393,8 +400,11 @@ const send_chat_message = async (msg, type="message") => {
 	} else if (document.getElementById("myFile").files.length) {
 		const file = document.getElementById("myFile").files[0];
 		let form = new FormData();
-		form.append("upload", file);
-		const response = await axios.post("/api/uploadFile", form);
+    form.append("upload", file);
+    form.append("isRecording", false);
+    form.append("channelID", current_channel);
+    const response = await axios.post("/api/uploadFile", form);
+    current_context_channel.files.push(response.data._id);
 		if (response.data)
 			message_in_html_form = `<div><a href="${response.data.path}"><pre>${response.data.displayName}</pre></a></div>`;
 		else return;
@@ -591,7 +601,7 @@ async function meet_modal_submission() {
 	const allow_students_stream = document.getElementById(
 		"Allow_Students_Stream"
 	).checked;
-	console.log(name, date, time, allow_students_stream);
+	// console.log(name, date, time, allow_students_stream);
 	if (name.length && time.length && date.length) {
 		userinfo = {
 			name: name,
@@ -602,10 +612,9 @@ async function meet_modal_submission() {
 	
 
 		response = await axios.post("/api/room/" + ROOM_ID + "/add_channel", {
-			data: { userinfo: userinfo },
+			data: { userinfo: userinfo, date, time },
 		});
 		response = response.data;
-
 
 		meet = `<br><div class="meet">
         <b>Meet Detail:<hr style="border: 1px solid black;background-color: black;height:1px;">
@@ -621,12 +630,12 @@ async function meet_modal_submission() {
         >click here</a></button>
         </div>
         `;
-		// Will send a new message to other users by the name of True-Meet Bot
+		// Will send a new message to other users by the name of GyanDaan Bot
 		let timestring = new Date().toLocaleString("en-US", {
 			timeZone: "Asia/Kolkata",
 		});
 		let generatedMessageId = await axios.post("/api/message", {
-			user_name: "True-Meet Bot",
+			user_name: "GyanDaan Bot",
 			message: meet,
 			email: "",
 			timestring,
@@ -637,7 +646,7 @@ async function meet_modal_submission() {
 		generatedMessageId = generatedMessageId.data;
 		await socket.emit(
 			"receive_channel_message",
-			"True-Meet Bot",
+			"GyanDaan Bot",
 			meet,
 			"",
 			current_channel_message_id,
@@ -647,7 +656,7 @@ async function meet_modal_submission() {
 		);
 
 		generate_message(
-			"True-Meet Bot",
+			"GyanDaan Bot",
 			meet,
 			timestring,
 			current_channel_message_id,
@@ -656,18 +665,37 @@ async function meet_modal_submission() {
 			false
 		);
 
-		meets_container = document.getElementById("meets_container");
-		temp_meet = document.createElement("div");
-		temp_meet_name = document.createElement("a");
-		temp_meet.setAttribute("class", "container_element");
-		temp_meet.setAttribute("id", `${response._id}meet`);
-		temp_meet_name.innerHTML = name;
-		temp_meet_name.href = "#";
-		temp_meet_name.setAttribute("onclick", `meet_message('${response._id}')`);
-		temp_meet.appendChild(temp_meet_name);
-		meets_container.appendChild(temp_meet);
-		document.getElementById("meet_modal_close").click();
-	}
+    meets_container = document.getElementById("meets_container");
+    temp_meet = document.createElement("div");
+    temp_meet.setAttribute("class", "container_element");
+    temp_meet.setAttribute("id", `${response._id}meet`);
+
+    let parsedDate = date.split('-');
+    let datetime = parsedDate[0] + parsedDate[1] + parsedDate[2]
+    let parsedTime = time.split(':');
+    datetime+= "T" + parsedTime[0] + parsedTime[1] + "00Z"
+    let google_link_calendar = `https://www.google.com/calendar/render?action=TEMPLATE&text=${name}&dates=${datetime}%2F`;
+    temp_meet.innerHTML = `
+    <a  style="float:left;width:80%" href="#" onclick="meet_message('${response._id}')" >
+      ${name}
+    </a>
+    <div class="container_element_settings dropdown">
+          <a id="user_data" href="#" role="button" data-toggle="dropdown" aria-expanded="false" style="float:right;margin-right:1%;">
+            <i class="fas fa-ellipsis-h"></i>
+          </a>
+  
+          <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item" href="${google_link_calendar}">
+                  Add to Google Calendar
+                </a>
+            </li>
+          </ul>
+      </div>
+    `;
+    meets_container.appendChild(temp_meet);
+    document.getElementById("meet_modal_close").click();
+  }
 }
 
 async function leave_channel(channel_id) {
@@ -861,7 +889,7 @@ async function poll_modal_submission() {
 }
 
 function update_poll(poll) {
-  console.log("here");
+  // console.log("here");
   let total_votes = 0;
   for (let i = 0; i < poll.options.length; i++) {
     document.getElementById(
@@ -1032,7 +1060,7 @@ const add_edit_delete_notifications = (
   timestamp,
   current_channel_id
 ) => {
-  console.log(current_channel_id, current_channel);
+  // console.log(current_channel_id, current_channel);
   if (current_channel_id == current_channel) {
     if (type == 2) {
       channel_data_copy.notifications = channel_data_copy.notifications.filter(
@@ -1230,7 +1258,7 @@ const new_update_adder = (type = 1) => {
     });
 };
 const notification_alert = () => {
-  console.log(user_last_notification_id, channel_last_notification_id);
+  // console.log(user_last_notification_id, channel_last_notification_id);
   if (user_last_notification_id != channel_last_notification_id) {
     document.getElementById("channel_notifications").style.color = "red";
     document.getElementById("alert_notification").style.display = "";
@@ -1279,7 +1307,7 @@ async function showChannelFiles() {
     });
     files = response.data;
   } catch (err) {
-    console.log(err);
+    // console.log(err);
     document.getElementById("all_files").innerHTML =
       "We have encountered an error while fetching you files. Sorry for Inconvnience!";
 
