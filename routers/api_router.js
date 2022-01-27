@@ -594,6 +594,7 @@ router.post("/course_request", async (req, res) => {
   request.name = data.name;
   request.requirements = data.requirements;
   request.tags = data.tags;
+  request.RequestedAt = new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
   await request.save();
   res.json("Success!");
 });
