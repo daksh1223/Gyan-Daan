@@ -69,9 +69,9 @@ const room_data = async (url) => {
            data-target="#channel_creation_modal"><i class="fas fa-plus"></i> Add Channel</a>
           </li>
           <li>
-            <a class="dropdown-item" href="#" title="Edit Room Details" data-toggle="modal"
+            <a class="dropdown-item" href="#" title="Edit Course Details" data-toggle="modal"
            data-target="#RoomcreationModal" onclick="fillRoomEditModal()">
-              <i class="fas fa-edit"></i> Edit Room
+              <i class="fas fa-edit"></i> Edit Course
             </a>
           </li>`;
 	}
@@ -608,8 +608,8 @@ function channel_modal_submission() {
 				temp_channel_container.setAttribute("id", response._id + "container");
 				channel_container.appendChild(temp_channel_container);
 				document.getElementById("modal_close").click();
-			});
-	}
+      });
+  }
 }
 async function meet_modal_submission() {
 	// For creating a new meet
