@@ -3,7 +3,7 @@ const create_new_tag =async(name) => {
     return await Tags.create({ name: name.toLowerCase() });
 };
 const get_tag_by_name =async(name) => {
-    return await Tags.findOne({name:name});
+    return await Tags.findOne({ name: name.toLowerCase() });
 }
 const get_all_tags = async () => {
 

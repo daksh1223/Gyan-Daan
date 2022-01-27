@@ -18,7 +18,10 @@ const bodyParser = require('body-parser')
 const adminbro = require("./adminbro");
 const User = require("./Schemas/UserSchema.js");
 const { find_channel_by_id } = require("./Repository/channel_repository");
-const { create_new_chat } = require("./Repository/chat_repository");
+const {
+	get_tag_by_name,
+	create_new_tag
+} = require("./Repository/tag_repository.js");
 const { find_user_by_email } = require("./Repository/user_repository");
 const home_page_router = require("./routers/home_router");
 const room_page_router = require("./routers/room_router");
@@ -76,6 +79,7 @@ passport.use(
           email: profile.email,
           name: profile.displayName,
         });
+        addUserNameTag(user, profile.displayName);
       }
       return done(null, user);
     }
@@ -97,6 +101,7 @@ passport.use(
           email: profile.emails[0].value,
           name: profile.displayName,
         });
+        addUserNameTag(user, profile.displayName);
       }
       return done(null, user);
     }
@@ -329,3 +334,16 @@ mongoose_morgan.token("status", function (req, res, params) {
 mongoose_morgan.token("res", function (req, res, params) {
   return new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
 });
+const addUserNameTag=async(user, name)=>{ 
+
+let addTag=await get_tag_by_name(name);
+
+  if (!addTag) {
+    addTag = await create_new_tag(name);
+  }
+    addTag.users.push(user.email);
+    user.tags.push(addTag.name);
+    await addTag.save();
+    await user.save();
+        
+}
