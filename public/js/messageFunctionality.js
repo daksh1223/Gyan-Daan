@@ -21,7 +21,7 @@ function deleteChat(id) {
         });
     }
 	chat.getElementsByClassName("chatFooter")[0].style.display = "none";
-	chat.getElementsByClassName("topnav")[0].style.display = "none";
+	chat.getElementsByClassName("topnav")[0].innerHTML = ``;
 	// console.log(channel_data_messages);
 }
 

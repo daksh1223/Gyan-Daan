@@ -127,6 +127,19 @@ const generate_message = (
 		message_card.setAttribute("id", message_id);
 		messages.append(message_card);
 		container.scrollTop = container.scrollHeight;
+		let navel = document.getElementById(`nav_${message_id}`);
+			$(message_card).hover(
+				function () {
+					if (navel) {
+						navel.style.display = "flex";
+					}
+				},
+				function () {
+					if (navel) {
+						navel.style.display = "none";
+					}
+				}
+			);
 	}
 };
 const show_chat = async (cid) => {
