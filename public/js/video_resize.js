@@ -25,7 +25,7 @@ function resize() {
   let video_grid = document.getElementById("video-grid");
   let Width = video_grid.offsetWidth - Margin * 2;
   let Height = video_grid.offsetHeight - Margin * 2;
-  console.log(pinned_user,Width,Height);
+  // console.log(pinned_user,Width,Height);
   if (!pinned_user) {
     let media_container = document.getElementsByClassName(
       "remote-stream-container"

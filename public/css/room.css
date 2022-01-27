@@ -1,153 +1,269 @@
 body,
 html {
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  letter-spacing: 0.05rem;
-  word-spacing: 0.1rem;
-  line-height: 150%;
-  font-family: "Red Hat Display";
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	letter-spacing: 0.05rem;
+	word-spacing: 0.1rem;
+	line-height: 150%;
+	font-family: "Red Hat Display";
 }
 a {
-  color: black;
+	color: black;
 }
 a:hover {
-  text-decoration: none;
+	text-decoration: none;
 }
 .form-check-label {
-  width: 100%;
+	width: 100%;
 }
 
 .chat_container {
-  box-sizing: border-box;
-  min-height: 100%;
-  max-height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+	box-sizing: border-box;
+	min-height: 100%;
+	max-height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
 #chat_messages {
-  box-sizing: border-box;
-  margin: auto;
-  width: 100%;
+	box-sizing: border-box;
+	margin: auto;
+	width: 100%;
 
-  display: flex;
-  flex-direction: column;
-  overflow: auto;
-  margin-bottom: 1%;
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+	margin-bottom: 1%;
 }
 
 .data_container::-webkit-scrollbar {
-  width: 8px;
+	width: 8px;
 }
 
 .data_container::-webkit-scrollbar-thumb {
-  border-radius: 100px;
+	border-radius: 100px;
 }
 .chat-input {
-  display: flex;
-  justify-content: center;
+	display: flex;
+	justify-content: center;
 }
 .message_container {
-  height: 100%;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+	height: 100%;
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 }
 
 .container_element {
-  color: black;
-  text-decoration: none;
-  padding: 1%;
-  margin-left: 2%;
-  word-wrap: break-word;
-  font-weight: 500;
+	color: black;
+	text-decoration: none;
+	padding: 1%;
+	margin-left: 2%;
+	word-wrap: break-word;
+	font-weight: 500;
 }
 .container_element:hover {
-  color: #0056b3;
-  text-decoration: none;
-  padding: 1%;
-  margin-left: 2%;
-  word-wrap: break-word;
-  font-weight: 500;
-  background-color: #ededed;
+	color: #0056b3;
+	text-decoration: none;
+	padding: 1%;
+	margin-left: 2%;
+	word-wrap: break-word;
+	font-weight: 500;
+	background-color: #ededed;
 }
 .container_element_settings {
-  color: black;
+	color: black;
 }
 .container_element .container_element_settings {
-  visibility: hidden;
-  color: black;
+	visibility: hidden;
+	color: black;
 }
 .container_element:hover .container_element_settings {
-  visibility: visible;
+	visibility: visible;
 }
 .fr-draggable,
 .fr-gvc,
 .fr-dvb,
 .fr-video,
 iframe {
-  width: 100% !important;
+	width: 100% !important;
 }
 .icon {
-  font-weight: 900;
-  text-align: center;
-  font-size: 10vmin;
-  color: black;
+	font-weight: 900;
+	text-align: center;
+	font-size: 10vmin;
+	color: black;
 }
 .room {
-  font-weight: 900;
-  text-align: center;
-  overflow: hidden;
-  color: black;
-  justify-content: center;
-  text-overflow: ellipsis;
-  /* margin-bottom: 5%; */
+	font-weight: 900;
+	text-align: center;
+	overflow: hidden;
+	color: black;
+	justify-content: center;
+	text-overflow: ellipsis;
+	/* margin-bottom: 5%; */
 }
 .custom_link {
-  text-decoration: none;
-  color: #4f46e5;
-  font-size: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-right: 1%;
+	text-decoration: none;
+	color: #4f46e5;
+	font-size: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-right: 1%;
 }
 .custom_link:hover {
-  text-decoration: none;
-  color: black;
+	text-decoration: none;
+	color: black;
 }
 
 .custom_link_black {
-  text-decoration: none;
-  color: black;
-  font-size: 100%;
+	text-decoration: none;
+	color: black;
+	font-size: 100%;
 }
 .custom_link_black:hover {
-  text-decoration: none;
-  color: black;
+	text-decoration: none;
+	color: black;
 }
 .pointer {
-  transition: all ease-in-out 0.2s;
+	transition: all ease-in-out 0.2s;
 }
 .home_link {
-  text-decoration: none;
-  color: #4f46e5;
-  font-size: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-right: 1%;
+	text-decoration: none;
+	color: #4f46e5;
+	font-size: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	margin-right: 1%;
 }
 .home_link:hover {
-  text-decoration: none;
+	text-decoration: none;
 }
 
 #editor_container {
-  width: 100%;
-  min-height: 62px;
-  margin: 0 1%;
+	width: 100%;
+	min-height: 62px;
+	margin: 0 1%;
 }
+
+#editor {
+	border: 0;
+	border-radius: 2rem;
+	outline: none;
+	overflow: hidden;
+	margin: 1%;
+	width: calc(95% - 100px);
+	height: 100%;
+	resize: none;
+	padding: 1% 2%;
+	align-self: center;
+}
+
+#editor_clear {
+	border: 0;
+	outline: none;
+	float: right;
+	align-self: center;
+	cursor: pointer;
+}
+
+input[type="file"] {
+	opacity: 0; /* make transparent */
+	z-index: -1; /* move under anything else */
+	position: absolute; /* don't let it take up space */
+}
+
+pre {
+	font-size: 1em;
+	white-space: pre-wrap;
+	color: inherit;
+	font-family: inherit;
+}
+
+#room_desc {
+	padding: 5%;
+	color: grey;
+}
+
+.channel_headers {
+	text-decoration: none;
+	float: left;
+	color: rgb(79, 70, 229);
+	display: flex;
+	flex-direction: row;
+}
+
+.poll_option {
+	min-height: 30px;
+}
+
+.participant_details {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	justify-content: center;
+}
+.pic {
+	height: 3rem;
+	width: 3rem;
+	border-radius: 50%;
+	margin-right: 2%;
+	align-self: center;
+}
+.participant_details div {
+	width: 100%;
+	font-size: 1 rem;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.messageEditIcon:hover {
+	display: block;
+}
+.message-dropdown-toggle::after {
+	content: none;
+	margin: 0%;
+	padding: 0%;
+}
+.message-dropdown-toggle {
+	margin: 0%;
+	padding: 0%;
+}
+.messageOptions {
+	display: flex;
+	align-items: center;
+	cursor: pointer;
+}
+.messageOptions:hover {
+	color: rgb(79, 70, 229);
+}
+.chatContent {
+	margin-top: 0.5%;
+	word-wrap: break-word;
+	overflow: hidden;
+}
+.reply{
+	background:white;
+	color:black;
+	margin-bottom:1%;
+}
+pre{
+	margin-bottom: 0%;
+}
+.meet{
+	border: 1px solid;
+	border-radius: 5px;
+	width:fit-content;
+	padding:2%;
+}
+.chatHeader{
+	   margin-top:0.5%;display:flex;justify-content:space-between;
+}
+  
 
 #editor {
   border: 0;
@@ -186,6 +302,8 @@ pre {
 #room_desc {
   padding: 5%;
   color: grey;
+  max-height: 20vh;
+  overflow:auto;
 }
 
 .channel_headers {
@@ -230,7 +348,7 @@ pre {
   border-bottom: 1px solid black;
 }
 
-.notification div {
+.notification_elem {
   width: 100%;
   word-wrap: break-word;
 }
@@ -273,3 +391,4 @@ td a{
 td a:hover{
   color: black;
 }
+.topnav{display:none;} 

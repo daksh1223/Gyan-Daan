@@ -1,6 +1,6 @@
 const Tags = require("../Schemas/TagSchema");
 const create_new_tag =async(name) => {
-    return await Tags.create({ name: name.toLowerCase() });
+    return await Tags.create({ name });
 };
 const get_tag_by_name =async(name) => {
     return await Tags.findOne({name:name});

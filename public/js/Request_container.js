@@ -18,7 +18,7 @@ const modal_filler = (id) => {
   Modal_Container.innerHTML = 
   `
   <div class="request_container">
-        <div class="request_container_elem"><b>Description: </b>${req.requirements}</div>
+        <div class="request_container_elem"><b>Description: </b><br>${req.requirements}</div>
         <small class="request_container_elem" style="text-align:right;">
             ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}
         </small>
@@ -40,10 +40,10 @@ const fill_container_data = (data) =>{
             <small class="request_elem">
             ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}
             </small>
-            <div class="request_elem">${req.requirements}</div>
+            <div class="request_elem" style="height:50%;">${req.requirements}</div>
             <div onclick="modal_filler('${
               req._id
-            }')" style="margin-left:auto;cursor:pointer;color:rgb(79, 70, 229);">Get more info...</div>
+            }')" style="margin-left:auto;cursor:pointer;margin-top:auto;color:rgb(79, 70, 229);">Get more info...</div>
         </div>̥
     `;});
     requests_container.innerHTML = temp;

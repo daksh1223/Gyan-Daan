@@ -9,7 +9,7 @@ const {
   get_user_rooms,
   get_all_users,
   get_user_by_id_and_populate_Rooms,
-  find_user_by_id_and_populate_last_notifications
+  find_user_by_id_and_populate_last_notifications,
 } = require("../Repository/user_repository");
 const { set_new_stream } = require("../Repository/stream_repository.js");
 const {
@@ -26,9 +26,23 @@ const {
   find_channel_by_id_and_populate_all_data,
 } = require("../Repository/channel_repository.js");
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-const { get_tag_by_name, create_new_tag ,get_all_tags} = require("../Repository/tag_repository.js");
-const {create_new_option, update_vote, create_new_poll, find_poll_by_id} = require('../Repository/poll_repository')
-const File = require('../Schemas/FileScema')
+const {
+  get_tag_by_name,
+  create_new_tag,
+  get_all_tags,
+} = require("../Repository/tag_repository.js");
+const {
+  create_new_option,
+  update_vote,
+  create_new_poll,
+  find_poll_by_id,
+} = require("../Repository/poll_repository");
+const {
+  create_new_chat,
+  delete_chat,
+  edit_chat,
+} = require("../Repository/chat_repository");
+const File = require("../Schemas/FileScema");
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 router.get("/get_user_details", async (req, res) => {
   let req_data = await get_user_by_id_and_populate_Rooms(req.user._id);
@@ -188,18 +202,26 @@ router
     let channel_details = await find_channel_by_id_and_populate_all_data(
       req.params.channel
     );
-    let user = await find_user_by_id_and_populate_last_notifications(req.user._id);
-    if(!user.channel_last_notification_id.find(e=>e.channel==req.params.channel)){
+    let user = await find_user_by_id_and_populate_last_notifications(
+      req.user._id
+    );
+    if (
+      !user.channel_last_notification_id.find(
+        (e) => e.channel == req.params.channel
+      )
+    ) {
       let new_channel_last_notification_id = new Channel_last_notification_id();
-      new_channel_last_notification_id.channel=req.params.channel;
+      new_channel_last_notification_id.channel = req.params.channel;
       user.channel_last_notification_id.push(new_channel_last_notification_id);
       await new_channel_last_notification_id.save();
       await user.save();
     }
-    let user_last_notification_id = user.channel_last_notification_id.find(e=>e.channel==req.params.channel).last_notification_id;
-    console.log(req.user._id,user.channel_last_notification_id)
+    let user_last_notification_id = user.channel_last_notification_id.find(
+      (e) => e.channel == req.params.channel
+    ).last_notification_id;
+    // console.log(req.user._id,user.channel_last_notification_id)
 
-    res.json({channel_details,user_last_notification_id});
+    res.json({ channel_details, user_last_notification_id });
   })
   .all((req, res) => {
     res.send(`${req.method} method is not allowed!`);
@@ -210,6 +232,9 @@ router.route("/channel/:channel/notifications").post(async (req, res) => {
     data = req.body.data;
   let new_notification = new Notification();
   new_notification.title = data.title;
+  new_notification.timestamp = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+  });
   new_notification.content = data.content;
   new_notification.save();
   channel.notifications.push(new_notification);
@@ -242,22 +267,29 @@ router
     res.json(notification_to_edit);
   });
 
-router.route("/channel/:channel/update_notification_id").post(async (req,res)=>{
-  let data= req.body;
-  if(data.type){
-    let channel = await find_channel_by_id(req.params.channel);
-    channel.last_notification_id= data.last_notification_id;
-    channel.save();
-  }
-  else {
-    let user = await find_user_by_id_and_populate_last_notifications(req.user._id);
-    let last_notification_id_container = user.channel_last_notification_id.find(e=>e.channel==req.params.channel);
-    last_notification_id_container.last_notification_id=data.last_notification_id;
-    last_notification_id_container.save();
-    user.save();
-  }
-  res.json("Succesfull!");
-})
+router
+  .route("/channel/:channel/update_notification_id")
+  .post(async (req, res) => {
+    let data = req.body;
+    if (data.type) {
+      let channel = await find_channel_by_id(req.params.channel);
+      channel.last_notification_id = data.last_notification_id;
+      channel.save();
+    } else {
+      let user = await find_user_by_id_and_populate_last_notifications(
+        req.user._id
+      );
+      let last_notification_id_container =
+        user.channel_last_notification_id.find(
+          (e) => e.channel == req.params.channel
+        );
+      last_notification_id_container.last_notification_id =
+        data.last_notification_id;
+      last_notification_id_container.save();
+      user.save();
+    }
+    res.json("Succesfull!");
+  });
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 router
@@ -351,6 +383,8 @@ router
       channel.meet_allow_students_stream = channelinfo.allow_students_stream;
       channel.meet_link = `/room/${room._id}/meetroom/${parent_channel._id}/meet/${channel._id}`;
       parent_channel.save();
+      channel.start_date = req.body.data.date;
+      channel.start_time = req.body.data.time;
     }
 
     channel.save();
@@ -528,6 +562,7 @@ router.route("/set_user_profile").post(async (req, res) => {
     }
   }
   user.profilepicUrl = req.body.profilepicUrl;
+  req.user.profilepicUrl = req.body.profilepicUrl;
   user.about = req.body.about;
   if (req.body.idUrl) {
     user.idUrl = req.body.idUrl;
@@ -674,16 +709,49 @@ router.get("/get_poll/:poll", async (req, res) => {
   res.json(poll);
 });
 
-router.get('/get_files/', async (req, res) => {
-
+router.get("/get_files/", async (req, res) => {
   try {
-    const files = await File.find({ '_id': { '$in': req.query.files } }).populate('createdBy');
-    res.json(files)
-  }
-  catch (err) {
+    const files = await File.find({ _id: { $in: req.query.files } }).populate(
+      "createdBy"
+    );
+    res.json(files);
+  } catch (err) {
     res.status(500).json(err);
   }
+});
+router
+  .route("/message")
+  .post(async (req, res) => {
+    //console.log(req.body);
 
-})
+    if (req.body.channel_id != -1) {
+      let Channel = await find_channel_by_id(req.body.channel_id);
+      let new_message = create_new_chat(
+        req.body.user_name,
+        req.body.message,
+        req.body.email,
+        req.body.timestring,
+        req.body.type
+      );
+      Channel.messages.push(new_message.id);
+      await Channel.save();
+
+      res.json(new_message._id);
+    }
+  })
+  .delete(async (req, res) => {
+    //console.log(req.body);
+
+    await delete_chat(req.body.message_id);
+
+    res.json("Deleted");
+  })
+  .put(async (req, res) => {
+    await edit_chat(
+      req.body.message_id,
+      req.body.message_content,
+      req.body.message_timestamp
+    );
+  });
 
 exports.router = router;

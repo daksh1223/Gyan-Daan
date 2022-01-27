@@ -30,26 +30,30 @@
 	<link rel="stylesheet" type="text/css" href="/css/profile.css" />
 	<link rel="stylesheet" type="text/css" href="/css/utility.css" />
 	<link rel="stylesheet" type="text/css" href="/css/tags.css" />
+	<script src="/js/tags.js"></script>
 </head>
 
 <body>
 	<div class="body_container">
-		<div style="display: flex;justify-content:space-between">
+		
+		<nav class="navbar navbar-expand-md navbar-light">
 
            <a  href="/home" style="margin-right: auto;"><img src="/images/logo.png" style="width: 100px;" /></a>
           
 
              
-                <ul  style="padding-right: 1%;list-style-type: none;">
+                <ul  style="list-style-type: none;margin-bottom: 0%;margin-right: 1%;">
                     <li>
 
-                        <div class="dropdown">
-                            <div class="dropdown-toggle nav-link active" id="user_data" href='#' role="button"
-                            data-toggle="dropdown" aria-expanded="false">
-							<img src="<%- user_profilePic %>" style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;"/>
-                          
-                            <%= user_name %>
-						</div>
+                     
+                            <ul class="navbar-nav" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
+								 <li class="nav-item">
+                               <div class="dropdown">
+                            <a class="dropdown-toggle nav-link active" id="user_data" href='#' role="button"
+                                data-toggle="dropdown" aria-expanded="false">
+                                <img src="<%- user_profilePic %>" style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;"/>
+                                                          <%= user_name %>
+                            </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
                                 <li>
                                     <a href="/profile/<%=user_email%>" class="dropdown-item">
@@ -58,21 +62,23 @@
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href='/donate' type="button">
-                                     
-                                            <i class="fas fa-donate"></i> Donate</a>
-                                   
-                               
+
+                                        <i class="fas fa-donate"></i> Donate</a>
+
+
                                 </li>
                                 <li>
                                     <a class="dropdown-item" href='/logout'>
                                         <i class="fas fa-sign-out-alt"></i> Sign out</a>
-                                    
+
                                 </li>
                             </ul>
                         </div>
+							</li>
+                        </ul>
                     </li>
                 </ul>
-            </div>
+            </nav>
      
 		<div class="main-container">
 

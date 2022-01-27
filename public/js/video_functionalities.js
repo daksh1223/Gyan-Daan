@@ -64,7 +64,7 @@ client.on("peer-leave", function (evt) {
   if (remote_streams[streamId] != undefined) {
     // If the relation exists in the remote_streams
     remote_streams[streamId].stop(); // Stop playing the stream's feed
-    console.log(pinned_user,streamId)
+    // console.log(pinned_user,streamId)
     if(pinned_user==streamId) {remove_pinned_user(streamId);}
     delete remote_streams[streamId]; // Then remove the relationship from the remote_streams
     var remote_stream_container_ID = "#" + streamId + "_container";
