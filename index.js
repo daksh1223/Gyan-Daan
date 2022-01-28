@@ -10,17 +10,17 @@ const mongoose_morgan = require("mongoose-morgan");
 const multer = require("multer");
 const favicon = require("serve-favicon");
 const passport = require("passport");
-const multerAzure = require('multer-azure')
+const multerAzure = require("multer-azure");
 const GoogleStrategy = require("passport-google-oauth2").Strategy;
 const MicrosoftStrategy = require("passport-microsoft").Strategy;
-const bodyParser = require('body-parser')
+const bodyParser = require("body-parser");
 
 const adminbro = require("./adminbro");
 const User = require("./Schemas/UserSchema.js");
 const { find_channel_by_id } = require("./Repository/channel_repository");
 const {
-	get_tag_by_name,
-	create_new_tag
+  get_tag_by_name,
+  create_new_tag,
 } = require("./Repository/tag_repository.js");
 const { find_user_by_email } = require("./Repository/user_repository");
 const home_page_router = require("./routers/home_router");
@@ -38,10 +38,10 @@ app.use(favicon(__dirname + "/public/favicon.ico"));
 app.use(express.static("public"));
 app.use(cors());
 // parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 
 // parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
 
 app.use(mongoose_morgan({ connectionString: dburl }, {}, "short"));
 app.use(
@@ -120,12 +120,14 @@ app.post("/auth/google", (req, res, next) => {
     scope: ["email", "profile"],
   })(req, res, next);
 });
-app.get("/auth/google/callback", 
+app.get(
+  "/auth/google/callback",
   passport.authenticate("google", {
     successRedirect: "/home",
     failureRedirect: "/",
-  }));
-  
+  })
+);
+
 app.post("/auth/microsoft", (req, res, next) => {
   req.session.isEducator = req.body.isEducator === "true";
   passport.authenticate("microsoft", {
@@ -150,7 +152,6 @@ app.use("/logout", (req, res) => {
   res.redirect("/");
 });
 checkAuthenticated = (req, res, next) => {
-
   if (req.isAuthenticated()) {
     res.locals.user_name = req.user.name;
     res.locals.user_email = req.user.email;
@@ -162,7 +163,6 @@ checkAuthenticated = (req, res, next) => {
     return next();
   }
 
-
   req.session.redirect_url = req.url;
   res.redirect("/");
 };
@@ -172,24 +172,23 @@ app.use(checkAuthenticated);
 app.use("/home", home_page_router.router);
 app.use("/room", room_page_router.router);
 app.use("/api", api_router.router);
-app.get("/profile/:email", async(req, res) => {
-
-  res.render("profile", { email: req.params.email  });
-})
+app.get("/profile/:email", async (req, res) => {
+  res.render("profile", { email: req.params.email });
+});
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 const upload = multer({
   storage: multerAzure({
-    connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING , //Connection String for azure storage account, this one is prefered if you specified, fallback to account and key if not.
+    connectionString: process.env.AZURE_STORAGE_CONNECTION_STRING, //Connection String for azure storage account, this one is prefered if you specified, fallback to account and key if not.
     account: process.env.AZURE_STORAGE_ACCOUNT, //The name of the Azure storage account
     key: process.env.AZURE_STORAGE_ACCESS_KEY, //A key listed under Access keys in the storage account pane
-    container: process.env.AZURE_STORAGE_CONTAINER,  //Any container name, it will be created if it doesn't exist
+    container: process.env.AZURE_STORAGE_CONTAINER, //Any container name, it will be created if it doesn't exist
     blobPathResolver: function (req, file, callback) {
       const ext = file.mimetype.split("/")[1];
       var blobPath = `${file.fieldname}-${Date.now()}.${ext}`; //Calculate blobPath in your own way.
       callback(null, blobPath);
-    }
-  })
+    },
+  }),
 });
 
 app.get("/donate", (req, res) => {
@@ -201,33 +200,30 @@ app.get("/Requested-Courses", (req, res) => {
 });
 app.get("/course-tracker/:id", (req, res) => {
   let id = req.params.id;
-  if (!req.session.isEducator) res.render("course_tracker", { id});
+  if (!req.session.isEducator) res.render("course_tracker", { id });
   else res.render("permission_denied");
 });
 app.get("/tracker", (req, res) => {
   if (!req.session.isEducator) res.render("tracker");
   else res.render("permission_denied");
 });
-app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
+app.post("/api/uploadFile", upload.single("upload"), async (req, res) => {
   // Stuff to be added later
   try {
     const newFile = await File.create({
       name: req.file.blobPath,
       path: req.file.url,
       displayName: req.file.originalname,
-      createdBy: req.user._id
+      createdBy: req.user._id,
     });
 
-    if(req.body.channelID)
-    {
-      const channel = await find_channel_by_id(req.body.channelID)
-      if (req.body.isRecording ==='true')
-        channel.recordings.push(newFile)
-      else 
-        channel.files.push(newFile)
+    if (req.body.channelID) {
+      const channel = await find_channel_by_id(req.body.channelID);
+      if (req.body.isRecording === "true") channel.recordings.push(newFile);
+      else channel.files.push(newFile);
       channel.save();
     }
-    
+
     res.send(newFile);
   } catch (error) {
     res.status(500).json({
@@ -237,58 +233,106 @@ app.post("/api/uploadFile", upload.single('upload'), async (req, res) => {
 });
 
 io.on("connection", (socket) => {
-  socket.on("join-room", (roomID, user, email, userID, profile_pic, educator_status, channelId) => {
-    socket.join(roomID);
-    let new_track_record = new Tracker();
-    new_track_record.user = userID;
-    new_track_record.course = roomID;
-    new_track_record.StartTime=new Date().toLocaleString("en-US", {
-      timeZone: "Asia/Kolkata",
-    });
-    socket.on("connect_to_new_user", (username, id) => {
-      socket.to(id).emit("user-joined", user, email, id, profile_pic, educator_status, channelId);
-    });
-    socket.on("notification_message",(type,id,title,content,timestamp,current_channel)=>{
-      socket.broadcast.to(roomID).emit("receive_notification_message",type,id,title,content,timestamp,current_channel);
-    })
-    socket.on("toggle_option", (poll) => {
-      socket.broadcast
-          .to(roomID)
-          .emit("update_poll", poll);
-    });
-
-    socket.broadcast.to(roomID).emit("user-joined", user, email, socket.id, profile_pic, educator_status, channelId);
-    socket.on(
-      "receive_channel_message",
-      async (username, data, email, channel_id,message_id,timestring,type) => {
-        socket.broadcast
-          .to(roomID)
-          .emit("send_channel_message", username, data, timestring, channel_id,message_id,email,type);
-      }
-    );
-      socket.on(
-				"deleteChat",
-				async (message_id) => {
-					socket.broadcast.to(roomID).emit("deleteChat", message_id);
-				}
-    );
-      socket.on("editChat", async (message_id, newData, timeString) => {
-				socket.broadcast
-					.to(roomID)
-					.emit("editChat", message_id, newData, timeString);
-			});
-    socket.on("disconnect", () => {
-      new_track_record.EndTime = new Date().toLocaleString("en-US", {
+  socket.on(
+    "join-room",
+    (roomID, user, email, userID, profile_pic, educator_status, channelId) => {
+      socket.join(roomID);
+      let new_track_record = new Tracker();
+      new_track_record.user = userID;
+      new_track_record.course = roomID;
+      new_track_record.StartTime = new Date().toLocaleString("en-US", {
         timeZone: "Asia/Kolkata",
       });
-      new_track_record.duration =
-        (new_track_record.EndTime.getTime() -
-          new_track_record.StartTime.getTime()) /
-        1000;
-      new_track_record.save();
-      socket.to(roomID).broadcast.emit("user-disconnected", email,channelId);
-    });
-  });
+      socket.on("connect_to_new_user", (username, id) => {
+        socket
+          .to(id)
+          .emit(
+            "user-joined",
+            user,
+            email,
+            id,
+            profile_pic,
+            educator_status,
+            channelId
+          );
+      });
+      socket.on(
+        "notification_message",
+        (type, id, title, content, timestamp, current_channel) => {
+          socket.broadcast
+            .to(roomID)
+            .emit(
+              "receive_notification_message",
+              type,
+              id,
+              title,
+              content,
+              timestamp,
+              current_channel
+            );
+        }
+      );
+      socket.on("toggle_option", (poll) => {
+        socket.broadcast.to(roomID).emit("update_poll", poll);
+      });
+
+      socket.broadcast
+        .to(roomID)
+        .emit(
+          "user-joined",
+          user,
+          email,
+          socket.id,
+          profile_pic,
+          educator_status,
+          channelId
+        );
+      socket.on(
+        "receive_channel_message",
+        async (
+          username,
+          data,
+          email,
+          channel_id,
+          message_id,
+          timestring,
+          type
+        ) => {
+          socket.broadcast
+            .to(roomID)
+            .emit(
+              "send_channel_message",
+              username,
+              data,
+              timestring,
+              channel_id,
+              message_id,
+              email,
+              type
+            );
+        }
+      );
+      socket.on("deleteChat", async (message_id) => {
+        socket.broadcast.to(roomID).emit("deleteChat", message_id);
+      });
+      socket.on("editChat", async (message_id, newData, timeString) => {
+        socket.broadcast
+          .to(roomID)
+          .emit("editChat", message_id, newData, timeString);
+      });
+      socket.on("disconnect", () => {
+        new_track_record.EndTime = new Date().toLocaleString("en-US", {
+          timeZone: "Asia/Kolkata",
+        });
+        new_track_record.duration =
+          (new_track_record.EndTime.getTime() -
+            new_track_record.StartTime.getTime()) /
+          1000;
+        new_track_record.save();
+        socket.to(roomID).broadcast.emit("user-disconnected", email, channelId);
+      });
+    }
+  );
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -333,16 +377,14 @@ mongoose_morgan.token("status", function (req, res, params) {
 mongoose_morgan.token("res", function (req, res, params) {
   return new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
 });
-const addUserNameTag=async(user, name)=>{ 
-
-let addTag=await get_tag_by_name(name);
+const addUserNameTag = async (user, name) => {
+  let addTag = await get_tag_by_name(name);
 
   if (!addTag) {
     addTag = await create_new_tag(name);
   }
-    addTag.users.push(user.email);
-    user.tags.push(addTag.name);
-    await addTag.save();
-    await user.save();
-        
-}
+  addTag.users.push(user.email);
+  user.tags.push(addTag.name);
+  await addTag.save();
+  await user.save();
+};
