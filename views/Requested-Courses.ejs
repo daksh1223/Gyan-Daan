@@ -26,6 +26,7 @@
         const user_name = "<%=user_name %>";
         const email = "<%= user_email %>";
         const isEducator = "<%= isEducator %>";
+        const isVerified = "<%=user_isVerified%>";
     </script>
     <link rel="stylesheet" type="text/css" href="/css/requested-course.css" />
     <link rel="stylesheet" type="text/css" href="/css/tags.css" />
@@ -107,13 +108,56 @@
                     </div>
                 </div>
                 <div class="modal-footer" style="border-color: #292929;">
-                    <button type="button" id="Requested_Course_close" class="btn btn-secondary"
+                     <button type="button" id="Requested_Course_close" class="btn btn-secondary"
                         data-dismiss="modal">Close</button>
+                     <button type="button"  class="btn"
+                        data-dismiss="modal"  id="Requested_Course_create" style="background-color: rgb(79, 70, 229);color:white">Create Course</button>
+                   
                 </div>
 
             </div>
         </div>
     </div>
+      <div class="modal fade" id="RoomcreationModal" tabindex="-1" role="dialog"
+            aria-labelledby="RoomcreationModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content" style="box-shadow: 0px 0px 15px black;">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="RoomcreationModalLongTitle">Create new course</h5>
+                    </div>
+                    <form>
+
+                        <div class="modal-body" style="overflow:auto;">
+                            <div class="form-group">
+                                <label for="room_name">Course Name</label>
+                                <input type="text" class="form-control" id="room_name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="room_description">Course Description</label>
+                                <textarea row="3" class="form-control" id="room_description"> </textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Add Course Tags:</label>
+                                <input type="text" id="room_tags" data-role="tagsinput" />
+                                <small class="form-text " style="font-weight:600;">
+                                    Add Tags associated with this course. <br>Eg. Trignometry, Maths, Class Xth
+                                    etc...<br>
+                                    Press enter after typing a tag name to add a new tag.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="modal_close" class="btn btn-secondary"
+                                data-dismiss="modal">Close</button>
+                            <button type="button" style="background-color: rgb(79, 70, 229);" class="btn btn-primary"
+                                onclick="modal_submission()">Create
+                                Course</button>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
 </body>
 
 </html>

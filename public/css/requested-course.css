@@ -71,3 +71,8 @@ body {
   width: 100%;
   word-wrap: break-word;
 }
+.name-link{
+  color:rgb(79, 70, 229);
+  text-decoration: none;
+  
+}

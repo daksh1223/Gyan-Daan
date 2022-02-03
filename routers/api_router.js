@@ -567,11 +567,12 @@ router.post("/course_request", async (req, res) => {
   request.name = data.name;
   request.requirements = data.requirements;
   request.tags = data.tags;
+  request.user = req.user._id;
   await request.save();
   res.json("Success!");
 });
 router.get("/all_requests", async (req, res) => {
-  let all_requests = await CourseRequest.find();
+  let all_requests = await CourseRequest.find().populate("user");
   return res.json({ all_requests, tags: req.user.tags });
 });
 router.get("/get_req_data/:id", async (req, res) => {
