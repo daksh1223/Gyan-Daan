@@ -30,11 +30,15 @@ const modal_filler = (id) => {
   let req = request_map[id];
   let date = new Date(req.RequestedAt);
   Modal_title.innerHTML = req.name;
+  let userHeader = ``;
+  if (req.user) {
+    userHeader = `<div style="margin-top:1%"><b> By - </b><a class="name-link" href="/profile/${req.user.email}">${req.user.name}</a></div>`;
+  } else { 
+    userHeader = `  <div style="margin-top:1%"><b> By - </b><span>Anonymous</span></div>`;
+  }
   Modal_Container.innerHTML = `
   <div class="request_container">
-     <div style="margin-top:1%"><b> By - </b><a class="name-link" href="/profile/${
-				req.user.email
-			}">${req.user.name}</a></div>
+        ${userHeader}
         <div class="request_container_elem"><b>Description: </b>${
 					req.requirements
 				}</div>
