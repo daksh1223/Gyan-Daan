@@ -69,9 +69,9 @@ const room_data = async (url) => {
            data-target="#channel_creation_modal"><i class="fas fa-plus"></i> Add Channel</a>
           </li>
           <li>
-            <a class="dropdown-item" href="#" title="Edit Room Details" data-toggle="modal"
+            <a class="dropdown-item" href="#" title="Edit Course Details" data-toggle="modal"
            data-target="#RoomcreationModal" onclick="fillRoomEditModal()">
-              <i class="fas fa-edit"></i> Edit Room
+              <i class="fas fa-edit"></i> Edit Course
             </a>
           </li>`;
 	}
@@ -183,6 +183,7 @@ const channel_data = async (cid) => {
   channel = channel.data;
   user_last_notification_id = channel.user_last_notification_id;
   channel = channel.channel_details;
+  console.log(channel);
   channel_last_notification_id = channel.last_notification_id;
   notification_alert();
   current_channel = cid; // Set the current channel as cid
@@ -1032,12 +1033,12 @@ const new_notification_former = (id, title, content, timestamp) => {
           <div style="color: rgb(79, 70, 229);display:flex;"><b><div id=${id}_title>${title}</div></b>`;
   if (isEducator != "false") {
     temp += `
-      <div class="dropdown" style="margin-left:3px;">
-          <a class="dropdown-toggle notification_dropdown"  type="button" id="dropdownMenuButton_${id}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <div class="dropdown" style="margin-left:3px;align-self:center;">
+          <a class="dropdown-toggle notification_dropdown notification_elem"  type="button" id="dropdownMenuButton_${id}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           </a>
           <div class="dropdown-menu" aria-labelledby="dropdownMenuButton_${id}" style="width:max-content;">
-            <a class="dropdown-item" href="#" onclick="notification_handler('${id}',0)"><i class="fas fa-pen"></i> Edit</a>
-            <a class="dropdown-item" href="#" onclick="notification_handler('${id}',1)"><i class="fas fa-trash"></i> Delete</a>
+            <a class="dropdown-item notification_elem" href="#" onclick="notification_handler('${id}',0)"><i class="fas fa-pen"></i> Edit</a>
+            <a class="dropdown-item notification_elem" href="#" onclick="notification_handler('${id}',1)"><i class="fas fa-trash"></i> Delete</a>
           </div>
       </div>
       `;
@@ -1104,7 +1105,7 @@ const notifications_handler = () => {
     document.getElementById("add_notification").style.display = "";
   }
   let notifications = channel_data_copy.notifications;
-  notifications.innerHTML = "";
+  notifications_container.innerHTML = "";
   let temp = "";
   for (let i = 0; i < notifications.length; i++) {
     new_notification_former(

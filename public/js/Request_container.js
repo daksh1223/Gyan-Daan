@@ -65,7 +65,7 @@ const fill_container_data = (data) =>{
             <small class="request_elem">
             ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}
             </small>
-            <div class="request_elem">${req.requirements}</div>
+            <div class="request_elem" style="height:50%;">${req.requirements}</div>
             <div onclick="modal_filler('${
 							req._id
 						}')" style="margin-left:auto;cursor:pointer;color:rgb(79, 70, 229);">Get more info...</div>

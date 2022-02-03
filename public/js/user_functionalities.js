@@ -250,7 +250,7 @@ function controls_provide(cid) {
             >screen_share</span
           >
            </button>
-        <button id="record-btn" type="button" class="btn btn-dark main__controls__button  btn-lg pointer"
+        <button id="record-btn" type="button" class="btn btn-dark main__controls__button  btn-lg pointer"  title="Record meet"
             onclick="toggle_play_stop_video('${cid}')">
             <span class="material-icons" id="record-icon"
             >play_circle</span

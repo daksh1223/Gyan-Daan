@@ -302,6 +302,8 @@ pre {
 #room_desc {
   padding: 5%;
   color: grey;
+  max-height: 20vh;
+  overflow:auto;
 }
 
 .channel_headers {
@@ -346,7 +348,7 @@ pre {
   border-bottom: 1px solid lightgray;
 }
 
-.notification div {
+.notification_elem {
   width: 100%;
   word-wrap: break-word;
 }

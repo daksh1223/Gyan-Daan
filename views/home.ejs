@@ -28,7 +28,7 @@
         const user_id = "<%= userId %>";
         const isVerified = "<%=user_isVerified%>";
     </script>
-    
+
     <link rel="stylesheet" type="text/css" href="/css/home.css" />
     <link rel="stylesheet" type="text/css" href="/css/tags.css" />
     <script src="/js/utility.js" defer></script>
@@ -61,8 +61,9 @@
                         <div class="dropdown">
                             <a class="dropdown-toggle nav-link active" id="user_data" href='#' role="button"
                                 data-toggle="dropdown" aria-expanded="false">
-                                <img src="<%- user_profilePic %>" style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;"/>
-                                                          <%= user_name %>
+                                <img src="<%- user_profilePic %>"
+                                    style="display:inline;height: 2rem; width: 2rem;border-radius: 50%;" />
+                                <%= user_name %>
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1" id="navbar_menu">
                                 <li>
@@ -162,7 +163,8 @@
                         <div class="modal-footer">
                             <button type="button" id="Requestmodal_close" class="btn btn-secondary"
                                 data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary" style="background-color: rgb(79, 70, 229);"onclick="Roomrequest_submission()">Send Request</button>
+                            <button type="button" class="btn btn-primary" style="background-color: rgb(79, 70, 229);"
+                                onclick="Roomrequest_submission()">Send Request</button>
                         </div>
                     </form>
 
@@ -170,74 +172,87 @@
             </div>
         </div>
 
-     
-   
-    
-        
-           <% if(!isEducator){ %>
-            
-                    
-           
-                 <nav class="navbar navbar-expand-lg navbar-light  justify-content-start" style="color: black;">
 
-            <h6 onclick="redirect=()=>{window.location = '/home'};redirect()" class="nav-link-par cus-nav-link nav-link" style="cursor:pointer;">
-                              <i class="fas fa-home"></i> Home</h6>
-                            
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar7" style="margin-left:auto;">
-                <span class="navbar-toggler-icon"></span>
-            </button>
 
-            <div class="navbar-collapse collapse" id="navbar7">
-                  <div id="stat_nav">
-                   <div  class="nav-link-par" id='enrolled_stat_link'>
-                                <h6 class="nav-link cus-nav-link" style="cursor:pointer;" onclick="stat_link_click('enrolled')">
-                                    Enrolled Courses </h6>
-                                </div>
-                            <div  class="nav-link-par" id='popular_stat_link'>
-                                <h6 class="nav-link cus-nav-link" style="cursor:pointer;" onclick="stat_link_click('popular')">
-                                    Popular </h6>
-                            </div>
-                            <div class="nav-link-par" id='oldest_stat_link'>
-                                <h6 class="nav-link cus-nav-link" style="cursor:pointer;" onclick="stat_link_click('oldest')">Oldest
-                                </h6>
-                            </div>
-                            <div  class="nav-link-par" id='latest_stat_link'>
-                                <h6 class="nav-link cus-nav-link" style="cursor:pointer;" onclick="stat_link_click('latest')">Latest
-                                </h6>
-                            </div>
-                            <div  class="nav-link-par" id='liked_stat_link'>
-                                <h6 class=" nav-link cus-nav-link" style="cursor:pointer;" onclick="stat_link_click('liked')">Most
-                                    Liked</h6>
-                            </div>
-                            </div>
-                       <div class="nav-link-par" id="createRequestLink" style="margin-right: 0%;min-width:fit-content;float: right;">
-            
-            
-            </div>
-                       
-            </div>
-        </nav>
-                
-                <% } %>
-                <% if(isEducator){ %>
-                          <nav class="navbar navbar-expand-lg navbar-light" style="color: black;justify-content:space-between;">
-                              <h6 onclick="redirect=()=>{window.location = '/home'};redirect()" class="nav-link-par cus-nav-link nav-link" style="cursor:pointer;">
-                              <i class="fas fa-home"></i> Home</h6>
-                            
-           
-            <div class="nav-link-par" id="createRequestLink" style="margin-right: 0%;min-width:fit-content;float: right;">
-            
-            
-            </div>
-        </nav>
-            <% } %>
-                <div class="rooms_container_parent">
-                    <h3 id="rooms_container_title" style="display:none"></h3>
-                    <div id="rooms_container" class="rooms_container">
+
+
+        <% if(!isEducator){ %>
+
+
+
+            <nav class="navbar navbar-expand-lg navbar-light  justify-content-start" style="color: black;">
+
+                <h6 onclick="redirect=()=>{window.location = '/home'};redirect()"
+                    class="nav-link-par cus-nav-link nav-link" style="cursor:pointer;">
+                    <i class="fas fa-home"></i> Home
+                </h6>
+
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar7"
+                    style="margin-left:auto;">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse" id="navbar7">
+                    <div id="stat_nav">
+                        <div class="nav-link-par" id='enrolled_stat_link'>
+                            <h6 class="nav-link cus-nav-link" style="cursor:pointer;"
+                                onclick="stat_link_click('enrolled')">
+                                Enrolled Courses </h6>
+                        </div>
+                        <div class="nav-link-par" id='popular_stat_link'>
+                            <h6 class="nav-link cus-nav-link" style="cursor:pointer;"
+                                onclick="stat_link_click('popular')">
+                                Popular </h6>
+                        </div>
+                        <div class="nav-link-par" id='oldest_stat_link'>
+                            <h6 class="nav-link cus-nav-link" style="cursor:pointer;"
+                                onclick="stat_link_click('oldest')">Oldest
+                            </h6>
+                        </div>
+                        <div class="nav-link-par" id='latest_stat_link'>
+                            <h6 class="nav-link cus-nav-link" style="cursor:pointer;"
+                                onclick="stat_link_click('latest')">Latest
+                            </h6>
+                        </div>
+                        <div class="nav-link-par" id='liked_stat_link'>
+                            <h6 class=" nav-link cus-nav-link" style="cursor:pointer;"
+                                onclick="stat_link_click('liked')">Most
+                                Liked</h6>
+                        </div>
                     </div>
-                    <h3 id="educators_container_title" style="display:none"></h3>
-                    <div id="educators_container" class="rooms_container"></div>
+                    <div class="nav-link-par" id="createRequestLink"
+                        style="margin-right: 0%;min-width:fit-content;float: right;">
+
+
+                    </div>
+
                 </div>
+            </nav>
+
+            <% } %>
+                <% if(isEducator){ %>
+                    <nav class="navbar navbar-expand-lg navbar-light"
+                        style="color: black;justify-content:space-between;">
+                        <h6 onclick="redirect=()=>{window.location = '/home'};redirect()"
+                            class="nav-link-par cus-nav-link nav-link" style="cursor:pointer;">
+                            <i class="fas fa-home"></i> Home
+                        </h6>
+
+
+                        <div class="nav-link-par" id="createRequestLink"
+                            style="margin-right: 0%;min-width:fit-content;float: right;">
+
+
+                        </div>
+                    </nav>
+                    <% } %>
+                        <div class="rooms_container_parent">
+                            <h3 id="rooms_container_title" style="display:none"></h3>
+                            <div id="rooms_container" class="rooms_container">
+                            </div>
+                            <h3 id="educators_container_title" style="display:none"></h3>
+                            <div id="educators_container" class="rooms_container"></div>
+                        </div>
     </div>
 
     <div class="modal fade" id="user_display_modal" tabindex="-1" role="dialog"

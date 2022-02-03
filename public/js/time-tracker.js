@@ -62,7 +62,7 @@ const get_tracker_data = async () => {
     data.forEach((session) => {
       if (session.course == room._id) sessions_time += session.duration;
     });
-    progress_data.push([sessions_time,room.name]);
+    progress_data.push([sessions_time, room.name]);
     sessions_time = duration_parser(sessions_time);
     temp += `
         <div class="time_container">
@@ -76,21 +76,26 @@ const get_tracker_data = async () => {
   let progress_bar = document.getElementById("progress-bar");
   let i = 0;
   let labels_container = document.getElementById("progress-bar-labels");
-  progress_data.sort((a,b)=>{ 
-    return (a[0]<b[0])?1:-1});
+  progress_data.sort((a, b) => {
+    return a[0] < b[0] ? 1 : -1;
+  });
   progress_data.forEach((val) => {
     let percentage = (val[0] / total_value) * 100;
     progress_bar.innerHTML += `
-          <div class="progress_bar_elem" style="width:${percentage}%;background-color:#${colors[i % colors.length]};" title="${val[1]} - ${Math.round(
-          percentage
-        )}% of total time spent here"></div>
+          <div class="progress_bar_elem" style="width:${percentage}%;background-color:#${
+      colors[i % colors.length]
+    };" title="${val[1]} - ${Math.round(
+      percentage
+    )}% of total time spent here"></div>
         `;
-    labels_container.innerHTML +=`
-            <div style="display:flex;align-items:center; margin-right:2%;" title="${val[1]} - ${Math.round(
-              percentage
-            )}% of total time spent here">
-                <div style="width:1.2rem;height:1.2rem;background-color:#${colors[i % colors.length]};border:0.1rem solid black;box-sizing:border-box;"></div>
-                <div style="margin-left:5%;"> ${val[1]}</div>
+    labels_container.innerHTML += `
+            <div style="display:flex;align-items:center; margin-right:2%;" title="${
+              val[1]
+            } - ${Math.round(percentage)}% of total time spent here">
+                <div style="width:1.2rem;height:1.2rem;background-color:#${
+                  colors[i % colors.length]
+                };border:0.1rem solid black;box-sizing:border-box;margin-right:2px;"></div>
+                <div> ${val[1]}</div>
             </div>
     `;
     i++;
