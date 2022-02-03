@@ -29,7 +29,6 @@ router
   .post(async (req, res) => {
     // Create the room using the create room function and then return that room in JSON format.
     if (req.user.isEducator) {
-      console.log(req.body.data.roominfo)
       const room = await home_controller.create_room(
         req.body.data.roominfo,
         req.user

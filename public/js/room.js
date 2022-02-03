@@ -19,7 +19,7 @@ let user_last_notification_id = 0;
 let show_files_container = document.getElementById("show_files");
 
 socket.on("connect", () => {
-  console.log("yes");
+  // console.log("yes");
 });
 if (isEducator != "false") {
   create_meet_container.innerHTML = `<i class="fa fa-video"></i> Start/Schedule a meet `;
@@ -183,7 +183,7 @@ const channel_data = async (cid) => {
   channel = channel.data;
   user_last_notification_id = channel.user_last_notification_id;
   channel = channel.channel_details;
-  console.log(channel);
+  // console.log(channel);
   channel_last_notification_id = channel.last_notification_id;
   notification_alert();
   current_channel = cid; // Set the current channel as cid
@@ -1308,7 +1308,7 @@ async function showChannelFiles() {
     });
     files = response.data;
   } catch (err) {
-    // console.log(err);
+    console.log(err);
     document.getElementById("all_files").innerHTML =
       "We have encountered an error while fetching you files. Sorry for Inconvnience!";
 

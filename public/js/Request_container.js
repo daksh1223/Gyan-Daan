@@ -17,7 +17,7 @@ let colors = [
 const get_all_requests = async () => {
   let data = await axios.get("/api/all_requests");
   data = data.data.all_requests;
-  console.log(data)
+  // console.log(data)
   request_arr = data;
   fill_container_data(data);
   
@@ -85,9 +85,9 @@ const search_courses = (val)=>{
       let date = new Date(elem.RequestedAt);
       date= date.getDate()+ "/" +(date.getMonth() + 1) + "/" +date.getFullYear();
        
-      return (elem.name.toLowerCase().includes(val)) || (elem.requirements.toLowerCase().includes(val)) || (String(date).includes(val) || elem.user.name.toLowerCase().includes(val))
+      return (elem.name.toLowerCase().includes(val)) || (elem.requirements.toLowerCase().includes(val)) || (String(date).includes(val))
     })
-    console.log(temp_arr);
+    // console.log(temp_arr);
     fill_container_data(temp_arr);
 }
 const checkIfVerified = (id) => {

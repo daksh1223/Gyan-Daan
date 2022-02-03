@@ -48,7 +48,7 @@ async function create_room(roominfo, session_user) {
   if (addTags) {
     for (let i = 0; i < addTags.length; i++) {
       let addTag = await get_tag_by_name(addTags[i].toLowerCase());
-		console.log(addTag);
+		// console.log(addTag);
       if (!addTag) {
         addTag = await create_new_tag(addTags[i].toLowerCase());
       }
