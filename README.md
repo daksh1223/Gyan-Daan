@@ -15,6 +15,8 @@
 # Logo 
 ![GyanDaan](./public/images/logo.png)
 
+# Youtube Link
+[Link](https://www.youtube.com/watch?v=9oHHZBZyGZE)
 
 # Demo 
    [https://gyan-daan.herokuapp.com/](https://gyan-daan.herokuapp.com/)  
